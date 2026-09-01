@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Wiki — player & server guides (English)
+    url: https://github.com/TheoroiDev/wizardReal/wiki
+    about: Getting started, spellcasting, spells, ritual chants, server FAQ
+  - name: Wiki — 中文文档
+    url: https://github.com/TheoroiDev/wizardReal/wiki/Home-zh
+    about: 快速开始、施法系统、法术一览、仪式吟唱、排障
+  - name: VoiceCast wiki
+    url: https://github.com/TheoroiDev/voiceCast/wiki
+    about: Speech engine configuration, model hosting, access control
