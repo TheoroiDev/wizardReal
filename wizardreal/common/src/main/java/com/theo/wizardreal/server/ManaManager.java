@@ -10,6 +10,9 @@ import net.minecraft.server.MinecraftServer;
  */
 public final class ManaManager {
 
+    /** Periodic PlayerMagicState autosave interval: 5 minutes = 6000 ticks. */
+    private static final int AUTOSAVE_INTERVAL_TICKS = 6000;
+
     private static final ManaManager INSTANCE = new ManaManager();
     public static ManaManager get() { return INSTANCE; }
 
@@ -31,6 +34,10 @@ public final class ManaManager {
         // Prune expired cooldowns occasionally (every 5 seconds = 100 ticks)
         if (server.getTickCount() % 100 == 0) {
             state.pruneCooldowns(server.overworld().getGameTime());
+        }
+        // Periodic autosave (every 5 minutes) so a crash loses at most one interval of progress
+        if (server.getTickCount() % AUTOSAVE_INTERVAL_TICKS == 0) {
+            state.save();
         }
     }
 }

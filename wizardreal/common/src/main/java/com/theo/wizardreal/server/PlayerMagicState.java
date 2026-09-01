@@ -20,7 +20,8 @@ import java.util.*;
  * cooldowns). Backed by a file in the world directory instead of
  * {@link net.minecraft.world.level.saveddata.SavedData} to avoid API churn across versions.
  *
- * <p>Auto-saved on server stop and periodically every 5 minutes.
+ * <p>Auto-saved on server stop and periodically every 5 minutes
+ * (the periodic hook lives in {@link ManaManager}).
  */
 public final class PlayerMagicState {
 
