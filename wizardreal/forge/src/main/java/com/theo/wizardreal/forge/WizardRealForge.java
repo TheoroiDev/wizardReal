@@ -3,7 +3,6 @@ package com.theo.wizardreal.forge;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
-import com.theo.wizardreal.compat.ModDetection;
 import com.theo.wizardreal.item.ScrollItem;
 import com.theo.wizardreal.item.SpellTomeItem;
 import com.theo.wizardreal.item.StaffItem;
@@ -48,7 +47,6 @@ public final class WizardRealForge {
 
     @SuppressWarnings({"deprecation", "removal"})
     public WizardRealForge() {
-        ModDetection.init(id -> ModList.get().isLoaded(id));
 
         var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);

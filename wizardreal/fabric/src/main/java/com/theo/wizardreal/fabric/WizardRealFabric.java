@@ -3,7 +3,6 @@ package com.theo.wizardreal.fabric;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
-import com.theo.wizardreal.compat.ModDetection;
 import com.theo.wizardreal.item.ScrollItem;
 import com.theo.wizardreal.item.SpellTomeItem;
 import com.theo.wizardreal.item.StaffItem;
@@ -33,7 +32,6 @@ import net.minecraft.world.item.Items;
 public final class WizardRealFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        ModDetection.init(id -> FabricLoader.getInstance().isModLoaded(id));
 
         // Datapack spell loading: scan + parse + rebuild the registry on /reload.
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(
