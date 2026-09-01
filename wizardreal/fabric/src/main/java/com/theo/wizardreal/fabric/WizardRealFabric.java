@@ -56,6 +56,7 @@ public final class WizardRealFabric implements ModInitializer {
 
         WizardRealParticles.SPARK = registerParticle("spark", new WizardSimpleParticle());
         WizardRealParticles.RUNE = registerParticle("rune", new WizardSimpleParticle());
+        WizardRealParticles.WISP = registerParticle("wisp", new WizardSimpleParticle());
 
         for (String soundId : WizardRealSounds.IDS) {
             Registry.register(BuiltInRegistries.SOUND_EVENT, WizardRealSounds.id(soundId),

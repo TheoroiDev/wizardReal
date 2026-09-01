@@ -1,7 +1,9 @@
 package com.theo.wizardreal.forge;
 
 import com.theo.wizardreal.WizardReal;
+import com.theo.wizardreal.client.HeldItemAmbience;
 import com.theo.wizardreal.client.StaffCastHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,6 +22,7 @@ public final class WizardRealForgeClientTick {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             StaffCastHandler.tick();
+            HeldItemAmbience.tick(Minecraft.getInstance());
         }
     }
 }

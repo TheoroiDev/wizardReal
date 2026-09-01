@@ -24,5 +24,8 @@ public final class WizardRealForgeParticles {
                 WizardSparkParticle.Factory::new);
         event.registerSpriteSet((ParticleType<SimpleParticleType>) WizardRealParticles.RUNE.get(),
                 WizardSparkParticle.Factory::new);
+        // Held-staff idle ambience: same sprite, much smaller scale.
+        event.registerSpriteSet((ParticleType<SimpleParticleType>) WizardRealParticles.WISP.get(),
+                sprites -> new WizardSparkParticle.Factory(sprites, 0.4f));
     }
 }

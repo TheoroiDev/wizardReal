@@ -76,6 +76,8 @@ public final class WizardRealForge {
                 WizardSimpleParticle::new)::get;
         WizardRealParticles.RUNE = PARTICLE_TYPES.register("rune",
                 WizardSimpleParticle::new)::get;
+        WizardRealParticles.WISP = PARTICLE_TYPES.register("wisp",
+                WizardSimpleParticle::new)::get;
 
         for (String soundId : WizardRealSounds.IDS) {
             SOUND_EVENTS.register(soundId, () -> SoundEvent.createVariableRangeEvent(WizardRealSounds.id(soundId)));

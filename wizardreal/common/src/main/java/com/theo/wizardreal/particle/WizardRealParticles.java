@@ -18,4 +18,7 @@ public final class WizardRealParticles {
 
     public static Supplier<ParticleType<?>> SPARK;
     public static Supplier<ParticleType<?>> RUNE;
+
+    /** Tiny mote used for held-staff idle ambience (client-side cosmetics). */
+    public static Supplier<ParticleType<?>> WISP;
 }
