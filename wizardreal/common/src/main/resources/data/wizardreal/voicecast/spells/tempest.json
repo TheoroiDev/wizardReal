@@ -1,0 +1,129 @@
+{
+  "id": "wizardreal:tempest",
+  "schools": [
+    "lightning"
+  ],
+  "mana_cost": 30,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "tempest",
+      "storm",
+      "风暴"
+    ],
+    "ipa": [
+      "ˈtɛmpɛst",
+      "fəŋ bɑʊ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.tempest.en.l1",
+          "aliases": [
+            "storm above"
+          ],
+          "ipa": [
+            "stɔːm əbʌv"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.en.l2",
+          "aliases": [
+            "strike them down"
+          ],
+          "ipa": [
+            "straɪk ðɛm dɑʊn"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.en.l3",
+          "aliases": [
+            "tempest"
+          ],
+          "ipa": [
+            "ˈtɛmpɛst"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.tempest.zh.l1",
+          "aliases": [
+            "天穹之上",
+            "tianqiong zhishang"
+          ],
+          "ipa": [
+            "tʰjɛn tɕʰjʊŋ ʈʂɨ ʂɑŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.zh.l2",
+          "aliases": [
+            "雷光落下",
+            "leiguang luoxia"
+          ],
+          "ipa": [
+            "lɛɪ kwɑŋ lwɔ ɕja"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.zh.l3",
+          "aliases": [
+            "风暴",
+            "fengbao"
+          ],
+          "ipa": [
+            "fəŋ bɑʊ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.tempest.ja.l1",
+          "aliases": [
+            "ten ni raikou tsudoite"
+          ],
+          "ipa": [
+            "tɛn ni raikoː tsudoitɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.ja.l2",
+          "aliases": [
+            "ochiro"
+          ],
+          "ipa": [
+            "otʃiɾo"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.tempest.ja.l3",
+          "aliases": [
+            "arashi"
+          ],
+          "ipa": [
+            "aɾaɕi"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:lightning",
+      "range": 48.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.tempest",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+apply from: rootProject.file("gradle/common-conventions.gradle")
+apply from: rootProject.file("gradle/loom-conventions.gradle")
+apply plugin: "architectury-plugin"
+
+architectury {
+    common(["fabric", "forge"])
+}
+
+// VoiceCast is a SEPARATE repo (../voicecast relative to this repo, or wherever
+// it is cloned). Coordinates are published by `gradlew publishToMavenLocal`
+// there; the unclassified voicecast-common artifact is the fat dev jar (bundles
+// Vosk/ONNX/Concentus classes + natives), so tests need nothing extra.
+def voicecastVersion = rootProject.voicecast_version
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    modImplementation "dev.architectury:architectury:${rootProject.architectury_version}"
+
+    compileOnly "com.theo.voicecast:voicecast-common-1.20.1:${voicecastVersion}"
+    testImplementation "com.theo.voicecast:voicecast-common-1.20.1:${voicecastVersion}"
+    testRuntimeOnly "com.theo.voicecast:voicecast-common-1.20.1:${voicecastVersion}"
+}

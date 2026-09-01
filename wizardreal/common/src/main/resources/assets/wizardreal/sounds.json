@@ -1,0 +1,105 @@
+{
+  "cast.ignis": {
+    "subtitle": "wizardreal.subtitle.cast.ignis",
+    "sounds": [{"name": "wizardreal:spell/cast_ignis", "volume": 1.0}]
+  },
+  "cast.fulmen": {
+    "subtitle": "wizardreal.subtitle.cast.fulmen",
+    "sounds": [{"name": "wizardreal:spell/cast_fulmen", "volume": 1.0}]
+  },
+  "cast.vitae": {
+    "subtitle": "wizardreal.subtitle.cast.vitae",
+    "sounds": [{"name": "wizardreal:spell/cast_vitae", "volume": 1.0}]
+  },
+  "cast.aegis": {
+    "subtitle": "wizardreal.subtitle.cast.aegis",
+    "sounds": [{"name": "wizardreal:spell/cast_aegis", "volume": 1.0}]
+  },
+  "cast.ictus": {
+    "subtitle": "wizardreal.subtitle.cast.ictus",
+    "sounds": [{"name": "wizardreal:spell/cast_ictus", "volume": 1.0}]
+  },
+  "cast.explosion": {
+    "subtitle": "wizardreal.subtitle.cast.explosion",
+    "sounds": [{"name": "wizardreal:spell/cast_explosion", "volume": 1.2, "stream": true}]
+  },
+  "cast.excalibur": {
+    "subtitle": "wizardreal.subtitle.cast.excalibur",
+    "sounds": [{"name": "wizardreal:spell/cast_excalibur", "volume": 1.2, "stream": true}]
+  },
+  "cast.dragon_slave": {
+    "subtitle": "wizardreal.subtitle.cast.dragon_slave",
+    "sounds": [{"name": "wizardreal:spell/cast_dragon_slave", "volume": 1.2, "stream": true}]
+  },
+  "cast.arcanum": {
+    "subtitle": "wizardreal.subtitle.cast.arcanum",
+    "sounds": [{"name": "wizardreal:spell/cast_arcanum", "volume": 1.0}]
+  },
+  "cast.gaia": {
+    "subtitle": "wizardreal.subtitle.cast.gaia",
+    "sounds": [{"name": "wizardreal:spell/cast_gaia", "volume": 1.0}]
+  },
+  "cast.mare": {
+    "subtitle": "wizardreal.subtitle.cast.mare",
+    "sounds": [{"name": "wizardreal:spell/cast_mare", "volume": 1.0}]
+  },
+  "cast.mortis": {
+    "subtitle": "wizardreal.subtitle.cast.mortis",
+    "sounds": [{"name": "wizardreal:spell/cast_mortis", "volume": 1.0}]
+  },
+  "cast.sanctus": {
+    "subtitle": "wizardreal.subtitle.cast.sanctus",
+    "sounds": [{"name": "wizardreal:spell/cast_sanctus", "volume": 1.0}]
+  },
+  "cast.semina": {
+    "subtitle": "wizardreal.subtitle.cast.semina",
+    "sounds": [{"name": "wizardreal:spell/cast_semina", "volume": 1.0}]
+  },
+  "cast.tempest": {
+    "subtitle": "wizardreal.subtitle.cast.tempest",
+    "sounds": [{"name": "wizardreal:spell/cast_tempest", "volume": 1.0}]
+  },
+  "cast.umbra": {
+    "subtitle": "wizardreal.subtitle.cast.umbra",
+    "sounds": [{"name": "wizardreal:spell/cast_umbra", "volume": 1.0}]
+  },
+  "cast.ventus": {
+    "subtitle": "wizardreal.subtitle.cast.ventus",
+    "sounds": [{"name": "wizardreal:spell/cast_ventus", "volume": 1.0}]
+  },
+  "impact.ignis": {
+    "subtitle": "wizardreal.subtitle.impact.ignis",
+    "sounds": [
+      {"name": "wizardreal:spell/impact_ignis", "volume": 1.0},
+      {"name": "wizardreal:spell/impact_ignis", "volume": 0.9, "pitch": 1.1, "weight": 2}
+    ]
+  },
+  "impact.fulmen": {
+    "subtitle": "wizardreal.subtitle.impact.fulmen",
+    "sounds": [{"name": "wizardreal:spell/impact_fulmen", "volume": 1.0}]
+  },
+  "impact.vitae": {
+    "subtitle": "wizardreal.subtitle.impact.vitae",
+    "sounds": [{"name": "wizardreal:spell/impact_vitae", "volume": 1.0}]
+  },
+  "impact.aegis": {
+    "subtitle": "wizardreal.subtitle.impact.aegis",
+    "sounds": [{"name": "wizardreal:spell/impact_aegis", "volume": 1.0}]
+  },
+  "impact.ictus": {
+    "subtitle": "wizardreal.subtitle.impact.ictus",
+    "sounds": [{"name": "wizardreal:spell/impact_ictus", "volume": 1.0}]
+  },
+  "impact.explosion": {
+    "subtitle": "wizardreal.subtitle.impact.explosion",
+    "sounds": [{"name": "wizardreal:spell/impact_explosion", "volume": 1.4}]
+  },
+  "impact.excalibur": {
+    "subtitle": "wizardreal.subtitle.impact.excalibur",
+    "sounds": [{"name": "wizardreal:spell/impact_excalibur", "volume": 1.2}]
+  },
+  "impact.dragon_slave": {
+    "subtitle": "wizardreal.subtitle.impact.dragon_slave",
+    "sounds": [{"name": "wizardreal:spell/impact_dragon_slave", "volume": 1.5}]
+  }
+}

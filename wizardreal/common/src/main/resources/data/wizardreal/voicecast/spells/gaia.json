@@ -1,0 +1,138 @@
+{
+  "id": "wizardreal:gaia",
+  "schools": [
+    "earth"
+  ],
+  "mana_cost": 35,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "gaia",
+      "大地"
+    ],
+    "ipa": [
+      "gaɪə",
+      "tɑɪ ti"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.gaia.en.l1",
+          "aliases": [
+            "deep roots tremble"
+          ],
+          "ipa": [
+            "diːp ɾuːts ʧɾɛmbəl"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.en.l2",
+          "aliases": [
+            "shake the ground"
+          ],
+          "ipa": [
+            "ʃɛɪk ðə gaʊnd"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.en.l3",
+          "aliases": [
+            "gaia"
+          ],
+          "ipa": [
+            "gaɪə"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.gaia.zh.l1",
+          "aliases": [
+            "大地之根",
+            "dadi zhi gen"
+          ],
+          "ipa": [
+            "tɑɪ ti ʈʂɨ kən"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.zh.l2",
+          "aliases": [
+            "震颤吧",
+            "zhanchan ba"
+          ],
+          "ipa": [
+            "ʈʂan tsʰan pa"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.zh.l3",
+          "aliases": [
+            "盖亚",
+            "gaiya"
+          ],
+          "ipa": [
+            "kaɪ ja"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.gaia.ja.l1",
+          "aliases": [
+            "daichi no ne"
+          ],
+          "ipa": [
+            "daitɕi no nɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.ja.l2",
+          "aliases": [
+            "yuruge"
+          ],
+          "ipa": [
+            "jɯɾɯɡɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.gaia.ja.l3",
+          "aliases": [
+            "gaia"
+          ],
+          "ipa": [
+            "ɡaja"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:explosion",
+      "range": 20.0,
+      "power": 3.0,
+      "set_fire": false
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:poof",
+      "count": 40,
+      "spread": 1.2,
+      "speed": 0.3,
+      "y_offset": 0.5
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.gaia",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

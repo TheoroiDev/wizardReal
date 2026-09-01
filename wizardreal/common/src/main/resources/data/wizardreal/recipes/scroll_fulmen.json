@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "wizardreal:scroll_blank" },
+    { "item": "minecraft:prismarine_shard" },
+    { "item": "minecraft:lapis_lazuli" }
+  ],
+  "result": {
+    "item": "wizardreal:scroll_blank",
+    "nbt": "{SpellId:\"wizardreal:fulmen\"}"
+  }
+}

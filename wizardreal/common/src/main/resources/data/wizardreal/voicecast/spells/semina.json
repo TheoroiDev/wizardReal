@@ -1,0 +1,144 @@
+{
+  "id": "wizardreal:semina",
+  "schools": [
+    "nature"
+  ],
+  "mana_cost": 30,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "semina",
+      "nature",
+      "自然"
+    ],
+    "ipa": [
+      "ˈsɛmɪna",
+      "nɛɪtʃəɹ",
+      "tsɨ ʐan"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.semina.en.l1",
+          "aliases": [
+            "seeds awaken"
+          ],
+          "ipa": [
+            "siːdz əwɛɪkən"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.en.l2",
+          "aliases": [
+            "bloom and grow"
+          ],
+          "ipa": [
+            "bluːm ænd gɾoʊ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.en.l3",
+          "aliases": [
+            "semina"
+          ],
+          "ipa": [
+            "ˈsɛmɪna"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.semina.zh.l1",
+          "aliases": [
+            "种子苏醒",
+            "zhongzi suxing"
+          ],
+          "ipa": [
+            "ʈʂʊŋ tsɨ su ɕɪŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.zh.l2",
+          "aliases": [
+            "生长开花",
+            "shengzhang kaihua"
+          ],
+          "ipa": [
+            "ʂəŋ ʈʂɑŋ kaɪ xwa"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.zh.l3",
+          "aliases": [
+            "自然",
+            "ziran"
+          ],
+          "ipa": [
+            "tsɨ ʐan"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.semina.ja.l1",
+          "aliases": [
+            "tane ga mebaeru"
+          ],
+          "ipa": [
+            "tanɛ ga mɛbaɛɾɯ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.ja.l2",
+          "aliases": [
+            "hana hirake"
+          ],
+          "ipa": [
+            "hana ɕiɾakɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.semina.ja.l3",
+          "aliases": [
+            "shizen"
+          ],
+          "ipa": [
+            "ɕizɛn"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:heal",
+      "amount": 6.0
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:regeneration",
+      "duration": 300,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:composter",
+      "count": 30,
+      "spread": 0.6,
+      "speed": 0.1,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.semina",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "wizardreal:fulmen",
+  "schools": [
+    "lightning"
+  ],
+  "mana_cost": 20,
+  "cooldown_ticks": 100,
+  "trigger": {
+    "aliases": [
+      "fulmen",
+      "lightning",
+      "thunder",
+      "thunderbolt"
+    ],
+    "ipa": [
+      "ˈfʊlmɛn",
+      "ˈfʊɫmɛn"
+    ]
+  },
+  "effects": [
+    {
+      "type": "wizardreal:lightning",
+      "range": 48.0
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "wizardreal:spark",
+      "count": 20,
+      "spread": 0.6,
+      "speed": 0.05,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.fulmen",
+      "volume": 1.0,
+      "pitch": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:impact.fulmen",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

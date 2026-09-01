@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "wizardreal:scroll_blank" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "minecraft:lapis_lazuli" }
+  ],
+  "result": {
+    "item": "wizardreal:scroll_blank",
+    "nbt": "{SpellId:\"wizardreal:ignis\"}"
+  }
+}

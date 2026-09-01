@@ -1,0 +1,140 @@
+{
+  "id": "wizardreal:ventus",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 25,
+  "cooldown_ticks": 200,
+  "trigger": {
+    "aliases": [
+      "ventus",
+      "gale",
+      "狂风"
+    ],
+    "ipa": [
+      "ˈvɛntʊs",
+      "gɛɪl",
+      "kwɑŋ fəŋ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.ventus.en.l1",
+          "aliases": [
+            "winds gather"
+          ],
+          "ipa": [
+            "wɪndz ɡaðəɹ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.en.l2",
+          "aliases": [
+            "unleash the gale"
+          ],
+          "ipa": [
+            "ʌnliːʃ ðə gɛɪl"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.en.l3",
+          "aliases": [
+            "ventus"
+          ],
+          "ipa": [
+            "ˈvɛntʊs"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.ventus.zh.l1",
+          "aliases": [
+            "风之汇聚",
+            "fengzhi huiju"
+          ],
+          "ipa": [
+            "fəŋ ʈʂɨ hwɛɪ tɕy"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.zh.l2",
+          "aliases": [
+            "解放狂风",
+            "jiefang kuangfeng"
+          ],
+          "ipa": [
+            "tɕjɛ fɑŋ kwɑŋ fəŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.zh.l3",
+          "aliases": [
+            "狂风",
+            "kuangfeng"
+          ],
+          "ipa": [
+            "kwɑŋ fəŋ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.ventus.ja.l1",
+          "aliases": [
+            "kaze ga tsumoru"
+          ],
+          "ipa": [
+            "kazɛ ga tsɯmoɾɯ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.ja.l2",
+          "aliases": [
+            "houka shiro"
+          ],
+          "ipa": [
+            "hoːka ɕiɾo"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.ventus.ja.l3",
+          "aliases": [
+            "kyoufuu"
+          ],
+          "ipa": [
+            "kʲoːɸɯː"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 8.0,
+      "angle_cos": 0.25,
+      "power": 1.5
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:cloud",
+      "count": 40,
+      "spread": 1.0,
+      "speed": 0.3,
+      "y_offset": 0.8
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.ventus",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    " S ",
+    " L "
+  ],
+  "key": {
+    "P": { "item": "minecraft:prismarine_crystals" },
+    "S": { "item": "wizardreal:staff_apprentice" },
+    "L": { "item": "minecraft:lapis_block" }
+  },
+  "result": {
+    "item": "wizardreal:staff_lightning"
+  }
+}

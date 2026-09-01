@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    " S ",
+    " R "
+  ],
+  "key": {
+    "B": { "item": "minecraft:blaze_powder" },
+    "S": { "item": "wizardreal:staff_apprentice" },
+    "R": { "item": "minecraft:redstone_block" }
+  },
+  "result": {
+    "item": "wizardreal:staff_fire"
+  }
+}

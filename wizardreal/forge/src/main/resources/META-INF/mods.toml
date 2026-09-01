@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="wizardreal"
+version="${version}"
+displayName="Be a Real Wizard"
+description='''
+Cast spells by speaking incantations.
+'''
+authors="theo"
+
+[[dependencies.wizardreal]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.wizardreal]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.wizardreal]]
+    modId="voicecast"
+    mandatory=true
+    versionRange="[0.1,)"
+    ordering="AFTER"
+    side="BOTH"

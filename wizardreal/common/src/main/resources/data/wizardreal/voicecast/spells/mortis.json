@@ -1,0 +1,146 @@
+{
+  "id": "wizardreal:mortis",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 25,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "mortis",
+      "wither",
+      "亡灵"
+    ],
+    "ipa": [
+      "ˈmɔːɾɪs",
+      "wɪðəɹ",
+      "wɑŋ lɪŋ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mortis.en.l1",
+          "aliases": [
+            "shadows call"
+          ],
+          "ipa": [
+            "ʃadoʊz kɔːl"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.en.l2",
+          "aliases": [
+            "wither and fade"
+          ],
+          "ipa": [
+            "wɪðəɹ ænd fɛɪd"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.en.l3",
+          "aliases": [
+            "mortis"
+          ],
+          "ipa": [
+            "ˈmɔːɾɪs"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mortis.zh.l1",
+          "aliases": [
+            "暗影低语",
+            "anying diyv"
+          ],
+          "ipa": [
+            "an jɪŋ ti y"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.zh.l2",
+          "aliases": [
+            "凋零枯萎",
+            "diaoling kuwei"
+          ],
+          "ipa": [
+            "tiaʊ lɪŋ kʰwɛɪ wɛɪ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.zh.l3",
+          "aliases": [
+            "死亡",
+            "siwang"
+          ],
+          "ipa": [
+            "sɨ wɑŋ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mortis.ja.l1",
+          "aliases": [
+            "kage ga sasayaku"
+          ],
+          "ipa": [
+            "kaɡɛ ga sasajakɯ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.ja.l2",
+          "aliases": [
+            "shibomi chire"
+          ],
+          "ipa": [
+            "ɕibomi tɕiɾɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mortis.ja.l3",
+          "aliases": [
+            "mortisu"
+          ],
+          "ipa": [
+            "moɾɯtisɯ"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:wither",
+      "duration": 200,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:slowness",
+      "duration": 200,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:smoke",
+      "count": 30,
+      "spread": 0.6,
+      "speed": 0.1,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.mortis",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

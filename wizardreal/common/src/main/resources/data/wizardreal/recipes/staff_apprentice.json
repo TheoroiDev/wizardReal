@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  G",
+    " S ",
+    "D  "
+  ],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "S": { "item": "minecraft:stick" },
+    "D": { "item": "minecraft:diamond" }
+  },
+  "result": {
+    "item": "wizardreal:staff_apprentice"
+  }
+}

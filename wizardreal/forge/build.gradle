@@ -1,0 +1,73 @@
+apply from: rootProject.file("gradle/common-conventions.gradle")
+apply from: rootProject.file("gradle/loom-conventions.gradle")
+apply from: rootProject.file("gradle/loader-conventions.gradle")
+apply plugin: "architectury-plugin"
+apply plugin: "com.gradleup.shadow"
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+loom {
+    forge {
+        convertAccessWideners = true
+    }
+}
+
+configurations {
+    common
+    shadowBundle
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    modImplementation "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+
+    common(project(path: ":wizardreal-common", configuration: "namedElements")) { transitive = false }
+    shadowBundle(project(path: ":wizardreal-common", configuration: "transformProductionForge")) { transitive = false }
+
+    // VoiceCast platform mod from maven (separate repo). Loom remaps the
+    // production (SRG) jar to the dev mappings automatically.
+    modImplementation "com.theo.voicecast:voicecast-forge-1.20.1:${rootProject.voicecast_version}"
+
+    // ===== Dev-only testing mods (modLocalRuntime = dev run only, NOT bundled) =====
+    // NOTE: client-only dev mods (EMI/BoccHUD/Tweakerge/MaFgLib) are NOT
+    // declared here — unlike Fabric Loader, Forge LOADS client mods on a
+    // dedicated server and dies at CONSTRUCT ("for invalid dist
+    // DEDICATED_SERVER"). Test them via runClient only; keep server-safe
+    // mods (spark/canary) here.
+    // spark/canary removed: canary mixins fail under the Yarn dev env
+    // (SRG resolution mismatch -> Heightmap.set infinite recursion)
+}
+
+tasks.processResources {
+    inputs.property "version", project.version
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+tasks.jar {
+    archiveClassifier = "dev"
+}
+
+shadowJar {
+    archiveClassifier = "dev-shadow"
+    configurations = [project.configurations.shadowBundle]
+    // Ship license/attribution inside the distributable jar (remapJar keeps
+    // everything that shadowJar produced).
+    with copySpec {
+        from(rootProject.file("LICENSE")) { into "META-INF" }
+        from(rootProject.file("legal")) { into "META-INF/legal" }
+    }
+}
+
+tasks.remapJar {
+    inputFile = shadowJar.archiveFile
+    archiveClassifier = ""
+    dependsOn shadowJar
+}

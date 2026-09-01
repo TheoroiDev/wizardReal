@@ -1,0 +1,146 @@
+{
+  "id": "wizardreal:umbra",
+  "schools": [
+    "illusion"
+  ],
+  "mana_cost": 30,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "umbra",
+      "veil",
+      "幻影"
+    ],
+    "ipa": [
+      "ˈʌmbɹə",
+      "vɛɪl",
+      "xwan jɪŋ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.umbra.en.l1",
+          "aliases": [
+            "veil of shadows"
+          ],
+          "ipa": [
+            "vɛɪl əv ʃadoʊz"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.en.l2",
+          "aliases": [
+            "walk unseen"
+          ],
+          "ipa": [
+            "wɔːk ʌnsiːn"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.en.l3",
+          "aliases": [
+            "umbra"
+          ],
+          "ipa": [
+            "ˈʌmbɹə"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.umbra.zh.l1",
+          "aliases": [
+            "暗影之幕",
+            "anying zhi mu"
+          ],
+          "ipa": [
+            "an jɪŋ ʈʂɨ mu"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.zh.l2",
+          "aliases": [
+            "隐身而行",
+            "yinshen erxing"
+          ],
+          "ipa": [
+            "jɪn ʂən ɚ ɕɪŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.zh.l3",
+          "aliases": [
+            "幻影",
+            "huanying"
+          ],
+          "ipa": [
+            "xwan jɪŋ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.umbra.ja.l1",
+          "aliases": [
+            "kage no tobari"
+          ],
+          "ipa": [
+            "kaɡɛ no tobaɾi"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.ja.l2",
+          "aliases": [
+            "miezU aruke"
+          ],
+          "ipa": [
+            "miɛzɯ aɾɯkɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.umbra.ja.l3",
+          "aliases": [
+            "genei"
+          ],
+          "ipa": [
+            "ɡɛnɛɪ"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:invisibility",
+      "duration": 400,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:speed",
+      "duration": 400,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:witch",
+      "count": 25,
+      "spread": 0.6,
+      "speed": 0.2,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.umbra",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

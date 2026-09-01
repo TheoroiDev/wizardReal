@@ -1,0 +1,15 @@
+Be a Real Wizard (wizardreal) + VoiceCast (voicecast)
+Copyright (c) 2026 theo — MIT licensed.
+
+This jar (wizardreal) bundles **no third-party code**; it is MIT-licensed
+(see META-INF/LICENSE and the repository-level LICENSE file).
+
+The companion mod **VoiceCast** — installed alongside wizardreal — bundles
+Vosk (Apache-2.0), ONNX Runtime (MIT), Concentus (MIT) and JNA
+(Apache-2.0 / LGPL-2.1-or-later). Their attribution and license texts ship
+inside every voicecast jar as META-INF/NOTICE +
+META-INF/legal/THIRD-PARTY-NOTICES.md, and are maintained in the voicecast
+repository (legal/ + CREDITS.md).
+
+Full credits for the combined project: see CREDITS.md in the wizardreal
+repository (https://github.com/Theoroi/wizardReal).

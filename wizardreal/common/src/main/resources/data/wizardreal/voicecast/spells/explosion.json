@@ -1,0 +1,143 @@
+{
+  "id": "wizardreal:explosion",
+  "schools": [
+    "fire"
+  ],
+  "mana_cost": 50,
+  "cooldown_ticks": 200,
+  "requires_learning": true,
+  "trigger": {
+    "aliases": [
+      "explosion",
+      "explode",
+      "burst",
+      "爆裂"
+    ],
+    "ipa": [
+      "ɪkˈsploʊʒən",
+      "pəʊ ljɛ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.explosion.en.l1",
+          "aliases": [
+            "cloak the sky in black"
+          ],
+          "ipa": [
+            "kloʊk ðə skaɪ ɪn blak"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.en.l2",
+          "aliases": [
+            "wake the crimson thunder"
+          ],
+          "ipa": [
+            "wɛɪk ðə kɾɪmzən ˈθʌndəɹ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.en.l3",
+          "aliases": [
+            "explosion"
+          ],
+          "ipa": [
+            "ɪkˈsploʊʒən"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.explosion.zh.l1",
+          "aliases": [
+            "以漆黑遮蔽苍穹",
+            "yi qihei zhebi cangqiong"
+          ],
+          "ipa": [
+            "i tɕʰi xɛɪ ʈʂə pʰɪ tɕʰjʊŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.zh.l2",
+          "aliases": [
+            "唤醒绯红之雷",
+            "huanxing feihong zhi lei"
+          ],
+          "ipa": [
+            "xwan ɕɪŋ fɛɪ xʊŋ ʈʂɨ lɛɪ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.zh.l3",
+          "aliases": [
+            "爆裂",
+            "baolie"
+          ],
+          "ipa": [
+            "pɑʊ ljɛ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.explosion.ja.l1",
+          "aliases": [
+            "shikkoku ga sora wo tsutsumi"
+          ],
+          "ipa": [
+            "ɕikːokɯ ga soɾa wo tsɯtsɯmi"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.ja.l2",
+          "aliases": [
+            "kurenai no ikazuchi wo okose"
+          ],
+          "ipa": [
+            "kɯɾɛnai no ikazɯtɕi wo okosɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.explosion.ja.l3",
+          "aliases": [
+            "ekusupuroojon"
+          ],
+          "ipa": [
+            "ɛkɯsɯpɾodʑoːn"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:lightning",
+      "range": 32.0
+    },
+    {
+      "type": "wizardreal:explosion",
+      "range": 32.0,
+      "power": 6.0,
+      "set_fire": true
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.explosion",
+      "volume": 1.0,
+      "pitch": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:impact.explosion",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

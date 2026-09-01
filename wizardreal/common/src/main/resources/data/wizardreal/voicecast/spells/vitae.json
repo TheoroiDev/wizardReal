@@ -1,0 +1,46 @@
+{
+  "id": "wizardreal:vitae",
+  "schools": [
+    "holy"
+  ],
+  "mana_cost": 10,
+  "cooldown_ticks": 80,
+  "trigger": {
+    "aliases": [
+      "vitae",
+      "heal",
+      "vitality",
+      "cure"
+    ],
+    "ipa": [
+      "ˈviːtaɪ",
+      "ˈwiːtaɪ"
+    ]
+  },
+  "effects": [
+    {
+      "type": "wizardreal:heal",
+      "amount": 8.0
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:heart",
+      "count": 12,
+      "spread": 0.4,
+      "speed": 0.0,
+      "y_offset": 1.6
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.vitae",
+      "volume": 1.0,
+      "pitch": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:impact.vitae",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

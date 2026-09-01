@@ -1,0 +1,79 @@
+apply from: rootProject.file("gradle/common-conventions.gradle")
+apply from: rootProject.file("gradle/loom-conventions.gradle")
+apply from: rootProject.file("gradle/loader-conventions.gradle")
+apply plugin: "architectury-plugin"
+apply plugin: "com.gradleup.shadow"
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    shadowCommon
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+
+    common(project(path: ":wizardreal-common", configuration: "namedElements")) { transitive = false }
+    shadowCommon(project(path: ":wizardreal-common", configuration: "transformProductionFabric")) { transitive = false }
+
+    // VoiceCast platform mod from maven (separate repo). Loom remaps the
+    // production (intermediary) jar to the dev mappings automatically.
+    modImplementation "com.theo.voicecast:voicecast-fabric-1.20.1:${rootProject.voicecast_version}"
+
+    // Fabric runtime does not ship JNA (voicecast-fabric JiJ's it, so this is
+    // a belt-and-suspenders fallback for dev runs).
+    runtimeOnly "net.java.dev.jna:jna:5.12.1"
+
+    // ===== Dev-only testing mods (modLocalRuntime = dev run only, NOT bundled) =====
+    // NOTE: Mods built with Loom 1.9+ cannot be resolved by our Loom 1.7.
+    // Download jars from Modrinth and drop into <subproject>/run/mods/ manually.
+    // EMI - recipe/item browser (the unified dev recipe viewer)
+    modLocalRuntime "maven.modrinth:emi:1.1.24+1.20.1+fabric"
+    // MaLiLib - library required by MiniHUD & Tweakeroo
+    modLocalRuntime "maven.modrinth:malilib:0.16.3"
+    // MiniHUD - debug HUD overlays
+    modLocalRuntime "maven.modrinth:minihud:0.27.1"
+    // Tweakeroo - client-side tweaks
+    modLocalRuntime "maven.modrinth:tweakeroo:0.17.1"
+    // Lithium - logic/tick optimization
+    modLocalRuntime "maven.modrinth:lithium:mc1.20.1-0.11.4-fabric"
+}
+
+tasks.processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.jar {
+    archiveClassifier = "dev"
+}
+
+shadowJar {
+    exclude "architectury.common.json"
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "dev-shadow"
+    // Ship license/attribution inside the distributable jar (remapJar keeps
+    // everything that shadowJar produced).
+    with copySpec {
+        from(rootProject.file("LICENSE")) { into "META-INF" }
+        from(rootProject.file("legal")) { into "META-INF/legal" }
+    }
+}
+
+tasks.remapJar {
+    injectAccessWidener = true
+    inputFile = shadowJar.archiveFile
+    archiveClassifier = ""
+    dependsOn shadowJar
+}

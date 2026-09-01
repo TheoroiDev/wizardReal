@@ -1,0 +1,40 @@
+{
+  "id": "wizardreal:ignis",
+  "schools": [
+    "fire"
+  ],
+  "mana_cost": 5,
+  "cooldown_ticks": 40,
+  "trigger": {
+    "aliases": [
+      "ignis",
+      "fire",
+      "flame",
+      "fireball"
+    ],
+    "ipa": [
+      "ˈɪɡnɪs"
+    ]
+  },
+  "effects": [
+    {
+      "type": "wizardreal:projectile",
+      "entity": "minecraft:small_fireball",
+      "speed": 1.5
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "wizardreal:spark",
+      "count": 12,
+      "spread": 0.4,
+      "speed": 0.02,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.ignis",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "id": "wizardreal:sanctus",
+  "schools": [
+    "holy"
+  ],
+  "mana_cost": 40,
+  "cooldown_ticks": 280,
+  "trigger": {
+    "aliases": [
+      "sanctus",
+      "holy",
+      "圣光"
+    ],
+    "ipa": [
+      "saŋktʊs",
+      "hoʊli",
+      "ʂəŋ kwɑŋ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.sanctus.en.l1",
+          "aliases": [
+            "light descend"
+          ],
+          "ipa": [
+            "laɪt dɪsɛnd"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.en.l2",
+          "aliases": [
+            "mend our wounds"
+          ],
+          "ipa": [
+            "mɛnd aʊɹ wuːndz"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.en.l3",
+          "aliases": [
+            "sanctus"
+          ],
+          "ipa": [
+            "saŋktʊs"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.sanctus.zh.l1",
+          "aliases": [
+            "圣光降临",
+            "shengguang jianglin"
+          ],
+          "ipa": [
+            "ʂəŋ kwɑŋ tɕjaŋ lɪn"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.zh.l2",
+          "aliases": [
+            "愈合伤口",
+            "yuhe shangkou"
+          ],
+          "ipa": [
+            "y xɛ ʂɑŋ kʰoʊ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.zh.l3",
+          "aliases": [
+            "神圣",
+            "shensheng"
+          ],
+          "ipa": [
+            "ʂəŋ ʂəŋ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.sanctus.ja.l1",
+          "aliases": [
+            "hikari kudaru"
+          ],
+          "ipa": [
+            "ɕikaɾi kɯdaɾɯ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.ja.l2",
+          "aliases": [
+            "kizu wo naose"
+          ],
+          "ipa": [
+            "kizɯ wo naosɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.sanctus.ja.l3",
+          "aliases": [
+            "seinaru"
+          ],
+          "ipa": [
+            "sɛinaɾɯ"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:heal",
+      "amount": 10.0
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:regeneration",
+      "duration": 200,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:absorption",
+      "duration": 400,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:glow",
+      "count": 25,
+      "spread": 0.6,
+      "speed": 0.2,
+      "y_offset": 1.5
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.sanctus",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

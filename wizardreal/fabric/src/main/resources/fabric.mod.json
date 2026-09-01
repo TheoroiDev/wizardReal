@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "wizardreal",
+  "version": "${version}",
+  "name": "Be a Real Wizard",
+  "description": "Cast spells by speaking incantations.",
+  "authors": ["theo"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.theo.wizardreal.fabric.WizardRealFabric"],
+    "client": ["com.theo.wizardreal.fabric.WizardRealFabricClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "voicecast": "*"
+  }
+}

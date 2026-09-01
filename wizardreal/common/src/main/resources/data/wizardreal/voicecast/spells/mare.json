@@ -1,0 +1,140 @@
+{
+  "id": "wizardreal:mare",
+  "schools": [
+    "water"
+  ],
+  "mana_cost": 30,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "mare",
+      "tide",
+      "沧海"
+    ],
+    "ipa": [
+      "ˈmaːɾɛ",
+      "tʰaɪd",
+      "tsʰaɪ haɪ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mare.en.l1",
+          "aliases": [
+            "rising tide"
+          ],
+          "ipa": [
+            "raɪzɪŋ taɪd"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.en.l2",
+          "aliases": [
+            "sweep them away"
+          ],
+          "ipa": [
+            "swiːp ðɛm əwɛɪ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.en.l3",
+          "aliases": [
+            "mare"
+          ],
+          "ipa": [
+            "maːɾɛ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mare.zh.l1",
+          "aliases": [
+            "潮水涌动",
+            "chaoshui yongdong"
+          ],
+          "ipa": [
+            "tsʰaɪ ʂwɛɪ jʊŋ tʊŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.zh.l2",
+          "aliases": [
+            "涤荡四方",
+            "didang sifang"
+          ],
+          "ipa": [
+            "ti tɑŋ sɨ fɑŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.zh.l3",
+          "aliases": [
+            "沧海",
+            "canghai"
+          ],
+          "ipa": [
+            "tsʰaɪ haɪ"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.mare.ja.l1",
+          "aliases": [
+            "shio ga oshiyoseru"
+          ],
+          "ipa": [
+            "ɕio ga oɕijosɛɾɯ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.ja.l2",
+          "aliases": [
+            "nagare sare"
+          ],
+          "ipa": [
+            "naɡaɾɛ saɾɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.mare.ja.l3",
+          "aliases": [
+            "umi"
+          ],
+          "ipa": [
+            "ɯmi"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 5.5,
+      "angle_cos": 0.2,
+      "power": 1.2
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:bubble",
+      "count": 30,
+      "spread": 0.8,
+      "speed": 0.4,
+      "y_offset": 0.5
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.mare",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

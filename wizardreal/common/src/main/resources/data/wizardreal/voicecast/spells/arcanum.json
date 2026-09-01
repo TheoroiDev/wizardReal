@@ -1,0 +1,145 @@
+{
+  "id": "wizardreal:arcanum",
+  "schools": [
+    "arcane"
+  ],
+  "mana_cost": 35,
+  "cooldown_ticks": 240,
+  "trigger": {
+    "aliases": [
+      "arcanum",
+      "arcane",
+      "奥术"
+    ],
+    "ipa": [
+      "ɑːˈkeɪnəm",
+      "ɑʊ ʃʊ"
+    ]
+  },
+  "chants": [
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.arcanum.en.l1",
+          "aliases": [
+            "weave the shield"
+          ],
+          "ipa": [
+            "wiːv ðə ʃiːld"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.en.l2",
+          "aliases": [
+            "hold the line"
+          ],
+          "ipa": [
+            "hoʊld ðə laɪn"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.en.l3",
+          "aliases": [
+            "arcanum"
+          ],
+          "ipa": [
+            "ɑːˈkeɪnəm"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.arcanum.zh.l1",
+          "aliases": [
+            "编织屏障",
+            "bianzhi pingzhang"
+          ],
+          "ipa": [
+            "pjɛn ʈʂɨ pʰɪŋ ʈʂɑŋ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.zh.l2",
+          "aliases": [
+            "坚守不退",
+            "jianshou butui"
+          ],
+          "ipa": [
+            "tɕjɛn ʂoʊ pu tʰwɛɪ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.zh.l3",
+          "aliases": [
+            "奥术",
+            "aoshu"
+          ],
+          "ipa": [
+            "ɑʊ ʂu"
+          ]
+        }
+      ]
+    },
+    {
+      "lines": [
+        {
+          "display_key": "wizardreal.chant.arcanum.ja.l1",
+          "aliases": [
+            "mamoru ke wo tsumure"
+          ],
+          "ipa": [
+            "mamoɾɯ kɛ wo tsɯmɯɾɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.ja.l2",
+          "aliases": [
+            "tatakae"
+          ],
+          "ipa": [
+            "tatakaɛ"
+          ]
+        },
+        {
+          "display_key": "wizardreal.chant.arcanum.ja.l3",
+          "aliases": [
+            "arukanumu"
+          ],
+          "ipa": [
+            "aɾɯkanɯmɯ"
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:resistance",
+      "duration": 400,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:absorption",
+      "duration": 400,
+      "amplifier": 2
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:enchant",
+      "count": 40,
+      "spread": 0.6,
+      "speed": 0.5,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.arcanum",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

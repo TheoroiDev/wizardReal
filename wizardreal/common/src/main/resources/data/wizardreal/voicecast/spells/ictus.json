@@ -1,0 +1,49 @@
+{
+  "id": "wizardreal:ictus",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 3,
+  "cooldown_ticks": 30,
+  "trigger": {
+    "aliases": [
+      "ictus",
+      "gust",
+      "wind",
+      "push",
+      "shove",
+      "strike"
+    ],
+    "ipa": [
+      "ˈɪktʊs"
+    ]
+  },
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 6.0,
+      "angle_cos": 0.5,
+      "power": 1.1
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "minecraft:cloud",
+      "count": 10,
+      "spread": 0.3,
+      "speed": 0.02,
+      "y_offset": 0.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.ictus",
+      "volume": 1.0,
+      "pitch": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:impact.ictus",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}

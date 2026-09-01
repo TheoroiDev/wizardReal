@@ -1,0 +1,54 @@
+{
+  "id": "wizardreal:aegis",
+  "schools": [
+    "arcane"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 120,
+  "trigger": {
+    "aliases": [
+      "aegis",
+      "shield",
+      "protect",
+      "protection",
+      "ward"
+    ],
+    "ipa": [
+      "ˈiːdʒɪs"
+    ]
+  },
+  "effects": [
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:resistance",
+      "duration": 200,
+      "amplifier": 1
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:fire_resistance",
+      "duration": 200,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:particles",
+      "particle": "wizardreal:rune",
+      "count": 30,
+      "spread": 0.5,
+      "speed": 0.1,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:cast.aegis",
+      "volume": 1.0,
+      "pitch": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "wizardreal:impact.aegis",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ]
+}
