@@ -35,6 +35,8 @@
 
 不冲突。VoiceCast 的麦克风只在"持杖 + 按住右键"时打开，松开立即释放设备；服务端识别与语音模组互不感知。玩家说话时语音聊天正常收音。
 
+对 Simple Voice Chat 有**正式集成**（M7b）：服务器可配置 `voicecast.toml` 的 `[compat] svcCoexistence`——默认 `share`（双方共享麦克风设备），`defer` 则在 SVC 正在收音时暂缓 VoiceCast 开麦（超时自动回落 share）。详见 `docs/compatibility.md`。
+
 ## 如何彻底关闭语音但保留法术？
 
 `[server] enabled = false`。服务器不加载任何模型；wizardreal 仍可用卷轴施法、数据包法术照常工作。

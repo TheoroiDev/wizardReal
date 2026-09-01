@@ -23,7 +23,7 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 1. Check the OS **microphone privacy permission** for Java/Minecraft;
 2. Verify the system's default recording device (VoiceCast uses the default input device);
 3. Exclusive-mode mic access by other apps (Discord, OBS) can conflict — disable exclusive mode (Windows: device properties → Advanced);
-4. Coexisting with Simple Voice Chat / Plasmo Voice: the microphone **opens only while holding a staff and right-click**, and is released immediately after — normally no interference with voice mods.
+4. Coexisting with Simple Voice Chat / Plasmo Voice: the microphone **opens only while holding a staff and right-click** and is released immediately after; with Simple Voice Chat installed, VoiceCast senses its transmit state automatically (default `share` mode shares the device; a server may set `svcCoexistence=defer` so VoiceCast postpones opening while SVC is capturing);
 
 ## My spell doesn't match
 
