@@ -62,5 +62,5 @@ build-setup.log
 __pycache__/
 
 # Runtime configs (whitelists etc.) and JVM dumps
-config/
+run/config/
 *.hprof
