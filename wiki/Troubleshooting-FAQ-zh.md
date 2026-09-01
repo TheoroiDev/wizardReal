@@ -1,8 +1,8 @@
-# [中文](../../zh/player/Troubleshooting-FAQ.md) | [English](../../en/player/Troubleshooting-FAQ.md)
+# [中文](Troubleshooting-FAQ) | [English](Troubleshooting-FAQ)
 
 # 排障与 FAQ
 
-> [← 返回首页](../Home.md) · 上一篇：[仪式吟唱](Ritual-Chants.md)
+> [← 返回首页](Home-zh.md) · 上一篇：[仪式吟唱](Ritual-Chants-zh)
 
 ## 没有波形 HUD
 
@@ -30,7 +30,7 @@
 - **语速放慢、发音清晰**，尤其触发词（"ignis" 不要吞音成 "ign"）；
 - **Vosk 引擎只认英文发音**——念拼音/中文请切换 `/voicecast engine ipa`；
 - IPA 引擎按音素匹配，对非母语发音更宽容（自动容忍松紧元音偏移、吞掉音节尾的辅音）；
-- 每个法术有多个别名（见[法术一览](Spells.md)），换一个好念的试试；
+- 每个法术有多个别名（见[法术一览](Spells-zh)），换一个好念的试试；
 - 准星下方的灰色文字是实时识别结果——如果显示的内容离触发词太远，先确认引擎下载完整（红色状态行消失）。
 
 ## 切换引擎

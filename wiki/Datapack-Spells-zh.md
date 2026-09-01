@@ -1,10 +1,10 @@
-# [中文](../../zh/admin/Datapack-Spells.md) | [English](../../en/admin/Datapack-Spells.md)
+# [中文](Datapack-Spells) | [English](Datapack-Spells)
 
 # 数据包法术
 
-> [← 返回管理员目录](../Home.md) · 上一篇：[性能与容量](Performance.md) · 下一篇：[服务器 FAQ](Server-FAQ.md)
+> [← 返回管理员目录](Home-zh.md) · 上一篇：[性能与容量（见 VoiceCast wiki：Performance-zh） · 下一篇：[服务器 FAQ](Server-FAQ-zh)
 
-法术是**数据包驱动**的：不需要写 Java 代码，往数据包里加 JSON 就能新增或覆盖法术。完整 schema 与效果参数表见 [`docs/spell_json.md`](../../../../docs/spell_json.md)，本页给管理员最小可用流程。
+法术是**数据包驱动**的：不需要写 Java 代码，往数据包里加 JSON 就能新增或覆盖法术。完整 schema 与效果参数表随模组内部文档提供，本页给管理员最小可用流程。
 
 ## 放置位置
 

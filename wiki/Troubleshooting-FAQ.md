@@ -1,8 +1,8 @@
-# [English](../../en/player/Troubleshooting-FAQ.md) | [中文](../../zh/player/Troubleshooting-FAQ.md)
+# [English](Troubleshooting-FAQ-zh) | [中文](Troubleshooting-FAQ-zh)
 
 # Troubleshooting & FAQ
 
-> [← Home](../Home.md) · Previous: [Ritual Chants](Ritual-Chants.md)
+> [← Home](Home.md) · Previous: [Ritual Chants](Ritual-Chants.md)
 
 ## No waveform HUD
 

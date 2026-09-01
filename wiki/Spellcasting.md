@@ -1,8 +1,8 @@
-# [English](../../en/player/Spellcasting.md) | [中文](../../zh/player/Spellcasting.md)
+# [English](Spellcasting-zh) | [中文](Spellcasting-zh)
 
 # Spellcasting
 
-> [← Home](../Home.md) · Previous: [Getting Started](Getting-Started.md) · Next: [Spells](Spells.md)
+> [← Home](Home.md) · Previous: [Getting Started](Getting-Started.md) · Next: [Spells](Spells.md)
 
 ## What you know
 

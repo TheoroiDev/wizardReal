@@ -1,10 +1,10 @@
-# [中文](../../zh/player/Ritual-Chants.md) | [English](../../en/player/Ritual-Chants.md)
+# [中文](Ritual-Chants) | [English](Ritual-Chants)
 
 # 仪式吟唱
 
-> [← 返回首页](../Home.md) · 上一篇：[法术一览](Spells.md) · 下一篇：[排障与 FAQ](Troubleshooting-FAQ.md)
+> [← 返回首页](Home-zh.md) · 上一篇：[法术一览](Spells-zh) · 下一篇：[排障与 FAQ](Troubleshooting-FAQ-zh)
 
-仪式法术（Explosion、Tempest 等 10 个，见[法术一览](Spells.md)）不是说完触发词就结束——触发词让你**进入吟唱状态**，随后必须逐句念完整段咒语，法术才会施放。吟唱时准星右侧会出现**吟唱 HUD**。
+仪式法术（Explosion、Tempest 等 10 个，见[法术一览](Spells-zh)）不是说完触发词就结束——触发词让你**进入吟唱状态**，随后必须逐句念完整段咒语，法术才会施放。吟唱时准星右侧会出现**吟唱 HUD**。
 
 ## 咏唱流程
 

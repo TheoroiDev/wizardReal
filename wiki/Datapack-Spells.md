@@ -1,10 +1,15 @@
-# [English](../../en/admin/Datapack-Spells.md) | [中文](../../zh/admin/Datapack-Spells.md)
+# [English](Datapack-Spells-zh) | [中文](Datapack-Spells-zh)
 
 # Datapack Spells
 
-> [← Admin Home](../Home.md) · Previous: [Performance](Performance.md) · Next: [Server FAQ](Server-FAQ.md)
+> [← Admin Home](Home.md) · Previous: [Performance(see the VoiceCast wiki: Performance) · Next: [Server FAQ](Server-FAQ.md)
 
-Spells are **datapack-driven**: add JSON to a datapack to add or override spells — no Java code. The full schema and effect parameter tables live in [`docs/spell_json.md`](../../../../docs/spell_json.md); this page is the minimal admin flow.
+Spells are **datapack-driven**: add JSON to a datapack to add or override spells — no Java code. The full schema and effect parameter tables ship with the mod's internal documentation; this page covers the admin workflow.
+# Datapack Spells
+
+> [← Admin Home](Home.md) · Previous: [Performance(see the VoiceCast wiki: Performance) · Next: [Server FAQ](Server-FAQ.md)
+
+Spells are **datapack-driven**: add JSON to a datapack to add or override spells — no Java code. The full schema and effect parameter tables live in the mod's internal spell-JSON schema documentation; this page is the minimal admin flow.
 
 ## Where to put files
 

@@ -1,8 +1,8 @@
-# [English](../../en/player/Spells.md) | [中文](../../zh/player/Spells.md)
+# [English](Spells-zh) | [中文](Spells-zh)
 
 # Spells
 
-> [← Home](../Home.md) · Previous: [Spellcasting](Spellcasting.md) · Next: [Ritual Chants](Ritual-Chants.md)
+> [← Home](Home.md) · Previous: [Spellcasting](Spellcasting.md) · Next: [Ritual Chants](Ritual-Chants.md)
 
 There are **15 built-in spells**: 5 instant + 10 ritual. All are voice-triggered; values below are base values with the Apprentice Staff.
 
@@ -41,4 +41,4 @@ The matcher does whole-word containment: "cast ignis now" scores the same as "ig
 
 ## Custom spells
 
-Server admins can add or override spells with a **datapack** — no code required. See [Datapack Spells](../admin/Datapack-Spells.md) in the admin docs.
+Server admins can add or override spells with a **datapack** — no code required. See [Datapack Spells](Datapack-Spells) in the admin docs.

@@ -2,7 +2,7 @@
 
 Minecraft 1.20.1 mod: **speak incantations to cast spells**. Built with [Architectury](https://github.com/architectury) MultiLoader for **Fabric and Forge**.
 
-📖 **Full documentation**: [wiki/Home.md](wiki/Home.md)（中文 / English）— player guides and server-admin docs.
+📖 **Full documentation**: [wiki (English)](https://github.com/TheoroiDev/wizardReal/wiki) · [中文文档](https://github.com/TheoroiDev/wizardReal/wiki/Home-zh) — player guides and server-admin docs.
 
 > This repository is one half of a two-repo project: the speech engine **[VoiceCast](https://github.com/Theoroi/wizardReal)** is a separate library mod; wizardreal consumes it via maven coordinates (`com.theo.voicecast:voicecast-*-1.20.1`).
 

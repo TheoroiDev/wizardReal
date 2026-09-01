@@ -1,8 +1,8 @@
-# [中文](../../zh/admin/Server-FAQ.md) | [English](../../en/admin/Server-FAQ.md)
+# [中文](Server-FAQ) | [English](Server-FAQ)
 
 # 服务器 FAQ
 
-> [← 返回管理员目录](../Home.md) · 上一篇：[数据包法术](Datapack-Spells.md)
+> [← 返回管理员目录](Home-zh.md) · 上一篇：[数据包法术](Datapack-Spells-zh)
 
 ## 玩家反馈"没有使用语音施法的权限"
 

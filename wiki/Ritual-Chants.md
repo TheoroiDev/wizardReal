@@ -1,8 +1,8 @@
-# [English](../../en/player/Ritual-Chants.md) | [中文](../../zh/player/Ritual-Chants.md)
+# [English](Ritual-Chants-zh) | [中文](Ritual-Chants-zh)
 
 # Ritual Chants
 
-> [← Home](../Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
+> [← Home](Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
 
 Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't cast on the trigger alone: the trigger word puts you into a **chant**, and you must speak each line of the incantation before the spell fires. A chant HUD appears to the right of the crosshair.
 

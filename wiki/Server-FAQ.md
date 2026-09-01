@@ -1,8 +1,8 @@
-# [English](../../en/admin/Server-FAQ.md) | [中文](../../zh/admin/Server-FAQ.md)
+# [English](Server-FAQ-zh) | [中文](Server-FAQ-zh)
 
 # Server FAQ
 
-> [← Admin Home](../Home.md) · Previous: [Datapack Spells](Datapack-Spells.md)
+> [← Admin Home](Home.md) · Previous: [Datapack Spells](Datapack-Spells.md)
 
 ## Players report "not allowed to use voice"
 
