@@ -7,6 +7,7 @@ import com.theo.wizardreal.item.ScrollItem;
 import com.theo.wizardreal.item.SpellTomeItem;
 import com.theo.wizardreal.item.StaffItem;
 import com.theo.wizardreal.item.WizardRealItems;
+import com.theo.wizardreal.net.SpellCatalogCache;
 import com.theo.wizardreal.particle.WizardRealParticles;
 import com.theo.wizardreal.particle.WizardSimpleParticle;
 import com.theo.wizardreal.server.SpellDataLoader;
@@ -80,8 +81,10 @@ public final class WizardRealFabric implements ModInitializer {
                     entries.accept(WizardRealItems.SCROLL_BLANK.get());
                     entries.accept(WizardRealItems.SPELL_TOME.get());
 
-                    // Add one spell tome and one scroll for every registered spell
-                    for (Spell spell : SpellRegistry.all()) {
+                    // One spell tome and one scroll per registered spell.
+                    // In MP the client registry is empty — fall back to the
+                    // spell catalog synced on join (SpellCatalogService).
+                    for (SpellCatalogCache.Entry spell : SpellCatalogCache.creativeEntries()) {
                         ItemStack tome = new ItemStack(WizardRealItems.SPELL_TOME.get());
                         SpellTomeItem.setSpellId(tome, spell.id());
                         entries.accept(tome);

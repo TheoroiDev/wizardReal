@@ -42,6 +42,7 @@ public final class SpellCatalogState {
     /** Called on the client thread after a spell_catalog packet arrives. */
     public static void handle(CatalogPayload payload) {
         last = payload;
+        com.theo.wizardreal.net.SpellCatalogCache.set(payload);  // common-safe view for tabs/tinting
         WizardRealConfig config = WizardRealConfig.load(Minecraft.getInstance().gameDirectory.toPath());
         if (config.fileMode() != WizardRealConfig.FileMode.OFF) {
             writeExport(payload, config.fileMode());

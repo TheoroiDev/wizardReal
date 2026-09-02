@@ -37,9 +37,13 @@ public final class SchoolTintModels {
         String spellId = tag.getString("SpellId");
         if (spellId == null || spellId.isBlank()) return 0f;
         Spell spell = SpellRegistry.get(spellId).orElse(null);
-        if (spell == null) return 0f;
-        Set<School> schools = spell.schools();
-        if (schools.isEmpty()) return 0f;
-        return schools.iterator().next().ordinal() + 1f;
+        if (spell != null) {
+            Set<School> schools = spell.schools();
+            if (schools.isEmpty()) return 0f;
+            return schools.iterator().next().ordinal() + 1f;
+        }
+        // Dedicated server: the client registry is empty — fall back to the
+        // synced spell catalog (populated on PLAYER_JOIN).
+        return com.theo.wizardreal.net.SpellCatalogCache.schoolOrdinal(spellId);
     }
 }

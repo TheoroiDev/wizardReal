@@ -71,11 +71,18 @@ public class ScrollItem extends Item {
             return Component.translatable("item.wizardreal.scroll_blank");
         }
         Spell spell = SpellRegistry.get(spellId).orElse(null);
-        if (spell == null) {
-            return Component.translatable("item.wizardreal.scroll_unknown");
+        if (spell != null) {
+            return Component.translatable("item.wizardreal.scroll_named",
+                    Component.translatable(spell.nameKey()));
         }
-        return Component.translatable("item.wizardreal.scroll_named",
-                Component.translatable(spell.nameKey()));
+        // Dedicated server: client registry is empty — resolve via the synced
+        // spell catalog so NBT scrolls don't read as "unknown" in MP.
+        String nameKey = com.theo.wizardreal.net.SpellCatalogCache.nameKey(spellId);
+        if (nameKey != null) {
+            return Component.translatable("item.wizardreal.scroll_named",
+                    Component.translatable(nameKey));
+        }
+        return Component.translatable("item.wizardreal.scroll_unknown");
     }
 
     public static void setSpellId(ItemStack stack, String spellId) {

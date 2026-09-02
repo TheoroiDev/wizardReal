@@ -40,8 +40,11 @@ final class WizardRealForgeModBus {
         put(event, new ItemStack(WizardRealItems.SCROLL_BLANK.get()));
         put(event, new ItemStack(WizardRealItems.SPELL_TOME.get()));
 
-        // Add one spell tome and one scroll for every registered spell
-        for (Spell spell : SpellRegistry.all()) {
+        // One spell tome and one scroll per registered spell. In MP the
+        // client registry is empty — fall back to the spell catalog synced
+        // on join (SpellCatalogService).
+        for (com.theo.wizardreal.net.SpellCatalogCache.Entry spell :
+                com.theo.wizardreal.net.SpellCatalogCache.creativeEntries()) {
             ItemStack tome = new ItemStack(WizardRealItems.SPELL_TOME.get());
             SpellTomeItem.setSpellId(tome, spell.id());
             put(event, tome);
