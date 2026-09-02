@@ -39,10 +39,11 @@ public final class LootTableModifier {
                     .when(LootItemRandomChanceCondition.randomChance(0.15f))
                     .build());
 
-            // Rare chance to find a spell tome
+            // Rare chance to find a spell tome bound to a random learnable spell
             context.addPool(LootPool.lootPool()
                     .setRolls(ConstantValue.exactly(1))
-                    .add(LootItem.lootTableItem(WizardRealItems.SPELL_TOME.get()))
+                    .add(LootItem.lootTableItem(WizardRealItems.SPELL_TOME.get())
+                            .apply(RandomSpellTomeFunction.builder()))
                     .when(LootItemRandomChanceCondition.randomChance(0.08f))
                     .build());
 
