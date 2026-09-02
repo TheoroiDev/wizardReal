@@ -5,6 +5,7 @@ import com.theo.wizardreal.client.ChantClient;
 import com.theo.wizardreal.client.SchoolTintModels;
 import com.theo.wizardreal.item.WizardRealItems;
 import com.theo.wizardreal.net.MagicSyncNetwork;
+import com.theo.wizardreal.net.SpellCatalogNetwork;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,6 +33,7 @@ public final class WizardRealForgeClient {
         event.enqueueWork(() -> {
             ChantClient.init();
             MagicSyncNetwork.registerClientReceiver();
+            SpellCatalogNetwork.registerClientReceiver();
             ResourceLocation schoolId = SchoolTintModels.SCHOOL_ID;
             ItemProperties.register(WizardRealItems.SPELL_TOME.get(), schoolId,
                     (stack, level, entity, seed) -> SchoolTintModels.schoolProperty(stack));

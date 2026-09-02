@@ -109,6 +109,9 @@ public final class SpellDataLoader {
         }
         ChantManager.get().clearAll(server);
         ServerVoiceCast.pushVocabulary();
+        // Catalog publication point: the registry was rebuilt (ids may have
+        // changed), so every online player's snapshot is stale.
+        SpellCatalogService.publishAll();
         WizardReal.LOGGER.info("Spell registry reloaded: {} builtin + {} datapack ({} files parsed)",
                 builtin, SpellRegistry.all().size() - builtin, loaded.size());
     }

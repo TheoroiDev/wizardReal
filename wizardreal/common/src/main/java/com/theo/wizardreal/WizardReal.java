@@ -9,6 +9,7 @@ import com.theo.wizardreal.server.MagicSyncHandler;
 import com.theo.wizardreal.server.ManaManager;
 import com.theo.wizardreal.server.PlayerMagicState;
 import com.theo.wizardreal.server.ServerVoiceCast;
+import com.theo.wizardreal.server.SpellCatalogService;
 import com.theo.wizardreal.server.SpellDataLoader;
 import com.theo.wizardreal.server.SpellKillDrops;
 import com.theo.wizardreal.spell.Spells;
@@ -43,6 +44,7 @@ public final class WizardReal {
         Spells.register();
         ServerVoiceCast.init();
         ChantNetwork.registerServerReceiver();
+        SpellCatalogService.register();
         PlayerMagicState.registerHooks();
         ManaManager.get().register();
         LootTableModifier.init();

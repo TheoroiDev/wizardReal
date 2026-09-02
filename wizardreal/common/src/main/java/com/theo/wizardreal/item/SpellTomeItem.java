@@ -4,6 +4,7 @@ import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.server.PlayerMagicState;
+import com.theo.wizardreal.server.SpellCatalogService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -62,6 +63,8 @@ public class SpellTomeItem extends Item {
         player.displayClientMessage(Component.translatable("wizardreal.tome.learn",
                 Component.translatable(spell.nameKey())).withStyle(ChatFormatting.GREEN), true);
         WizardReal.LOGGER.info("{} learned spell {} from tome", player.getName().getString(), spellId);
+        // Catalog publication point: learned flags just changed for this player.
+        SpellCatalogService.publish(player);
 
         return InteractionResultHolder.success(stack);
     }

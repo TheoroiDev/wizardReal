@@ -8,6 +8,7 @@ import com.theo.wizardreal.client.SchoolTintModels;
 import com.theo.wizardreal.client.StaffCastHandler;
 import com.theo.wizardreal.client.WizardSparkParticle;
 import com.theo.wizardreal.net.MagicSyncNetwork;
+import com.theo.wizardreal.net.SpellCatalogNetwork;
 import com.theo.wizardreal.item.WizardRealItems;
 import com.theo.wizardreal.particle.WizardRealParticles;
 import net.fabricmc.api.ClientModInitializer;
@@ -28,6 +29,7 @@ public final class WizardRealFabricClient implements ClientModInitializer {
     public void onInitializeClient() {
         ChantClient.init();
         MagicSyncNetwork.registerClientReceiver();
+        SpellCatalogNetwork.registerClientReceiver();
 
         ParticleFactoryRegistry.getInstance().register(
                 (ParticleType<SimpleParticleType>) WizardRealParticles.SPARK.get(),
