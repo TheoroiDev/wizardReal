@@ -39,13 +39,15 @@ public final class PlayerMagicState {
     private final Map<UUID, Float> maxMana = new HashMap<>();
     // player uuid -> known spell ids
     private final Map<UUID, Set<String>> knownSpells = new HashMap<>();
+    // player uuid -> explicitly forgotten spell ids (overrides the implicit DEFAULT_SPELLS)
+    private final Map<UUID, Set<String>> forgottenSpells = new HashMap<>();
     // player uuid -> spell id -> world time when cooldown ends
     private final Map<UUID, Map<String, Long>> cooldownUntil = new HashMap<>();
 
     private static PlayerMagicState INSTANCE;
     private static Path savePath;
 
-    private PlayerMagicState() {}
+    PlayerMagicState() {}
 
     /**
      * Register the lifecycle hooks. The cached instance is cleared on server
@@ -107,6 +109,7 @@ public final class PlayerMagicState {
     // Known spells
     // ------------------------------------------------------------------
     public boolean knowsSpell(UUID player, String spellId) {
+        if (isForgotten(player, spellId)) return false;
         return knownSpells.computeIfAbsent(player, k -> {
             HashSet<String> set = new HashSet<>(DEFAULT_SPELLS);
             return set;
@@ -114,12 +117,36 @@ public final class PlayerMagicState {
     }
 
     public void learnSpell(UUID player, String spellId) {
+        forgottenSpells.computeIfAbsent(player, k -> new HashSet<>()).remove(spellId);
         knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)).add(spellId);
     }
 
+    /**
+     * Command/ops path to unlearn a spell. Works for the implicit
+     * {@link #DEFAULT_SPELLS} too: forgetting is tracked in a separate
+     * "forgotten" set that {@link #knowsSpell} consults before anything else.
+     */
+    public void forgetSpell(UUID player, String spellId) {
+        knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)).remove(spellId);
+        forgottenSpells.computeIfAbsent(player, k -> new HashSet<>()).add(spellId);
+    }
+
     public Set<String> getKnownSpells(UUID player) {
-        return Collections.unmodifiableSet(
+        Set<String> effective = new HashSet<>(
                 knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)));
+        effective.addAll(DEFAULT_SPELLS);
+        Set<String> forgotten = forgottenSpells.get(player);
+        if (forgotten != null) effective.removeAll(forgotten);
+        return Collections.unmodifiableSet(effective);
+    }
+
+    public boolean isForgotten(UUID player, String spellId) {
+        return forgottenSpells.getOrDefault(player, Collections.emptySet()).contains(spellId);
+    }
+
+    public Set<String> getForgottenSpells(UUID player) {
+        return Collections.unmodifiableSet(
+                forgottenSpells.getOrDefault(player, Collections.emptySet()));
     }
 
     // ------------------------------------------------------------------
@@ -140,6 +167,15 @@ public final class PlayerMagicState {
 
     public void setCooldown(UUID player, String spellId, long until) {
         cooldownUntil.computeIfAbsent(player, k -> new HashMap<>()).put(spellId, until);
+    }
+
+    public void clearCooldown(UUID player, String spellId) {
+        Map<String, Long> map = cooldownUntil.get(player);
+        if (map != null) map.remove(spellId);
+    }
+
+    public void clearAllCooldowns(UUID player) {
+        cooldownUntil.remove(player);
     }
 
     /** Remove expired cooldowns to keep data small. */
@@ -197,6 +233,14 @@ public final class PlayerMagicState {
         }
         nbt.put("knownSpells", knownTag);
 
+        CompoundTag forgottenTag = new CompoundTag();
+        for (Map.Entry<UUID, Set<String>> e : forgottenSpells.entrySet()) {
+            ListTag list = new ListTag();
+            for (String s : e.getValue()) list.add(StringTag.valueOf(s));
+            forgottenTag.put(e.getKey().toString(), list);
+        }
+        nbt.put("forgottenSpells", forgottenTag);
+
         CompoundTag cdTag = new CompoundTag();
         for (Map.Entry<UUID, Map<String, Long>> e : cooldownUntil.entrySet()) {
             CompoundTag inner = new CompoundTag();
@@ -233,6 +277,18 @@ public final class PlayerMagicState {
                     Set<String> set = new HashSet<>();
                     for (int i = 0; i < list.size(); i++) set.add(list.getString(i));
                     knownSpells.put(uuid, set);
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        if (nbt.contains("forgottenSpells", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = nbt.getCompound("forgottenSpells");
+            for (String key : tag.getAllKeys()) {
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    ListTag list = tag.getList(key, Tag.TAG_STRING);
+                    Set<String> set = new HashSet<>();
+                    for (int i = 0; i < list.size(); i++) set.add(list.getString(i));
+                    if (!set.isEmpty()) forgottenSpells.put(uuid, set);
                 } catch (IllegalArgumentException ignored) {}
             }
         }

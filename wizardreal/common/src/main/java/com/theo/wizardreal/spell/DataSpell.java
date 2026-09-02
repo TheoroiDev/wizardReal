@@ -34,6 +34,11 @@ public final class DataSpell extends AbstractSpell {
         return thresholdOverride;
     }
 
+    /** Ordered effect list (inspection/debug, e.g. the spellinfo command). */
+    public List<SpellEffect> effects() {
+        return effects;
+    }
+
     @Override
     public List<Chant> chants() {
         return chants;

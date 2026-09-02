@@ -12,6 +12,7 @@ import com.theo.wizardreal.server.ServerVoiceCast;
 import com.theo.wizardreal.server.SpellCatalogService;
 import com.theo.wizardreal.server.SpellDataLoader;
 import com.theo.wizardreal.server.SpellKillDrops;
+import com.theo.wizardreal.server.WizardRealCommands;
 import com.theo.wizardreal.spell.Spells;
 import dev.architectury.event.events.common.LifecycleEvent;
 import net.minecraft.resources.ResourceLocation;
@@ -50,6 +51,7 @@ public final class WizardReal {
         LootTableModifier.init();
         SpellKillDrops.init();
         MagicSyncHandler.register();
+        WizardRealCommands.register();
         // Datapack spell load runs between SERVER_STARTING and SERVER_STARTED:
         // the server must be captured before the reload listeners fire.
         LifecycleEvent.SERVER_STARTING.register(SpellDataLoader::setServer);
