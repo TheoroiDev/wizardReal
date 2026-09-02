@@ -27,6 +27,18 @@ jobs:
         with:
           validate-wrappers: true
 
+      # Cross-repo dependency: voicecast is consumed from mavenLocal until the
+      # remote CI maven lands (voicecast#13, M8 epic). Build & publish it first.
+      - name: Checkout voicecast (dependency, published to mavenLocal)
+        uses: actions/checkout@v4
+        with:
+          repository: TheoroiDev/voiceCast
+          path: voicecast-dep
+
+      - name: Publish voicecast to mavenLocal
+        run: ./gradlew publishToMavenLocal --console=plain
+        working-directory: voicecast-dep
+
       - name: Build (all subprojects, JUnit 5 tests included)
         run: ./gradlew build --console=plain
 
