@@ -44,7 +44,10 @@ public final class SpellCatalogBuilder {
         }
         List<CatalogPayload.CatalogOrigin> origins = new ArrayList<>();
         for (Map.Entry<String, List<CatalogPayload.CatalogSpell>> e : byOrigin.entrySet()) {
-            origins.add(new CatalogPayload.CatalogOrigin(e.getKey(), "origin." + e.getKey(), e.getValue()));
+            // Lang-key convention: origin ids use ':' but display keys use '.'
+            // ("wizardreal:wizardry" -> "origin.wizardreal.wizardry").
+            String nameKey = "origin." + e.getKey().replace(':', '.');
+            origins.add(new CatalogPayload.CatalogOrigin(e.getKey(), nameKey, e.getValue()));
         }
         return new CatalogPayload(List.copyOf(origins));
     }
