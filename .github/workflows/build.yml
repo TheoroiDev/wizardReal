@@ -1,0 +1,48 @@
+name: build
+
+# Trigger policy (synced with voicecast/wizardpedia): tags (v*) = release
+# gate; PRs = pre-merge checks; push is intentionally NOT a trigger (local
+# `gradlew build` is the per-push gate). GitHub Release upload from tag builds
+# is planned but deliberately not implemented yet.
+on:
+  push:
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Gradle daemon; the JDK 17 toolchain is provisioned via foojay)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle (cache + wrapper validation)
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+
+      - name: Build (all subprojects, JUnit 5 tests included)
+        run: ./gradlew build --console=plain
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: "**/build/reports/tests/"
+          if-no-files-found: ignore
+
+      - name: Upload platform jars
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars
+          path: |
+            wizardreal/*/build/libs/*.jar
+            !**/*-sources.jar
+          if-no-files-found: error
