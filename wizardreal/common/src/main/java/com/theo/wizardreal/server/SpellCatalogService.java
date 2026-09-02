@@ -42,6 +42,9 @@ public final class SpellCatalogService {
         UUID playerUuid = player.getUUID();
         CatalogPayload payload = SpellCatalogBuilder.build(s, playerUuid);
         SpellCatalogNetwork.send(player, payload);
+        // Zero-dep push into the wizardpedia compendium (no-op when the mod
+        // is absent or [wizardpedia] pushMode = off).
+        WizardpediaPublisher.push(player, payload);
         WizardReal.LOGGER.debug("Spell catalog pushed to {}", player.getName().getString());
     }
 
