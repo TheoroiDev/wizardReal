@@ -55,6 +55,8 @@ Scroll-binding recipes currently exist for three spells (bound scrolls for the o
 
 > Scrolls are a great way to lend a spell to someone who hasn't learned it.
 
+Server operators can also grant or revoke spells directly — see [Commands](Commands.md) (`/wr learn` / `/wr unlearn`).
+
 ## Didn't match?
 
 - The HUD shows `Heard: "…" — no spell matched` when nothing fits;
