@@ -4,8 +4,8 @@ Fabric loader wiring for [Be a Real Wizard](../../README.md).
 
 ## Contents (`com.theo.wizardreal.fabric`)
 
-- `WizardRealFabric` — `ModInitializer`: common init (spells + network registration).
-- `WizardRealFabricClient` — `ClientModInitializer`: calls `WizardRealClient.init()` (pushes spell vocabulary to VoiceCast, subscribes recognition finals).
+- `WizardRealFabric` — `ModInitializer`: registers the datapack spell reload listener, items (4 staves / scroll / tome), particles, sounds and the creative tab, then calls `WizardReal.init()`.
+- `WizardRealFabricClient` — `ClientModInitializer`: registers S2C receivers (chant, magic sync, spell catalog) plus HUD/particle/item-property rendering and the client tick (PTT gesture + chant cancel). All gameplay and recognition stay server-side; the vocabulary push and recognition subscription live in the server-side `WizardReal.init()`.
 
 ## Run / build
 
@@ -21,5 +21,5 @@ Requires VoiceCast: `:voicecast-fabric` is wired into the dev run; in production
 
 ## Resources
 
-- `fabric.mod.json` — main entrypoint; depends on Fabric Loader, Fabric API, and (in production) `voicecast`.
+- `fabric.mod.json` — main entrypoint; depends on Fabric Loader, Fabric API, and `voicecast`.
 - `pack.mcmeta` — pack format 15.

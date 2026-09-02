@@ -4,7 +4,7 @@ Minecraft 1.20.1 mod: **speak incantations to cast spells**. Built with [Archite
 
 📖 **Full documentation**: [wiki (English)](https://github.com/TheoroiDev/wizardReal/wiki) · [中文文档](https://github.com/TheoroiDev/wizardReal/wiki/Home-zh) — player guides and server-admin docs.
 
-> This repository is one half of a two-repo project: the speech engine **[VoiceCast](https://github.com/Theoroi/wizardReal)** is a separate library mod; wizardreal consumes it via maven coordinates (`com.theo.voicecast:voicecast-*-1.20.1`).
+> This repository is one of the project's companion repos: the speech engine **[VoiceCast](https://github.com/TheoroiDev/voiceCast)** is a separate library mod; wizardreal consumes it via maven coordinates (`com.theo.voicecast:voicecast-*-1.20.1`).
 
 ## What it does
 
@@ -36,4 +36,4 @@ $env:Path="$env:JAVA_HOME\bin;$env:Path"
 
 ## License
 
-MIT — see the root [LICENSE](LICENSE); a NOTICE also ships inside the jars (`META-INF/NOTICE`). Third-party attribution for the paired VoiceCast mod lives in the voicecast repository.
+MIT — see the [LICENSE](LICENSE); a NOTICE also ships inside the jars (`META-INF/legal/NOTICE`). Third-party attribution for the paired VoiceCast mod lives in the voicecast repository.

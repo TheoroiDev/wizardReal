@@ -1,4 +1,4 @@
-# [English](Troubleshooting-FAQ-zh) | [中文](Troubleshooting-FAQ-zh)
+# [English](Troubleshooting-FAQ) | [中文](Troubleshooting-FAQ-zh)
 
 # Troubleshooting & FAQ
 
@@ -14,7 +14,7 @@
 
 Red = the model isn't ready. Read the **status line** above the waveform:
 
-- **Gold** "preparing/downloading model": first download, wait a moment (Vosk ~40 MB / IPA ~230 MB);
+- **Gold** "preparing/downloading model": first download, wait a moment (Vosk ~40 MB / IPA ~150 MB, int4/q4 ONNX);
 - **Red** "engine failed / model missing": check `logs/latest.log`. If the server set `autoDownload = false`, an admin must place the model files manually;
 - **Red** "Microphone unavailable": next section.
 
@@ -28,7 +28,7 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 ## My spell doesn't match
 
 - Slow down and pronounce clearly, especially the trigger ("ignis", not "ign");
-- **Vosk only understands English pronunciation** — switch to `/voicecast engine ipa` to chant pinyin/Chinese;
+- The `vosk-text` engine only understands English — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phonemes and is an alternative, not the only way to chant in Chinese;
 - The IPA engine matches by phonemes and is forgiving to non-native accents (tolerates tense/lax vowel shifts, dropped syllable-final consonants);
 - Each spell has several aliases (see [Spells](Spells.md)) — try another;
 - The gray text under the crosshair is the live recognition — if it's far from any trigger word, first confirm the model finished loading (red status line gone).
@@ -36,8 +36,9 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 ## Switching engines
 
 ```
-/voicecast engine vosk    # word recognition (English words)
-/voicecast engine ipa     # phoneme recognition (pronunciation-based, supports zh/ja)
+/voicecast engine vosk-en  # word recognition (English words)
+/voicecast engine vosk-cn  # Chinese word recognition (Japanese/Korean: vosk-jp / vosk-kr)
+/voicecast engine ipa      # phoneme recognition (pronunciation-based, supports zh/ja)
 /voicecast settings       # picker UI
 ```
 
@@ -55,7 +56,7 @@ Recognition runs **server-side** and the mic is open only during staff + right-c
 
 ## Other questions
 
-- **No mana bar**: mana/cooldowns sync on change — cast once after joining;
+- **No mana bar**: mana/cooldowns are fully synced on join and re-synced every 2 seconds — the bar should appear within 2 seconds of joining; if it doesn't, look for other causes;
 - **Spells cost no mana**: creative mode skips mana (not cooldowns);
 - **Last chant line doesn't complete**: make sure you're reading the *highlighted* line; after completion there's a 3 s lockout before the next ritual can start;
 - Anything else: open a GitHub issue with `logs/latest.log` attached.

@@ -4,8 +4,8 @@ Forge loader wiring for [Be a Real Wizard](../../README.md).
 
 ## Contents (`com.theo.wizardreal.forge`)
 
-- `WizardRealForge` — `@Mod` entry point; common init (spells + network registration).
-- `WizardRealForgeClient` — `@EventBusSubscriber(Dist.CLIENT, bus=MOD)`; `FMLClientSetupEvent` → `enqueueWork(WizardRealClient::init)` (spell vocabulary + recognition subscription).
+- `WizardRealForge` — `@Mod` entry point; registers items (4 staves / scroll / tome), particles, sounds and the creative tab, then calls `WizardReal.init()`.
+- `WizardRealForgeClient` — `@EventBusSubscriber(Dist.CLIENT, bus=MOD)`; `FMLClientSetupEvent` → `enqueueWork(...)` registering S2C receivers (chant, magic sync, spell catalog) and school-tint item properties. HUD overlays live on `WizardRealForgeClientHud`, the client tick (PTT gesture + chant cancel) on `WizardRealForgeClientTick`. All gameplay and recognition stay server-side.
 
 ## Run / build
 

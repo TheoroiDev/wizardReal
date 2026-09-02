@@ -1,8 +1,6 @@
 // Root build: plugin classpath + Architectury minecraft version wiring only.
-// All shared subproject configuration lives in buildSrc convention plugins:
-//   wizardreal.common-conventions  — Java toolchain, repositories, naming
-//   wizardreal.loom-conventions    — Loom + minecraft/mappings (all subprojects)
-//   wizardreal.loader-conventions  — Loom runs (dev username / verbose bridge)
+// All shared subproject configuration is applied via `apply from:` convention
+// scripts in `gradle/` (common/loom/loader-conventions.gradle).
 // See workspace-root docs/build_layout.md for the rationale.
 
 plugins {

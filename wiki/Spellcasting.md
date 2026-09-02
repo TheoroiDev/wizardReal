@@ -1,4 +1,4 @@
-# [English](Spellcasting-zh) | [中文](Spellcasting-zh)
+# [English](Spellcasting) | [中文](Spellcasting-zh)
 
 # Spellcasting
 
@@ -15,7 +15,7 @@ A fresh character knows 5 basic spells: **Ignis**, **Fulmen**, **Vitae**, **Aegi
 - **Creative mode** skips mana (but not cooldowns); spectators can never cast;
 - The **mana bar** renders right above the XP bar (dark/light blue); active cooldowns appear as small icons above it, labeled with remaining seconds.
 
-> Mana data lives in `wizardreal_player_magic.nbt` in the world folder and is written **when the server stops normally** — a crash can lose progress made since the last clean stop.
+> Mana data lives in `wizardreal_player_magic.nbt` in the world folder and is **auto-saved every 5 minutes** and written **on clean server stop** — a crash loses at most the last 5 minutes of progress.
 
 ## Staffs & schools
 
@@ -59,5 +59,5 @@ Scroll-binding recipes currently exist for three spells (bound scrolls for the o
 
 - The HUD shows `Heard: "…" — no spell matched` when nothing fits;
 - Speak clearly; every alias of a spell works (see [Spells](Spells.md));
-- **Vosk only understands English pronunciation** — switch to the IPA engine (`/voicecast engine ipa`) for Chinese/Japanese incantations;
+- The `vosk-text` engine only understands English pronunciation — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phoneme and is more forgiving of accents — an alternative, not the only way to chant in Chinese;
 - Chant-based spells behave differently — see [Ritual Chants](Ritual-Chants.md).

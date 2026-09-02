@@ -1,4 +1,4 @@
-# [English](Server-FAQ-zh) | [中文](Server-FAQ-zh)
+# [English](Server-FAQ) | [中文](Server-FAQ-zh)
 
 # Server FAQ
 
@@ -44,7 +44,7 @@ There is a **first-class integration** with Simple Voice Chat (M7b): a server ca
 ## Where is data stored, can it be lost?
 
 - `wizardreal_player_magic.nbt` in the world folder: per-player mana, known spells, cooldowns;
-- Written **on normal server stop** — a crash can lose progress since the last clean stop (schedule your own snapshots/backups);
+- **Auto-saved every 5 minutes** and written on clean server stop — a crash loses at most the last 5 minutes (schedule your own snapshots/backups);
 - Models and configs live in `config/voicecast/`, are world-independent and survive world changes.
 
 ## Anything to watch when upgrading?

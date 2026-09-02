@@ -1,8 +1,8 @@
+# [English](Home) | [中文](Home-zh)
+
 # Be a Real Wizard — Wiki
 
 A Minecraft 1.20.1 mod (Fabric + Forge) for **casting spells with your voice**. Hold a staff, hold right-click and chant — powered by the [VoiceCast](https://github.com/TheoroiDev/voiceCast) speech engine ([its own wiki](https://github.com/TheoroiDev/voiceCast/wiki)).
-
-> 中文文档：[首页（中文）](Home-zh)
 
 ## Quick start in 10 seconds
 

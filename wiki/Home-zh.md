@@ -1,4 +1,4 @@
-# [English](Home-zh) | [中文](Home-zh)
+# [English](Home) | [中文](Home-zh)
 
 # Be a Real Wizard · 中文 Wiki
 

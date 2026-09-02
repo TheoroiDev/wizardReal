@@ -1,4 +1,4 @@
-# [English](Ritual-Chants-zh) | [中文](Ritual-Chants-zh)
+# [English](Ritual-Chants) | [中文](Ritual-Chants-zh)
 
 # Ritual Chants
 
@@ -10,7 +10,7 @@ Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't 
 
 1. **Trigger**: say the spell's trigger word (e.g. "explosion") — chanting begins;
 2. **Line by line**: speak the highlighted (`►`) line. On a match it turns green (`✓`) and the next line becomes current;
-3. **Complete**: after the last line (the trigger word itself) the spell casts immediately.
+3. **Complete**: after the final line (usually the trigger word — a few Chinese variants use a translated name) the spell casts immediately.
 
 ## The rules
 

@@ -1,4 +1,4 @@
-# [English](Getting-Started-zh) | [中文](Getting-Started-zh)
+# [English](Getting-Started) | [中文](Getting-Started-zh)
 
 # 快速开始（Be a Real Wizard）
 

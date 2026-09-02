@@ -1,8 +1,8 @@
-# [中文](Datapack-Spells) | [English](Datapack-Spells)
+# [English](Datapack-Spells) | [中文](Datapack-Spells-zh)
 
 # 数据包法术
 
-> [← 返回管理员目录](Home-zh.md) · 上一篇：[性能与容量（见 VoiceCast wiki：Performance-zh） · 下一篇：[服务器 FAQ](Server-FAQ-zh)
+> [← 返回管理员目录](Home-zh.md) · 上一篇：[性能与容量（VoiceCast wiki）](https://github.com/TheoroiDev/voiceCast/wiki/Performance) · 下一篇：[服务器 FAQ](Server-FAQ-zh)
 
 法术是**数据包驱动**的：不需要写 Java 代码，往数据包里加 JSON 就能新增或覆盖法术。完整 schema 与效果参数表随模组内部文档提供，本页给管理员最小可用流程。
 
@@ -19,7 +19,6 @@
 ```json
 {
   "id": "myspells:petra",
-  "name": "Petra",
   "mana_cost": 15,
   "cooldown_ticks": 100,
   "schools": ["earth"],
@@ -32,6 +31,7 @@
 }
 ```
 
+- **显示名**来自语言文件键 `spell.<id>.name`——JSON 中不写 `name` 字段（未知字段会被忽略）；
 - `id`：命名空间 id（同名 id 会**覆盖内置法术**，含内置数据包条目）；
 - `aliases`：**触发词**（多个同义），`ipa` 是 IPA 引擎的发音模板——中文触发词建议同时给拼音模板；
 - `mana_cost` 默认 10、`cooldown_ticks` 默认 40、`requires_learning` 默认 false、`origin` 默认 `wizardreal:wizardry`；

@@ -1,13 +1,8 @@
-# [English](Datapack-Spells-zh) | [中文](Datapack-Spells-zh)
+# [English](Datapack-Spells) | [中文](Datapack-Spells-zh)
 
 # Datapack Spells
 
-> [← Admin Home](Home.md) · Previous: [Performance(see the VoiceCast wiki: Performance) · Next: [Server FAQ](Server-FAQ.md)
-
-Spells are **datapack-driven**: add JSON to a datapack to add or override spells — no Java code. The full schema and effect parameter tables ship with the mod's internal documentation; this page covers the admin workflow.
-# Datapack Spells
-
-> [← Admin Home](Home.md) · Previous: [Performance(see the VoiceCast wiki: Performance) · Next: [Server FAQ](Server-FAQ.md)
+> [← Admin Home](Home.md) · Previous: [Performance](https://github.com/TheoroiDev/voiceCast/wiki/Performance) · Next: [Server FAQ](Server-FAQ.md)
 
 Spells are **datapack-driven**: add JSON to a datapack to add or override spells — no Java code. The full schema and effect parameter tables live in the mod's internal spell-JSON schema documentation; this page is the minimal admin flow.
 
@@ -24,7 +19,6 @@ Server-side datapacks (`world/datapacks/<name>/data/...`) or singleplayer `datap
 ```json
 {
   "id": "myspells:petra",
-  "name": "Petra",
   "mana_cost": 15,
   "cooldown_ticks": 100,
   "schools": ["earth"],
@@ -37,6 +31,7 @@ Server-side datapacks (`world/datapacks/<name>/data/...`) or singleplayer `datap
 }
 ```
 
+- The **display name** comes from the language-file key `spell.<id>.name` — don't set a `name` field in the JSON (unknown fields are ignored);
 - `id`: namespaced id (**same id overrides built-in spells**, including builtin datapack entries);
 - `aliases`: the **trigger words**; `ipa` are pronunciation templates for the IPA engine — for Chinese triggers also supply pinyin templates;
 - Defaults: `mana_cost` 10, `cooldown_ticks` 40, `requires_learning` false, `origin` `wizardreal:wizardry`;
