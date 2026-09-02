@@ -33,3 +33,5 @@ Voice recognition is handled by the companion **VoiceCast** mod — see [its wik
 - [Spells](Spells): all 15 built-in spells with trigger words;
 - [Ritual Chants](Ritual-Chants): long incantations;
 - Problems: [Troubleshooting & FAQ](Troubleshooting-FAQ).
+
+> [← Home](Home) · Next: [Spellcasting](Spellcasting)

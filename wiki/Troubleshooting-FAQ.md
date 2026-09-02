@@ -60,3 +60,5 @@ Recognition runs **server-side** and the mic is open only during staff + right-c
 - **Spells cost no mana**: creative mode skips mana (not cooldowns);
 - **Last chant line doesn't complete**: make sure you're reading the *highlighted* line; after completion there's a 3 s lockout before the next ritual can start;
 - Anything else: open a GitHub issue with `logs/latest.log` attached.
+
+> [← Home](Home.md) · Previous: [Ritual Chants](Ritual-Chants.md)

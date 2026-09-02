@@ -61,3 +61,5 @@
 - 请尽量清晰、完整地念出触发词（[法术一览](Spells-zh)列出了每个法术的全部别名）；
 - `vosk-en` 引擎只认**英文**发音；中文/日文吟唱可切换 CJK 母语引擎 `vosk-cn` / `vosk-jp`（韩语 `vosk-kr`）；IPA 引擎（`/voicecast engine ipa`）按音素匹配、对口音更宽容，是另一种替代项，并非中文吟唱的唯一途径；
 - 咏唱类法术的处理方式不同，见[仪式吟唱](Ritual-Chants-zh)。
+
+> [← 返回首页](Home-zh.md) · 上一篇：[快速开始](Getting-Started.md) · 下一篇：[法术一览](Spells-zh)

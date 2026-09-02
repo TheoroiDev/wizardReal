@@ -42,3 +42,9 @@ The matcher does whole-word containment: "cast ignis now" also matches (an exact
 ## Custom spells
 
 Server admins can add or override spells with a **datapack** — no code required. See [Datapack Spells](Datapack-Spells) in the admin docs.
+
+## Can't remember spells?
+
+`wizardReal` has kindly saved all spells for you -- check out `wizardreal/spell_catalog.json` in your game directory!
+
+> [← Home](Home.md) · Previous: [Spellcasting](Spellcasting.md) · Next: [Ritual Chants](Ritual-Chants.md)

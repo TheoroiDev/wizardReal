@@ -42,3 +42,9 @@
 ## 自定义法术
 
 服务器管理员可以通过**数据包**添加/覆盖法术（不需要写代码），见管理员文档[数据包法术](Datapack-Spells-zh)。
+
+## 记不住咒语？
+
+`wizardReal` 贴心地为你保存了所有的咒语，快看看你的游戏目录 `wizardreal/spell_catalog.json`
+
+> [← 返回首页](Home-zh.md) · 上一篇：[施法系统](Spellcasting-zh) · 下一篇：[仪式吟唱](Ritual-Chants-zh)

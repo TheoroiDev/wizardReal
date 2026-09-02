@@ -4,7 +4,7 @@
 
 > [← Home](Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
 
-Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't cast on the trigger alone: the trigger word puts you into a **chant**, and you must speak each line of the incantation before the spell fires. A chant HUD appears to the right of the crosshair.
+Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't cast on the trigger alone: the trigger word puts you into a **chant**, and you must speak each line of the incantation before the spell fires. A **chant HUD** appears to the right of the crosshair.
 
 ## How it flows
 
@@ -39,3 +39,5 @@ Explosion               ← spell title (gold)
 - Chinese lines carry **pinyin** and Japanese lines **romaji** aliases, so both the Vosk and IPA engines understand them;
 - While chanting, **no instant spells fire**: every utterance feeds the current ritual only;
 - Mana and cooldown settle **on completion** — cancelling costs nothing.
+
+> [← Home](Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
