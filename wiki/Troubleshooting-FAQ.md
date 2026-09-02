@@ -28,7 +28,7 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 ## My spell doesn't match
 
 - Slow down and pronounce clearly, especially the trigger ("ignis", not "ign");
-- The `vosk-text` engine only understands English — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phonemes and is an alternative, not the only way to chant in Chinese;
+- The `vosk-en` engine only understands English — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phonemes and is an alternative, not the only way to chant in Chinese;
 - The IPA engine matches by phonemes and is forgiving to non-native accents (tolerates tense/lax vowel shifts, dropped syllable-final consonants);
 - Each spell has several aliases (see [Spells](Spells.md)) — try another;
 - The gray text under the crosshair is the live recognition — if it's far from any trigger word, first confirm the model finished loading (red status line gone).

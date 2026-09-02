@@ -59,5 +59,5 @@ Scroll-binding recipes currently exist for three spells (bound scrolls for the o
 
 - The HUD shows `Heard: "…" — no spell matched` when nothing fits;
 - Speak clearly; every alias of a spell works (see [Spells](Spells.md));
-- The `vosk-text` engine only understands English pronunciation — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phoneme and is more forgiving of accents — an alternative, not the only way to chant in Chinese;
+- The `vosk-en` engine only understands English pronunciation — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phoneme and is more forgiving of accents — an alternative, not the only way to chant in Chinese;
 - Chant-based spells behave differently — see [Ritual Chants](Ritual-Chants.md).
