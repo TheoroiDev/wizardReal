@@ -30,7 +30,7 @@ import net.minecraft.resources.ResourceLocation;
  *   "requires_learning": false,
  *   "origin": "wizardreal:wizardry",
  *   "threshold": 0.6,
- *   "trigger": { "aliases": [...], "ipa": [...], "threshold": 0.6 },
+ *   "trigger": { "aliases": [...], "ipa": [...] },
  *   "chants": [ { "lines": [ { "display_key": "...", "aliases": [...], "ipa": [...] } ] } ],
  *   "effects": [ { "type": "wizardreal:projectile", ... } ]
  * }
