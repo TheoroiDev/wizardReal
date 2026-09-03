@@ -34,14 +34,15 @@ dependencies {
     // production (SRG) jar to the dev mappings automatically.
     modImplementation "com.theo.voicecast:voicecast-forge-1.20.1:${rootProject.voicecast_version}"
 
-    // ===== Dev-only testing mods (modLocalRuntime = dev run only, NOT bundled) =====
+    // Dev-only testing mods are NOT gradle dependencies: pre-downloaded into
+    // the workspace resources/devmods/forge/ dir and wired by
+    // loader-conventions from manifest.txt as file dependencies (Loom remaps
+    // them; SRG production jars cannot load from a dev mods folder).
     // NOTE: client-only dev mods (EMI/BoccHUD/Tweakerge/MaFgLib) are NOT
     // declared here — unlike Fabric Loader, Forge LOADS client mods on a
     // dedicated server and dies at CONSTRUCT ("for invalid dist
     // DEDICATED_SERVER"). Test them via runClient only; keep server-safe
     // mods (spark/canary) here.
-    // Simple Voice Chat - M7b coexistence compatibility testing (dev only; server-safe mod)
-    modLocalRuntime "maven.modrinth:simple-voice-chat:forge-1.20.1-2.6.22"
     // NOTE: Carpet on Forge dev is deliberately NOT wired. The "Carpet:
     // NeoForged" 1.20.1 build (beta) assumes platform-shipped MixinExtras
     // (NeoForge bundles it; Forge 1.20.1 does not) and its jarJar carries

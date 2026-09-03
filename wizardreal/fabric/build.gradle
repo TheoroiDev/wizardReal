@@ -33,23 +33,10 @@ dependencies {
     // a belt-and-suspenders fallback for dev runs).
     runtimeOnly "net.java.dev.jna:jna:5.12.1"
 
-    // ===== Dev-only testing mods (modLocalRuntime = dev run only, NOT bundled) =====
-    // Loom 1.17 resolves both legacy and modern Modrinth builds; jars can also
-    // be dropped into <subproject>/run/mods/ manually when preferred.
-    // EMI - recipe/item browser (the unified dev recipe viewer)
-    modLocalRuntime "maven.modrinth:emi:1.1.24+1.20.1+fabric"
-    // MaLiLib - library required by MiniHUD & Tweakeroo
-    modLocalRuntime "maven.modrinth:malilib:0.16.3"
-    // MiniHUD - debug HUD overlays
-    modLocalRuntime "maven.modrinth:minihud:0.27.1"
-    // Tweakeroo - client-side tweaks
-    modLocalRuntime "maven.modrinth:tweakeroo:0.17.1"
-    // Lithium - logic/tick optimization
-    modLocalRuntime "maven.modrinth:lithium:mc1.20.1-0.11.4-fabric"
-    // Simple Voice Chat - M7b coexistence compatibility testing (dev run only)
-    modLocalRuntime "maven.modrinth:simple-voice-chat:fabric-1.20.1-2.6.22"
-    // Carpet - testing utilities (fake players, /carpet rules)
-    modLocalRuntime "maven.modrinth:carpet:1.4.112"
+    // Dev-only testing mods (EMI/minihud/tweakeroo/lithium/SVC/carpet/...)
+    // are NOT gradle dependencies: they are pre-downloaded into the workspace
+    // resources/devmods/<loader>/ dir and wired by loader-conventions from
+    // manifest.txt (fabric: hardlinked into the run dir's mods/ folder).
 }
 
 tasks.processResources {

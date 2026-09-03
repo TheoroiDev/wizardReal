@@ -15,7 +15,7 @@
 ### Infrastructure
 
 - CI 将 voicecast 依赖构建进 mavenLocal（远程 maven 就绪前的过渡；voicecast#13）
-- Fabric 开发运行捆绑 Carpet 测试 mod（Forge 移植受阻；voicecast#38）
+- 纯开发测试 mod 移出 gradle 依赖：release jar 预下载到工作区 `resources/devmods/<loader>/`，由 `manifest.txt` 驱动接线（fabric 硬链接进 run mods 目录；forge 作为文件依赖由 Loom 重映射；Carpet 的 Forge 移植仍受阻，voicecast#38）；语音模型事实源移至 `resources/models/`
 
 ### Changes
 
