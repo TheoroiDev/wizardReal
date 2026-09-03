@@ -35,7 +35,7 @@ No. All voice traffic rides the vanilla Minecraft connection (small client→ser
 
 No. The microphone opens only for "staff held + right-click held" and is released immediately after; server-side recognition is invisible to voice mods. Players' normal voice chat keeps working while they chant.
 
-There is a **first-class integration** with Simple Voice Chat (M7b): a server can set `[compat] svcCoexistence` in `voicecast.toml` — the default `share` shares the microphone device, while `defer` postpones VoiceCast's mic-open while SVC is capturing (falling back to share after a timeout). See `docs/compatibility.md`.
+There is a **first-class integration** with Simple Voice Chat (M7b): coexistence is automatic — VoiceCast and SVC share the microphone with no setup required. `[compat] svcCoexistence` in `voicecast.toml` is a **client-local setting** (each player's own config; the server neither reads nor syncs it). The old `defer` mode was removed in voicecast 0.3.2; existing configs fall back to `share`. See `docs/ref/compatibility.md`.
 
 ## How do I disable voice but keep the spells?
 
