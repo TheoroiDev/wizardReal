@@ -4,14 +4,18 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ## Unreleased
 
+### Changes
+
+- Wiki Server-FAQ updated for voicecast 0.3.2 (defer removal); docs/ref paths fixed
+
+### Modding/API
+
+- Machine-readable JSON Schema for the datapack spell format, validating spell JSONs offline: `schema/spell.schema.json` in the repo root
+
 ### Infrastructure
 
 - CI builds the voicecast dependency into mavenLocal as a bridge until a remote maven exists (voicecast#13)
 - Fabric dev runs bundle a Carpet testing mod (Forge port blocked; voicecast#38)
-
-### Changes
-
-- Wiki Server-FAQ updated for voicecast 0.3.2 (defer removal); docs/ref paths fixed
 
 ## 0.3.2 — 2026-09-02
 
@@ -61,4 +65,4 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ### Modding/API
 
-- Datapack spell schema (docs/spells/spell_json.md); machine-readable JSON Schema at `wizardreal/schema/spell.schema.json`
+- Datapack spell schema (docs/spells/spell_json.md)

@@ -4,6 +4,14 @@
 
 ## Unreleased（未发布）
 
+### Changes
+
+- Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径
+
+### Modding/API
+
+- 数据包法术格式的机器可读 JSON Schema，可离线校验法术 JSON：仓库根 `schema/spell.schema.json`
+
 ### Infrastructure
 
 - CI 将 voicecast 依赖构建进 mavenLocal（远程 maven 就绪前的过渡；voicecast#13）
@@ -61,4 +69,4 @@
 
 ### Modding/API
 
-- 数据包法术 schema（docs/spells/spell_json.md）；机器可读 JSON Schema 位于 `wizardreal/schema/spell.schema.json`
+- 数据包法术 schema（docs/spells/spell_json.md）
