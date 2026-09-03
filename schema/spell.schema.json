@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theoroi.dev/schemas/wizardreal/spell.schema.json",
+  "title": "wizardreal spell definition",
+  "description": "Data-driven spell definition for data/<ns>/voicecast/spells/<file>.json, parsed by SpellDefinition.CODEC (wizardreal-common). Field documentation: docs/spells/spell_json.md in the workspace root repo. Addon-registered effect types are covered by the generic branch of the effects anyOf; built-in types are enumerated for editor assistance. Runtime parsing is lenient about unknown top-level keys, but this schema is stricter by design (typo protection).",
+  "type": "object",
+  "required": ["id", "schools", "trigger", "effects"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+:[a-z0-9_./-]+$",
+      "description": "Namespaced spell id. Display name resolves via lang key spell.<id>.name."
+    },
+    "schools": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["fire", "lightning", "water", "earth", "air", "holy", "necromancy", "arcane", "nature", "illusion"]
+      },
+      "description": "Spell schools (multi-value). Staff affinity: no penalty if ANY school matches; +50% mana when none match."
+    },
+    "mana_cost": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 10
+    },
+    "cooldown_ticks": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 40
+    },
+    "requires_learning": {
+      "type": "boolean",
+      "default": false,
+      "description": "true = must be learned from a tome (grimoire) before casting."
+    },
+    "origin": {
+      "type": "string",
+      "default": "wizardreal:wizardry",
+      "description": "Staff origin restriction; staff items carry origin.<ns>.<path> lang keys."
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1,
+      "default": -1,
+      "description": "Match threshold override. -1 = use matcher default (text 0.8 / IPA 0.6); >=0 replaces the default outright (no template-level thresholds exist)."
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["aliases"],
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Text recognition vocabulary. Flat multilingual list (en words + pinyin/romaji); only entries matching the loaded engine's language are recognized via text path. Do not pile synonyms: larger grammar = more confusion."
+        },
+        "ipa": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IPA phoneme templates for the ipa-phonemes engine (cross-language path)."
+        }
+      }
+    },
+    "chants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/chant" },
+      "description": "Ritual chant variants. Non-empty = ritual spell: speaking the trigger word enters the chant, then every line must be spoken in order before casting. First matched line locks the variant."
+    },
+    "effects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "anyOf": [
+          { "$ref": "#/$defs/effects/projectile" },
+          { "$ref": "#/$defs/effects/lightning" },
+          { "$ref": "#/$defs/effects/heal" },
+          { "$ref": "#/$defs/effects/status_effect" },
+          { "$ref": "#/$defs/effects/knockback" },
+          { "$ref": "#/$defs/effects/explosion" },
+          { "$ref": "#/$defs/effects/beam" },
+          { "$ref": "#/$defs/effects/sound" },
+          { "$ref": "#/$defs/effects/particles" },
+          { "$ref": "#/$defs/effects/addon" }
+        ]
+      },
+      "description": "Ordered effect list, executed sequentially."
+    }
+  },
+  "$defs": {
+    "resourceLocation": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+:[a-z0-9_./-]+$"
+    },
+    "chant": {
+      "type": "object",
+      "required": ["lines"],
+      "additionalProperties": false,
+      "properties": {
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/line" }
+        }
+      }
+    },
+    "line": {
+      "type": "object",
+      "required": ["display_key"],
+      "additionalProperties": false,
+      "properties": {
+        "display_key": {
+          "type": "string",
+          "description": "Lang key for this line's display text (e.g. wizardreal.chant.example.l1)."
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Text recognition metadata for this line; the first line spoken locks the variant."
+        },
+        "ipa": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IPA templates for this line (ipa-phonemes engine)."
+        }
+      }
+    },
+    "effects": {
+      "projectile": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "entity"],
+        "properties": {
+          "type": { "const": "wizardreal:projectile" },
+          "entity": { "$ref": "#/$defs/resourceLocation", "description": "Entity id to launch (e.g. minecraft:small_fireball)." },
+          "speed": { "type": "number", "default": 1.5 },
+          "count": { "type": "integer", "minimum": 1, "default": 1 },
+          "spread": { "type": "number", "minimum": 0, "default": 0 }
+        }
+      },
+      "lightning": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": { "const": "wizardreal:lightning" },
+          "range": { "type": "number", "minimum": 0, "default": 48, "description": "Strike at the looked-at block within range." }
+        }
+      },
+      "heal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "amount"],
+        "properties": {
+          "type": { "const": "wizardreal:heal" },
+          "amount": { "type": "number", "exclusiveMinimum": 0, "description": "Hearts healed on the caster." }
+        }
+      },
+      "status_effect": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "effect"],
+        "properties": {
+          "type": { "const": "wizardreal:status_effect" },
+          "effect": { "$ref": "#/$defs/resourceLocation", "description": "Mob effect id (e.g. minecraft:speed)." },
+          "duration": { "type": "integer", "minimum": 1, "default": 200 },
+          "amplifier": { "type": "integer", "minimum": 0, "default": 0 }
+        }
+      },
+      "knockback": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": { "const": "wizardreal:knockback" },
+          "range": { "type": "number", "minimum": 0, "default": 6 },
+          "angle_cos": { "type": "number", "minimum": -1, "maximum": 1, "default": 0.5, "description": "Look-direction cone half-angle as cosine." },
+          "power": { "type": "number", "minimum": 0, "default": 1.1 }
+        }
+      },
+      "explosion": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "description": "Explosion at the looked-at point; breaks blocks.",
+        "properties": {
+          "type": { "const": "wizardreal:explosion" },
+          "range": { "type": "number", "minimum": 0, "default": 16 },
+          "power": { "type": "number", "minimum": 0, "default": 4 },
+          "set_fire": { "type": "boolean", "default": false }
+        }
+      },
+      "beam": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type"],
+        "properties": {
+          "type": { "const": "wizardreal:beam" },
+          "range": { "type": "number", "minimum": 0, "default": 30 },
+          "width": { "type": "number", "minimum": 0, "default": 1 },
+          "damage": { "type": "number", "minimum": 0, "default": 8 },
+          "set_fire": { "type": "boolean", "default": false },
+          "fire_seconds": { "type": "integer", "minimum": 0, "default": 3 }
+        }
+      },
+      "sound": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "sound"],
+        "properties": {
+          "type": { "const": "wizardreal:sound" },
+          "sound": { "$ref": "#/$defs/resourceLocation", "description": "Sound event id (e.g. wizardreal:spell.cast_ignis)." },
+          "volume": { "type": "number", "minimum": 0, "default": 1 },
+          "pitch": { "type": "number", "minimum": 0, "default": 1 }
+        }
+      },
+      "particles": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "particle"],
+        "properties": {
+          "type": { "const": "wizardreal:particles" },
+          "particle": { "$ref": "#/$defs/resourceLocation", "description": "Simple (no-argument) particle type id." },
+          "count": { "type": "integer", "minimum": 0, "default": 10 },
+          "spread": { "type": "number", "minimum": 0, "default": 0.5 },
+          "speed": { "type": "number", "minimum": 0, "default": 0.1 },
+          "y_offset": { "type": "number", "default": 1 }
+        }
+      },
+      "addon": {
+        "type": "object",
+        "required": ["type"],
+        "description": "Effect type registered by an addon mod via EffectRegistry (type must not be a built-in id). Parameter schema is defined by the addon."
+      }
+    }
+  },
+  "examples": [
+    {
+      "id": "wizardreal:ignis",
+      "schools": ["fire"],
+      "mana_cost": 5,
+      "cooldown_ticks": 40,
+      "requires_learning": false,
+      "origin": "wizardreal:wizardry",
+      "threshold": -1.0,
+      "trigger": {
+        "aliases": ["ignis", "fire", "flame", "火球"],
+        "ipa": ["ˈɪɡnɪs"]
+      },
+      "chants": [
+        {
+          "lines": [
+            { "display_key": "wizardreal.chant.example.l1", "aliases": ["line one"], "ipa": [] }
+          ]
+        }
+      ],
+      "effects": [
+        { "type": "wizardreal:projectile", "entity": "minecraft:small_fireball", "speed": 1.5 },
+        { "type": "wizardreal:sound", "sound": "minecraft:entity.blaze.shoot", "volume": 1.0, "pitch": 1.2 }
+      ]
+    }
+  ]
+}
