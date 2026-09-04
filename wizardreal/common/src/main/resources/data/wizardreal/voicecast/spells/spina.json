@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:ignis",
+  "id": "wizardreal:spina",
   "schools": [
-    "fire"
+    "nature"
   ],
-  "mana_cost": 8,
-  "cooldown_ticks": 40,
+  "mana_cost": 9,
+  "cooldown_ticks": 45,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ignis",
-        "fireball"
+        "spina",
+        "thorn seed"
       ],
       "zh": [
-        "火球",
-        "烈焰弹"
+        "荆棘种",
+        "棘弹"
       ],
       "ja": [
-        "イグニス",
-        "ファイアボール"
+        "スピーナ",
+        "いばらのたね"
       ],
       "ko": []
     },
@@ -30,12 +30,12 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:small_fireball",
-      "speed": 1.5
+      "entity": "minecraft:arrow",
+      "speed": 2.0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.blaze.shoot"
+      "sound": "minecraft:block.azalea_leaves.break"
     }
   ]
 }

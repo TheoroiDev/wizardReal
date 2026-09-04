@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:ignis",
+  "id": "wizardreal:sagitta",
   "schools": [
-    "fire"
+    "holy"
   ],
-  "mana_cost": 8,
-  "cooldown_ticks": 40,
+  "mana_cost": 9,
+  "cooldown_ticks": 45,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ignis",
-        "fireball"
+        "sagitta",
+        "holy arrow"
       ],
       "zh": [
-        "火球",
-        "烈焰弹"
+        "圣光矢",
+        "光箭"
       ],
       "ja": [
-        "イグニス",
-        "ファイアボール"
+        "サジッタ",
+        "せいこうや"
       ],
       "ko": []
     },
@@ -30,12 +30,12 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:small_fireball",
-      "speed": 1.5
+      "entity": "minecraft:spectral_arrow",
+      "speed": 2.4
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.blaze.shoot"
+      "sound": "minecraft:entity.arrow.shoot"
     }
   ]
 }

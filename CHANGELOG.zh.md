@@ -11,6 +11,7 @@
 
 ### Changes
 
+- breaking: 法术矩阵批次0 重写（07 ×3）：旧 15 法术集替换为语言 keyed 的批次0 矩阵（10 弹位 ignis/unda/fulmen/saxum/ventus/spina/sagitta/ossum/telum/falsum、4 用位 fulgur/semina/sanare/velum、禁咒 explosion 重做为 6 句多语言变体吟唱）；被移除的 id（aegis/arcanum/gaia/ictus/mare/mortis/sanctus/tempest/umbra/vitae）后续批次回归——学习计数随新 id 重计，ko 变体按计划滞后一批（加载校验器 WARN）
 - Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径
 - 咏唱入口改版（语音改版 D9）：仪式法术的**第一句（L1）**现在用于进入咏唱并锁定变体（入口语句计为第 1 行）；空闲态念触发词/咒名改为尝试破弃快施，需咏唱熟练度（学习系统上线前一律拒绝）
 - 吟唱中念出咒名即提前施放，威力按已完成行数取档（`chant_policy.skip_allowed`；禁咒拒绝跳章）

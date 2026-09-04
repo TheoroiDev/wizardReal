@@ -1,7 +1,7 @@
 {
-  "id": "wizardreal:ventus",
+  "id": "wizardreal:falsum",
   "schools": [
-    "air"
+    "illusion"
   ],
   "mana_cost": 8,
   "cooldown_ticks": 40,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ventus",
-        "wind blade"
+        "falsum",
+        "phantom bolt"
       ],
       "zh": [
-        "风刃",
-        "气刃"
+        "幻弹",
+        "虚影弹"
       ],
       "ja": [
-        "ウェンタス",
-        "カゼノヤイバ"
+        "ファルスム",
+        "まぼろしだま"
       ],
       "ko": []
     },
@@ -30,18 +30,12 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:snowball",
-      "speed": 2.2
-    },
-    {
-      "type": "wizardreal:knockback",
-      "range": 8,
-      "angle_cos": 0.5,
-      "power": 1.6
+      "entity": "minecraft:egg",
+      "speed": 2.0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.phantom.flap"
+      "sound": "minecraft:entity.illusioner.cast_spell"
     }
   ]
 }

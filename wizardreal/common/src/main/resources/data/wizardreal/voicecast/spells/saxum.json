@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:fulmen",
+  "id": "wizardreal:saxum",
   "schools": [
-    "lightning"
+    "earth"
   ],
-  "mana_cost": 12,
-  "cooldown_ticks": 60,
+  "mana_cost": 10,
+  "cooldown_ticks": 50,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "fulmen",
-        "lightning"
+        "saxum",
+        "stone spear"
       ],
       "zh": [
-        "落雷",
-        "雷击"
+        "石矛",
+        "岩枪"
       ],
       "ja": [
-        "フルメン",
-        "カミナリ"
+        "サクスム",
+        "いしやり"
       ],
       "ko": []
     },
@@ -29,12 +29,13 @@
   },
   "effects": [
     {
-      "type": "wizardreal:lightning",
-      "range": 48
+      "type": "wizardreal:projectile",
+      "entity": "minecraft:arrow",
+      "speed": 2.6
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.lightning_bolt.thunder"
+      "sound": "minecraft:block.stone.hit"
     }
   ]
 }

@@ -14,7 +14,6 @@
   "spell.wizardreal:arcanum.name": "Arcanum · 奥术",
   "spell.wizardreal:semina.name": "Semina · 自然",
   "spell.wizardreal:umbra.name": "Umbra · 暗影",
-
   "wizardreal.cast.success": "施法成功：%s",
   "wizardreal.cast.cooldown": "冷却中……剩余 %s 秒",
   "wizardreal.cast.canceled": "法术溃散了",
@@ -23,12 +22,9 @@
   "wizardreal.cast.wrong_origin": "你的法杖无法引导 %s 魔法",
   "wizardreal.cast.wrong_school": "法杖学派不匹配：该系魔法消耗更多法力",
   "wizardreal.cast.unknown_spell": "你还没有学会这个法术",
-
   "wizardreal.heard.unknown": "听到：“%s”——没有匹配的法术",
   "wizardreal.heard.matched": "正在咏唱 %s……",
-
   "wizardreal.hud.mana": "法力：%s/%s",
-
   "wizardreal.chant.prompt": "咏唱第一句……",
   "wizardreal.chant.retry": "✗ 重复本句",
   "wizardreal.chant.interrupted": "✦ 咏唱被打断——请重复本句",
@@ -36,7 +32,6 @@
   "wizardreal.chant.skip_locked": "熟练度不足，无法省略咏唱",
   "wizardreal.chant.weak_skip": "破弃施放！已省略咏唱（威力降低）",
   "wizardreal.learning.not_ready": "尚未掌握（%s%%）——请研读典籍或练习咏唱",
-
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",
   "wizardreal.chant.explosion.en.l3": "Explosion!",
@@ -46,7 +41,6 @@
   "wizardreal.chant.explosion.ja.l1": "漆黒が 空を つつみ",
   "wizardreal.chant.explosion.ja.l2": "紅の 雷 を おこせ",
   "wizardreal.chant.explosion.ja.l3": "エクスプロージョン！",
-
   "wizardreal.chant.tempest.en.l1": "Storm above",
   "wizardreal.chant.tempest.en.l2": "Strike them down",
   "wizardreal.chant.tempest.en.l3": "Tempest!",
@@ -56,7 +50,6 @@
   "wizardreal.chant.tempest.ja.l1": "天に 雷光集いて",
   "wizardreal.chant.tempest.ja.l2": "落ちろ",
   "wizardreal.chant.tempest.ja.l3": "嵐！",
-
   "wizardreal.chant.mare.en.l1": "Rising tide",
   "wizardreal.chant.mare.en.l2": "Sweep them away",
   "wizardreal.chant.mare.en.l3": "Mare!",
@@ -66,7 +59,6 @@
   "wizardreal.chant.mare.ja.l1": "潮が 押し寄せる",
   "wizardreal.chant.mare.ja.l2": "流れ去れ",
   "wizardreal.chant.mare.ja.l3": "海！",
-
   "wizardreal.chant.gaia.en.l1": "Deep roots tremble",
   "wizardreal.chant.gaia.en.l2": "Shake the ground",
   "wizardreal.chant.gaia.en.l3": "Gaia!",
@@ -76,7 +68,6 @@
   "wizardreal.chant.gaia.ja.l1": "大地の 根より",
   "wizardreal.chant.gaia.ja.l2": "揺るげ",
   "wizardreal.chant.gaia.ja.l3": "ガイア！",
-
   "wizardreal.chant.ventus.en.l1": "Winds gather",
   "wizardreal.chant.ventus.en.l2": "Unleash the gale",
   "wizardreal.chant.ventus.en.l3": "Ventus!",
@@ -86,7 +77,6 @@
   "wizardreal.chant.ventus.ja.l1": "风が 塚る",
   "wizardreal.chant.ventus.ja.l2": "放か しろ",
   "wizardreal.chant.ventus.ja.l3": "狂风！",
-
   "wizardreal.chant.sanctus.en.l1": "Light descend",
   "wizardreal.chant.sanctus.en.l2": "Mend our wounds",
   "wizardreal.chant.sanctus.en.l3": "Sanctus!",
@@ -96,7 +86,6 @@
   "wizardreal.chant.sanctus.ja.l1": "光り 降りて",
   "wizardreal.chant.sanctus.ja.l2": "傷を 治せ",
   "wizardreal.chant.sanctus.ja.l3": "聖なる！",
-
   "wizardreal.chant.mortis.en.l1": "Shadows call",
   "wizardreal.chant.mortis.en.l2": "Wither and fade",
   "wizardreal.chant.mortis.en.l3": "Mortis!",
@@ -106,7 +95,6 @@
   "wizardreal.chant.mortis.ja.l1": "影が 囁く",
   "wizardreal.chant.mortis.ja.l2": "萎み 散れ",
   "wizardreal.chant.mortis.ja.l3": "モルティス！",
-
   "wizardreal.chant.arcanum.en.l1": "Weave the shield",
   "wizardreal.chant.arcanum.en.l2": "Hold the line",
   "wizardreal.chant.arcanum.en.l3": "Arcanum!",
@@ -116,7 +104,6 @@
   "wizardreal.chant.arcanum.ja.l1": "守りの 力を 績め",
   "wizardreal.chant.arcanum.ja.l2": "戦え",
   "wizardreal.chant.arcanum.ja.l3": "アルカナム！",
-
   "wizardreal.chant.semina.en.l1": "Seeds awaken",
   "wizardreal.chant.semina.en.l2": "Bloom and grow",
   "wizardreal.chant.semina.en.l3": "Semina!",
@@ -126,7 +113,6 @@
   "wizardreal.chant.semina.ja.l1": "種が 芽生える",
   "wizardreal.chant.semina.ja.l2": "花 開け",
   "wizardreal.chant.semina.ja.l3": "自然！",
-
   "wizardreal.chant.umbra.en.l1": "Veil of shadows",
   "wizardreal.chant.umbra.en.l2": "Walk unseen",
   "wizardreal.chant.umbra.en.l3": "Umbra!",
@@ -136,7 +122,6 @@
   "wizardreal.chant.umbra.ja.l1": "影の 幕を 降ろせ",
   "wizardreal.chant.umbra.ja.l2": "見えず 進め",
   "wizardreal.chant.umbra.ja.l3": "幻影！",
-
   "item.wizardreal.staff_apprentice": "学徒法杖",
   "item.wizardreal.staff_fire": "火焰法杖",
   "item.wizardreal.staff_lightning": "雷霆法杖",
@@ -148,7 +133,6 @@
   "item.wizardreal.spell_tome.blank": "空白法术典籍",
   "item.wizardreal.spell_tome.unknown": "无法辨认的典籍",
   "item.wizardreal.spell_tome.named": "%s 之典籍",
-
   "wizardreal.tome.blank": "这本典籍空无一字。",
   "wizardreal.tome.invalid": "这本典籍已损毁。",
   "wizardreal.tome.already_known": "你已经掌握 %s。",
@@ -158,7 +142,6 @@
   "wizardreal.cmd.learning_set": "%2$s 的 %1$s 熟练度：%3$s%%",
   "wizardreal.cmd.invalid_amount": "无效数值 '%s'（数字 = 增减百分点，'N%%' = 设为绝对值）",
   "wizardreal.cmd.spellinfo.difficulty": "难度：%s（你的熟练度：%s）",
-
   "wizardreal.cmd.unknown_spell": "未知咒语：%s",
   "wizardreal.cmd.learned": "已让 %2$s 学会 %1$s",
   "wizardreal.cmd.unlearned": "已让 %2$s 忘记 %1$s",
@@ -199,7 +182,6 @@
   "wizardreal.cmd.common.no": "否",
   "wizardreal.cmd.common.na": "-",
   "wizardreal.cmd.common.default": "默认",
-
   "school.fire": "火",
   "school.lightning": "雷",
   "school.water": "水",
@@ -211,9 +193,7 @@
   "school.nature": "自然",
   "school.illusion": "幻术",
   "origin.wizardreal.wizardry": "巫术",
-
   "itemGroup.wizardreal.main": "WizardReal 巫法",
-
   "wizardreal.subtitle.cast.ignis": "火焰咆哮",
   "wizardreal.subtitle.cast.fulmen": "雷光噼啪",
   "wizardreal.subtitle.cast.vitae": "圣钟轻鸣",
@@ -238,5 +218,15 @@
   "wizardreal.subtitle.impact.ictus": "能量噼啪",
   "wizardreal.subtitle.impact.explosion": "爆裂",
   "wizardreal.subtitle.impact.excalibur": "圣光爆发",
-  "wizardreal.subtitle.impact.dragon_slave": "灾变"
+  "wizardreal.subtitle.impact.dragon_slave": "灾变",
+  "spell.wizardreal:unda.name": "水弹",
+  "spell.wizardreal:saxum.name": "石矛",
+  "spell.wizardreal:spina.name": "荆棘种",
+  "spell.wizardreal:sagitta.name": "圣光矢",
+  "spell.wizardreal:ossum.name": "骨矛",
+  "spell.wizardreal:telum.name": "奥术矢",
+  "spell.wizardreal:falsum.name": "幻弹",
+  "spell.wizardreal:fulgur.name": "雷蓄",
+  "spell.wizardreal:sanare.name": "净化",
+  "spell.wizardreal:velum.name": "隐幕"
 }

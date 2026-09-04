@@ -14,7 +14,6 @@
   "spell.wizardreal:arcanum.name": "Arcanum",
   "spell.wizardreal:semina.name": "Semina",
   "spell.wizardreal:umbra.name": "Umbra",
-
   "wizardreal.cast.success": "Cast: %s",
   "wizardreal.cast.cooldown": "Cooling down... %ss left",
   "wizardreal.cast.canceled": "The spell fizzles",
@@ -23,12 +22,9 @@
   "wizardreal.cast.wrong_origin": "Your staff cannot channel %s magic",
   "wizardreal.cast.wrong_school": "Staff mismatch: this school of magic costs more mana",
   "wizardreal.cast.unknown_spell": "You have not learned this spell yet",
-
   "wizardreal.heard.unknown": "Heard: \"%s\" — no spell matched",
   "wizardreal.heard.matched": "Casting %s...",
-
   "wizardreal.hud.mana": "Mana: %s/%s",
-
   "wizardreal.chant.prompt": "Chant the first line...",
   "wizardreal.chant.retry": "✗ Repeat this line",
   "wizardreal.chant.interrupted": "✦ The chant wavers — repeat the line",
@@ -36,7 +32,6 @@
   "wizardreal.chant.skip_locked": "Not mastered enough to skip the chant",
   "wizardreal.chant.weak_skip": "Skip-cast! Chant skipped (reduced power)",
   "wizardreal.learning.not_ready": "Not mastered yet (%s%%) — study the tome or practice the chant",
-
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",
   "wizardreal.chant.explosion.en.l3": "Explosion!",
@@ -46,7 +41,6 @@
   "wizardreal.chant.explosion.ja.l1": "漆黒が 空を つつみ",
   "wizardreal.chant.explosion.ja.l2": "紅の 雷 を おこせ",
   "wizardreal.chant.explosion.ja.l3": "エクスプロージョン！",
-
   "wizardreal.chant.tempest.en.l1": "Storm above",
   "wizardreal.chant.tempest.en.l2": "Strike them down",
   "wizardreal.chant.tempest.en.l3": "Tempest!",
@@ -56,7 +50,6 @@
   "wizardreal.chant.tempest.ja.l1": "天に 雷光集いて",
   "wizardreal.chant.tempest.ja.l2": "落ちろ",
   "wizardreal.chant.tempest.ja.l3": "嵐！",
-
   "wizardreal.chant.mare.en.l1": "Rising tide",
   "wizardreal.chant.mare.en.l2": "Sweep them away",
   "wizardreal.chant.mare.en.l3": "Mare!",
@@ -66,7 +59,6 @@
   "wizardreal.chant.mare.ja.l1": "潮が 押し寄せる",
   "wizardreal.chant.mare.ja.l2": "流れ去れ",
   "wizardreal.chant.mare.ja.l3": "海！",
-
   "wizardreal.chant.gaia.en.l1": "Deep roots tremble",
   "wizardreal.chant.gaia.en.l2": "Shake the ground",
   "wizardreal.chant.gaia.en.l3": "Gaia!",
@@ -76,7 +68,6 @@
   "wizardreal.chant.gaia.ja.l1": "大地の 根より",
   "wizardreal.chant.gaia.ja.l2": "揺るげ",
   "wizardreal.chant.gaia.ja.l3": "ガイア！",
-
   "wizardreal.chant.ventus.en.l1": "Winds gather",
   "wizardreal.chant.ventus.en.l2": "Unleash the gale",
   "wizardreal.chant.ventus.en.l3": "Ventus!",
@@ -86,7 +77,6 @@
   "wizardreal.chant.ventus.ja.l1": "风が 塚る",
   "wizardreal.chant.ventus.ja.l2": "放か しろ",
   "wizardreal.chant.ventus.ja.l3": "狂风！",
-
   "wizardreal.chant.sanctus.en.l1": "Light descend",
   "wizardreal.chant.sanctus.en.l2": "Mend our wounds",
   "wizardreal.chant.sanctus.en.l3": "Sanctus!",
@@ -96,7 +86,6 @@
   "wizardreal.chant.sanctus.ja.l1": "光り 降りて",
   "wizardreal.chant.sanctus.ja.l2": "傷を 治せ",
   "wizardreal.chant.sanctus.ja.l3": "聖なる！",
-
   "wizardreal.chant.mortis.en.l1": "Shadows call",
   "wizardreal.chant.mortis.en.l2": "Wither and fade",
   "wizardreal.chant.mortis.en.l3": "Mortis!",
@@ -106,7 +95,6 @@
   "wizardreal.chant.mortis.ja.l1": "影が 囁く",
   "wizardreal.chant.mortis.ja.l2": "萎み 散れ",
   "wizardreal.chant.mortis.ja.l3": "モルティス！",
-
   "wizardreal.chant.arcanum.en.l1": "Weave the shield",
   "wizardreal.chant.arcanum.en.l2": "Hold the line",
   "wizardreal.chant.arcanum.en.l3": "Arcanum!",
@@ -116,7 +104,6 @@
   "wizardreal.chant.arcanum.ja.l1": "守りの 力を 績め",
   "wizardreal.chant.arcanum.ja.l2": "戦え",
   "wizardreal.chant.arcanum.ja.l3": "アルカナム！",
-
   "wizardreal.chant.semina.en.l1": "Seeds awaken",
   "wizardreal.chant.semina.en.l2": "Bloom and grow",
   "wizardreal.chant.semina.en.l3": "Semina!",
@@ -126,7 +113,6 @@
   "wizardreal.chant.semina.ja.l1": "種が 芽生える",
   "wizardreal.chant.semina.ja.l2": "花 開け",
   "wizardreal.chant.semina.ja.l3": "自然！",
-
   "wizardreal.chant.umbra.en.l1": "Veil of shadows",
   "wizardreal.chant.umbra.en.l2": "Walk unseen",
   "wizardreal.chant.umbra.en.l3": "Umbra!",
@@ -136,7 +122,6 @@
   "wizardreal.chant.umbra.ja.l1": "影の 幕を 降ろせ",
   "wizardreal.chant.umbra.ja.l2": "見えず 進め",
   "wizardreal.chant.umbra.ja.l3": "幻影！",
-
   "item.wizardreal.staff_apprentice": "Apprentice Staff",
   "item.wizardreal.staff_fire": "Fire Staff",
   "item.wizardreal.staff_lightning": "Lightning Staff",
@@ -148,7 +133,6 @@
   "item.wizardreal.spell_tome.blank": "Blank Spell Tome",
   "item.wizardreal.spell_tome.unknown": "Illegible Tome",
   "item.wizardreal.spell_tome.named": "Tome of %s",
-
   "wizardreal.tome.blank": "This tome is blank.",
   "wizardreal.tome.invalid": "This tome is corrupted.",
   "wizardreal.tome.already_known": "You already know %s.",
@@ -158,7 +142,6 @@
   "wizardreal.cmd.learning_set": "Learning %s for %s: %s%%",
   "wizardreal.cmd.invalid_amount": "Invalid amount '%s' (use a number for +/- points, or 'N%%' to set)",
   "wizardreal.cmd.spellinfo.difficulty": "Difficulty: %s (your mastery: %s)",
-
   "wizardreal.cmd.unknown_spell": "Unknown spell: %s",
   "wizardreal.cmd.learned": "Taught %s to %s",
   "wizardreal.cmd.unlearned": "Removed %s from %s",
@@ -199,7 +182,6 @@
   "wizardreal.cmd.common.no": "no",
   "wizardreal.cmd.common.na": "-",
   "wizardreal.cmd.common.default": "default",
-
   "school.fire": "Fire",
   "school.lightning": "Lightning",
   "school.water": "Water",
@@ -211,9 +193,7 @@
   "school.nature": "Nature",
   "school.illusion": "Illusion",
   "origin.wizardreal.wizardry": "Wizardry",
-
   "itemGroup.wizardreal.main": "WizardReal",
-
   "wizardreal.subtitle.cast.ignis": "Flames roar",
   "wizardreal.subtitle.cast.fulmen": "Lightning crackles",
   "wizardreal.subtitle.cast.vitae": "Holy chime",
@@ -238,5 +218,15 @@
   "wizardreal.subtitle.impact.ictus": "Energy zaps",
   "wizardreal.subtitle.impact.explosion": "Explosion",
   "wizardreal.subtitle.impact.excalibur": "Holy blast",
-  "wizardreal.subtitle.impact.dragon_slave": "Cataclysm"
+  "wizardreal.subtitle.impact.dragon_slave": "Cataclysm",
+  "spell.wizardreal:unda.name": "Water Orb",
+  "spell.wizardreal:saxum.name": "Stone Spear",
+  "spell.wizardreal:spina.name": "Thorn Seed",
+  "spell.wizardreal:sagitta.name": "Holy Arrow",
+  "spell.wizardreal:ossum.name": "Bone Spear",
+  "spell.wizardreal:telum.name": "Arcane Bolt",
+  "spell.wizardreal:falsum.name": "Phantom Bolt",
+  "spell.wizardreal:fulgur.name": "Storm Brand",
+  "spell.wizardreal:sanare.name": "Cleanse",
+  "spell.wizardreal:velum.name": "Veil"
 }

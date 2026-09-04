@@ -11,6 +11,7 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ### Changes
 
+- breaking: spell matrix batch-0 rewrite (07 x3): the legacy 15-spell set is replaced by the language-keyed batch-0 matrix (10 projectile spells ignis/unda/fulmen/saxum/ventus/spina/sagitta/ossum/telum/falsum, 4 utility spells fulgur/semina/sanare/velum, and the forbidden chant explosion redone as a 6-line chant with per-language variants); removed ids (aegis/arcanum/gaia/ictus/mare/mortis/sanctus/tempest/umbra/vitae) return in later batches - learning counters reset with the new ids, ko variants lag one batch by design (validator WARNs)
 - Wiki Server-FAQ updated for voicecast 0.3.2 (defer removal); docs/ref paths fixed
 - Spell effects now scale with cast power (chant tiers x learning): damage/heal/range/blast linear, status durations sub-linear (sqrt) with amplifier capped at +2, projectile counts scale — power comes from the chant tier and mastery; cosmetic sound/particle effects stay unscaled
 - Load-time spell validation report: near-identical first lines across ritual chains (L1 conflicts), forbidden-chant field group mistakes (difficulty >= 2 without requires_learning/skip_allowed=false), IPA coverage gaps, and a registered-count line in the reload log

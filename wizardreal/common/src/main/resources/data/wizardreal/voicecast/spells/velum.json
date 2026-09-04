@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:fulmen",
+  "id": "wizardreal:velum",
   "schools": [
-    "lightning"
+    "illusion"
   ],
   "mana_cost": 12,
-  "cooldown_ticks": 60,
+  "cooldown_ticks": 200,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "fulmen",
-        "lightning"
+        "velum",
+        "veil"
       ],
       "zh": [
-        "落雷",
-        "雷击"
+        "隐幕",
+        "匿影"
       ],
       "ja": [
-        "フルメン",
-        "カミナリ"
+        "ウェールム",
+        "カクレミノ"
       ],
       "ko": []
     },
@@ -29,12 +29,14 @@
   },
   "effects": [
     {
-      "type": "wizardreal:lightning",
-      "range": 48
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:invisibility",
+      "duration": 160,
+      "amplifier": 0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.lightning_bolt.thunder"
+      "sound": "minecraft:entity.enderman.teleport"
     }
   ]
 }

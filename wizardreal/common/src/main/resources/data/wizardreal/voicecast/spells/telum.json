@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:ignis",
+  "id": "wizardreal:telum",
   "schools": [
-    "fire"
+    "arcane"
   ],
-  "mana_cost": 8,
-  "cooldown_ticks": 40,
+  "mana_cost": 10,
+  "cooldown_ticks": 45,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ignis",
-        "fireball"
+        "telum",
+        "arcane bolt"
       ],
       "zh": [
-        "火球",
-        "烈焰弹"
+        "奥术矢",
+        "秘法弹"
       ],
       "ja": [
-        "イグニス",
-        "ファイアボール"
+        "テールム",
+        "ひほうだん"
       ],
       "ko": []
     },
@@ -30,12 +30,12 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:small_fireball",
-      "speed": 1.5
+      "entity": "minecraft:shulker_bullet",
+      "speed": 1.8
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.blaze.shoot"
+      "sound": "minecraft:entity.evoker.cast_spell"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
-  "id": "wizardreal:ventus",
+  "id": "wizardreal:unda",
   "schools": [
-    "air"
+    "water"
   ],
   "mana_cost": 8,
   "cooldown_ticks": 40,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ventus",
-        "wind blade"
+        "unda",
+        "water orb"
       ],
       "zh": [
-        "风刃",
-        "气刃"
+        "水弹",
+        "潮珠"
       ],
       "ja": [
-        "ウェンタス",
-        "カゼノヤイバ"
+        "ウンダ",
+        "みずだま"
       ],
       "ko": []
     },
@@ -31,17 +31,17 @@
     {
       "type": "wizardreal:projectile",
       "entity": "minecraft:snowball",
-      "speed": 2.2
+      "speed": 1.8
     },
     {
       "type": "wizardreal:knockback",
-      "range": 8,
+      "range": 5,
       "angle_cos": 0.5,
-      "power": 1.6
+      "power": 0.6
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.phantom.flap"
+      "sound": "minecraft:entity.generic.splash"
     }
   ]
 }

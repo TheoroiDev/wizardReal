@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:semina",
+  "id": "wizardreal:sanare",
   "schools": [
-    "nature"
+    "holy"
   ],
-  "mana_cost": 12,
-  "cooldown_ticks": 100,
+  "mana_cost": 14,
+  "cooldown_ticks": 120,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "semina",
-        "green bounty"
+        "sanare",
+        "cleanse"
       ],
       "zh": [
-        "丰收",
-        "丰穰祝福"
+        "净化",
+        "圣愈"
       ],
       "ja": [
-        "セミナ",
-        "ホウジョウ"
+        "サナーレ",
+        "セイジョ"
       ],
       "ko": []
     },
@@ -30,17 +30,17 @@
   "effects": [
     {
       "type": "wizardreal:heal",
-      "amount": 6
+      "amount": 8
     },
     {
       "type": "wizardreal:status_effect",
-      "effect": "minecraft:regeneration",
+      "effect": "minecraft:absorption",
       "duration": 200,
       "amplifier": 1
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:block.composter.fill"
+      "sound": "minecraft:block.beacon.power_select"
     }
   ]
 }

@@ -1,10 +1,10 @@
 {
-  "id": "wizardreal:ignis",
+  "id": "wizardreal:ossum",
   "schools": [
-    "fire"
+    "necromancy"
   ],
-  "mana_cost": 8,
-  "cooldown_ticks": 40,
+  "mana_cost": 11,
+  "cooldown_ticks": 55,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -12,16 +12,16 @@
   "trigger": {
     "languages": {
       "en": [
-        "ignis",
-        "fireball"
+        "ossum",
+        "bone spear"
       ],
       "zh": [
-        "火球",
-        "烈焰弹"
+        "骨矛",
+        "白骨弹"
       ],
       "ja": [
-        "イグニス",
-        "ファイアボール"
+        "オッスム",
+        "ほねやり"
       ],
       "ko": []
     },
@@ -30,12 +30,12 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:small_fireball",
-      "speed": 1.5
+      "entity": "minecraft:wither_skull",
+      "speed": 1.2
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.blaze.shoot"
+      "sound": "minecraft:entity.wither_skeleton.ambient"
     }
   ]
 }

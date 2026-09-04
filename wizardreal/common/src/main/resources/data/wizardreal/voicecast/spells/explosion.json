@@ -1,143 +1,229 @@
 {
   "id": "wizardreal:explosion",
   "schools": [
-    "fire"
+    "arcane"
   ],
-  "mana_cost": 50,
-  "cooldown_ticks": 200,
+  "mana_cost": 60,
+  "cooldown_ticks": 1200,
   "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 2.5,
   "trigger": {
-    "aliases": [
-      "explosion",
-      "explode",
-      "burst",
-      "爆裂"
-    ],
-    "ipa": [
-      "ɪkˈsploʊʒən",
-      "pəʊ ljɛ"
-    ]
+    "languages": {
+      "en": [
+        "explosion"
+      ],
+      "zh": [
+        "爆裂"
+      ],
+      "ja": [
+        "エクスプロージョン"
+      ],
+      "ko": []
+    },
+    "ipa": []
   },
-  "chants": [
-    {
-      "lines": [
-        {
-          "display_key": "wizardreal.chant.explosion.en.l1",
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
           "aliases": [
-            "cloak the sky in black"
-          ],
-          "ipa": [
-            "kloʊk ðə skaɪ ɪn blak"
+            "blackest ire, crown of the end"
           ]
         },
-        {
-          "display_key": "wizardreal.chant.explosion.en.l2",
-          "aliases": [
-            "wake the crimson thunder"
-          ],
-          "ipa": [
-            "wɛɪk ðə kɾɪmzən ˈθʌndəɹ"
-          ]
-        },
-        {
-          "display_key": "wizardreal.chant.explosion.en.l3",
+        "cast": {
           "aliases": [
             "explosion"
-          ],
-          "ipa": [
-            "ɪkˈsploʊʒən"
-          ]
-        }
-      ]
-    },
-    {
-      "lines": [
-        {
-          "display_key": "wizardreal.chant.explosion.zh.l1",
-          "aliases": [
-            "以漆黑遮蔽苍穹",
-            "yi qihei zhebi cangqiong"
-          ],
-          "ipa": [
-            "i tɕʰi xɛɪ ʈʂə pʰɪ tɕʰjʊŋ"
           ]
         },
-        {
-          "display_key": "wizardreal.chant.explosion.zh.l2",
-          "aliases": [
-            "唤醒绯红之雷",
-            "huanxing feihong zhi lei"
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the earth split wide"
+              ]
+            },
+            {
+              "aliases": [
+                "let the heavens bend low"
+              ]
+            },
+            {
+              "aliases": [
+                "sealed in ruin's name"
+              ]
+            },
+            {
+              "aliases": [
+                "unmake all that stands"
+              ]
+            }
           ],
-          "ipa": [
-            "xwan ɕɪŋ fɛɪ xʊŋ ʈʂɨ lɛɪ"
+          [
+            {
+              "aliases": [
+                "ashes wake, the sky ignites"
+              ]
+            },
+            {
+              "aliases": [
+                "the bell of doom is rung"
+              ]
+            },
+            {
+              "aliases": [
+                "fire without mercy"
+              ]
+            },
+            {
+              "aliases": [
+                "kneel, o towering walls"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以漆黑遮蔽苍穹"
           ]
         },
-        {
-          "display_key": "wizardreal.chant.explosion.zh.l3",
+        "cast": {
           "aliases": [
-            "爆裂",
-            "baolie"
-          ],
-          "ipa": [
-            "pɑʊ ljɛ"
-          ]
-        }
-      ]
-    },
-    {
-      "lines": [
-        {
-          "display_key": "wizardreal.chant.explosion.ja.l1",
-          "aliases": [
-            "shikkoku ga sora wo tsutsumi"
-          ],
-          "ipa": [
-            "ɕikːokɯ ga soɾa wo tsɯtsɯmi"
+            "爆裂"
           ]
         },
-        {
-          "display_key": "wizardreal.chant.explosion.ja.l2",
-          "aliases": [
-            "kurenai no ikazuchi wo okose"
+        "body": [
+          [
+            {
+              "aliases": [
+                "唤醒赤红雷霆"
+              ]
+            },
+            {
+              "aliases": [
+                "大地为之崩裂"
+              ]
+            },
+            {
+              "aliases": [
+                "苍穹为之低头"
+              ]
+            },
+            {
+              "aliases": [
+                "以毁灭之名封印"
+              ]
+            }
           ],
-          "ipa": [
-            "kɯɾɛnai no ikazɯtɕi wo okosɛ"
+          [
+            {
+              "aliases": [
+                "灰烬苏醒天穹燃"
+              ]
+            },
+            {
+              "aliases": [
+                "厄运之钟敲响"
+              ]
+            },
+            {
+              "aliases": [
+                "无慈之炎奔流"
+              ]
+            },
+            {
+              "aliases": [
+                "高墙跪伏尘埃"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "闇をもって天を覆え"
           ]
         },
-        {
-          "display_key": "wizardreal.chant.explosion.ja.l3",
+        "cast": {
           "aliases": [
-            "ekusupuroojon"
-          ],
-          "ipa": [
-            "ɛkɯsɯpɾodʑoːn"
+            "エクスプロージョン"
           ]
-        }
-      ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "紅蓮の雷を目覚めさせよ"
+              ]
+            },
+            {
+              "aliases": [
+                "大地よ割れ開け"
+              ]
+            },
+            {
+              "aliases": [
+                "天よかしこめ"
+              ]
+            },
+            {
+              "aliases": [
+                "破滅の名のもとに封ぜよ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "灰は目覚め空は燃える"
+              ]
+            },
+            {
+              "aliases": [
+                "厄の鐘が鳴る"
+              ]
+            },
+            {
+              "aliases": [
+                "慈悲なき炎よ流れよ"
+              ]
+            },
+            {
+              "aliases": [
+                "高き壁よひざせ"
+              ]
+            }
+          ]
+        ]
+      }
     }
-  ],
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "skip_allowed": false,
+    "interruptible": false
+  },
   "effects": [
     {
-      "type": "wizardreal:lightning",
-      "range": 32.0
-    },
-    {
       "type": "wizardreal:explosion",
-      "range": 32.0,
-      "power": 6.0,
+      "range": 16,
+      "power": 4,
       "set_fire": true
     },
     {
       "type": "wizardreal:sound",
-      "sound": "wizardreal:cast.explosion",
-      "volume": 1.0,
-      "pitch": 1.0
-    },
-    {
-      "type": "wizardreal:sound",
-      "sound": "wizardreal:impact.explosion",
-      "volume": 1.0,
-      "pitch": 1.0
+      "sound": "minecraft:entity.generic.explode"
     }
   ]
 }
