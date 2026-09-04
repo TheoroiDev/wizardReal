@@ -20,6 +20,6 @@ public record HealEffect(float amount) implements SpellEffect {
 
     @Override
     public void apply(CastContext ctx) {
-        ctx.caster().heal(amount);
+        ctx.caster().heal(EffectPower.linear(ctx, amount));
     }
 }

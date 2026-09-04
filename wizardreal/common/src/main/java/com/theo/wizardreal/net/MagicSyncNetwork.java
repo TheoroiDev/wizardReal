@@ -36,12 +36,20 @@ public final class MagicSyncNetwork {
             for (int i = 0; i < cdCount; i++) {
                 cooldowns.put(buf.readUtf(64), buf.readVarInt());
             }
-            ctx.queue(() -> MagicClientState.apply(mana, maxMana, cooldowns));
+            // 0.4.0 learning section (D-D2): stored mastery percentages only —
+            // absent spells sit at the client-side 10% baseline.
+            int learningCount = buf.readVarInt();
+            Map<String, Float> learning = new HashMap<>();
+            for (int i = 0; i < learningCount; i++) {
+                learning.put(buf.readUtf(128), buf.readFloat());
+            }
+            ctx.queue(() -> MagicClientState.apply(mana, maxMana, cooldowns, learning));
         });
     }
 
     public static void sendFull(ServerPlayer player, float mana, float maxMana,
-                                 Map<String, Long> cooldownEnds, long worldTime) {
+                                 Map<String, Long> cooldownEnds, long worldTime,
+                                 Map<String, Float> learningPercents) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeFloat(mana);
         buf.writeFloat(maxMana);
@@ -50,6 +58,11 @@ public final class MagicSyncNetwork {
             buf.writeUtf(e.getKey());
             long remaining = Math.max(0, e.getValue() - worldTime);
             buf.writeVarInt((int) remaining);
+        }
+        buf.writeVarInt(learningPercents.size());
+        for (Map.Entry<String, Float> e : learningPercents.entrySet()) {
+            buf.writeUtf(e.getKey(), 128);
+            buf.writeFloat(e.getValue());
         }
         NetworkManager.sendToPlayer(player, CHANNEL, buf);
     }

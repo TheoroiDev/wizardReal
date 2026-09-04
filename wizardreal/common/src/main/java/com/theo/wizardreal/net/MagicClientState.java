@@ -16,11 +16,14 @@ public final class MagicClientState {
     public static volatile float maxMana = 200f;
     /** spell id -> client time (ms) when cooldown ends */
     private static final Map<String, Long> cooldowns = new ConcurrentHashMap<>();
+    /** spell id -> mastery percent (0.4.0 learning sync; absent spells sit at the 10% baseline) */
+    private static final Map<String, Float> learning = new ConcurrentHashMap<>();
 
     private MagicClientState() {}
 
     /** Apply a full sync. Must be called on the client main thread. */
-    public static void apply(float newMana, float newMaxMana, Map<String, Integer> remainingTicksBySpell) {
+    public static void apply(float newMana, float newMaxMana, Map<String, Integer> remainingTicksBySpell,
+                             Map<String, Float> learningPercents) {
         mana = newMana;
         maxMana = newMaxMana;
         long now = System.currentTimeMillis();
@@ -28,6 +31,14 @@ public final class MagicClientState {
         for (Map.Entry<String, Integer> e : remainingTicksBySpell.entrySet()) {
             cooldowns.put(e.getKey(), now + e.getValue() * 50L);
         }
+        learning.clear();
+        learning.putAll(learningPercents);
+    }
+
+    /** Mastery percent for the HUD; absent spells read as the 10% baseline. */
+    public static float learningPercent(String spellId) {
+        Float t = learning.get(spellId);
+        return t == null ? 10f : t;
     }
 
     /** Snapshot of active cooldowns (spell id -> end ms) for HUD rendering. */

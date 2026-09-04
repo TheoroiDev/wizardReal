@@ -29,15 +29,15 @@ public record ExplosionEffect(double range, float power, boolean setFire) implem
 
     @Override
     public void apply(CastContext ctx) {
-        HitResult hit = ctx.caster().pick(range, 1.0f, false);
+        HitResult hit = ctx.caster().pick(EffectPower.linear(ctx, range), 1.0f, false);
         Vec3 pos;
         if (hit instanceof BlockHitResult && hit.getType() == HitResult.Type.BLOCK) {
             pos = hit.getLocation();
         } else {
-            pos = ctx.origin().add(ctx.lookDir().scale(range));
+            pos = ctx.origin().add(ctx.lookDir().scale(EffectPower.linear(ctx, range)));
         }
         Level world = ctx.caster().level();
-        world.explode(ctx.caster(), pos.x, pos.y, pos.z, power, setFire,
+        world.explode(ctx.caster(), pos.x, pos.y, pos.z, EffectPower.linear(ctx, power), setFire,
                 Level.ExplosionInteraction.MOB);
     }
 }

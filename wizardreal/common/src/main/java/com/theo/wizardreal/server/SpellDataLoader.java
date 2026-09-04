@@ -112,7 +112,12 @@ public final class SpellDataLoader {
         // Catalog publication point: the registry was rebuilt (ids may have
         // changed), so every online player's snapshot is stale.
         SpellCatalogService.publishAll();
-        WizardReal.LOGGER.info("Spell registry reloaded: {} builtin + {} datapack ({} files parsed)",
-                builtin, SpellRegistry.all().size() - builtin, loaded.size());
+        // Load-time validation report (L1 conflicts / forbidden group / IPA gaps).
+        for (String warning : SpellLoadValidator.validate(SpellRegistry.all())) {
+            WizardReal.LOGGER.warn("[spell-validate] {}", warning);
+        }
+        WizardReal.LOGGER.info("Spell registry reloaded: {} builtin + {} datapack ({} files parsed, expected {})",
+                builtin, SpellRegistry.all().size() - builtin, loaded.size(),
+                builtin + loaded.size());
     }
 }

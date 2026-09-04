@@ -1,5 +1,7 @@
 package com.theo.wizardreal.client;
 
+import com.theo.wizardreal.net.MagicClientState;
+
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -43,10 +45,14 @@ public final class ChantHud {
         int crossX = screenW / 2 + X_OFFSET;
         int crossY = screenH / 2;
 
-        // Title: spell name. spellId already carries its namespace (e.g.
-        // "wizardreal:explosion"); lang keys are "spell.<id>.name".
+        // Title: spell name + mastery percent (0.4.0 learning sync). spellId
+        // already carries its namespace; lang keys are "spell.<id>.name".
+        float mastery = MagicClientState.learningPercent(state.spellId);
         Component title = Component.translatable("spell." + state.spellId + ".name")
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
+                .copy()
+                .append(Component.literal(String.format("  %.0f%%", mastery))
+                        .withStyle(mastery >= 100f ? ChatFormatting.GREEN : ChatFormatting.GRAY));
         if (lines == null) {
             // no chant variant loaded (shouldn't normally happen)
             ctx.drawString(tr, title, crossX, crossY - 14, 0xFFFFFF);

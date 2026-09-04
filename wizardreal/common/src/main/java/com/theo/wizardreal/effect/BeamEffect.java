@@ -33,8 +33,9 @@ public record BeamEffect(double range, double width, float damage, boolean setFi
 
     @Override
     public void apply(CastContext ctx) {
+        double scaledRange = EffectPower.linear(ctx, range);
         Vec3 from = ctx.origin();
-        Vec3 to = from.add(ctx.lookDir().scale(range));
+        Vec3 to = from.add(ctx.lookDir().scale(scaledRange));
         // Corridor approximation: entities intersecting the segment's box
         // (expanded by half the beam width). Good enough for the basic set.
         AABB corridor = new AABB(from, to).inflate(width * 0.5);
@@ -42,9 +43,9 @@ public record BeamEffect(double range, double width, float damage, boolean setFi
         List<net.minecraft.world.entity.Entity> targets = world.getEntities(
                 ctx.caster(), corridor, e -> e.isAlive());
         for (net.minecraft.world.entity.Entity e : targets) {
-            e.hurt(world.damageSources().playerAttack(ctx.caster()), damage);
+            e.hurt(world.damageSources().playerAttack(ctx.caster()), EffectPower.linear(ctx, damage));
             if (setFire) {
-                e.setSecondsOnFire((int) fireSeconds);
+                e.setSecondsOnFire(EffectPower.duration(ctx, (int) fireSeconds));
             }
         }
     }

@@ -29,12 +29,12 @@ public record LightningEffect(double range) implements SpellEffect {
 
     @Override
     public void apply(CastContext ctx) {
-        HitResult hit = ctx.caster().pick(range, 1.0f, false);
+        HitResult hit = ctx.caster().pick(EffectPower.linear(ctx, range), 1.0f, false);
         Vec3 pos;
         if (hit instanceof BlockHitResult && hit.getType() == HitResult.Type.BLOCK) {
             pos = hit.getLocation();
         } else {
-            pos = ctx.origin().add(ctx.lookDir().scale(range));
+            pos = ctx.origin().add(ctx.lookDir().scale(EffectPower.linear(ctx, range)));
         }
         ServerLevel world = (ServerLevel) ctx.caster().level();
         LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, world);

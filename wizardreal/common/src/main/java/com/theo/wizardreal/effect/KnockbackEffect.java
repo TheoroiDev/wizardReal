@@ -29,10 +29,11 @@ public record KnockbackEffect(double range, double angleCos, double power) imple
     public void apply(CastContext ctx) {
         Vec3 origin = ctx.origin();
         Vec3 look = ctx.lookDir();
+        double scaledRange = EffectPower.linear(ctx, range);
         List<Entity> targets = ctx.caster().level().getEntities(
                 ctx.caster(),
-                ctx.caster().getBoundingBox().inflate(range),
-                e -> e.isAlive() && e.distanceToSqr(ctx.caster()) <= range * range);
+                ctx.caster().getBoundingBox().inflate(scaledRange),
+                e -> e.isAlive() && e.distanceToSqr(ctx.caster()) <= scaledRange * scaledRange);
         for (Entity e : targets) {
             Vec3 to = e.position().add(0, e.getBbHeight() * 0.5, 0).subtract(origin).normalize();
             if (to.dot(look) < angleCos) continue;

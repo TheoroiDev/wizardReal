@@ -29,6 +29,7 @@ public record StatusEffectEffect(MobEffect effect, int duration, int amplifier) 
     @Override
     public void apply(CastContext ctx) {
         ctx.caster().addEffect(
-                new MobEffectInstance(effect, duration, amplifier, true, true, true));
+                new MobEffectInstance(effect, EffectPower.duration(ctx, duration),
+                        EffectPower.amplifierBonus(ctx, amplifier), true, true, true));
     }
 }

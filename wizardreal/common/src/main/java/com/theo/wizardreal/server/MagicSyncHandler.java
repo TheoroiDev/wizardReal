@@ -1,6 +1,7 @@
 package com.theo.wizardreal.server;
 
 import com.theo.wizardreal.WizardReal;
+import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.net.MagicSyncNetwork;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
@@ -46,6 +47,14 @@ public final class MagicSyncHandler {
         UUID uuid = player.getUUID();
         long worldTime = player.getServer().overworld().getGameTime();
         Map<String, Long> cds = state.getCooldowns(uuid);
-        MagicSyncNetwork.sendFull(player, state.getMana(uuid), state.getMaxMana(uuid), cds, worldTime);
+        // Learning sync (0.4.0 D-D2): stored mastery percentages only (small —
+        // spells at the 10% baseline are never stored).
+        Map<String, Float> learning = new java.util.HashMap<>();
+        for (Map.Entry<String, Float> e : state.learningSnapshot(uuid).entrySet()) {
+            Spell spell = com.theo.wizardreal.api.SpellRegistry.get(e.getKey()).orElse(null);
+            float difficulty = spell == null ? 1.0f : spell.difficulty();
+            learning.put(e.getKey(), e.getValue() / Math.max(0.01f, difficulty));
+        }
+        MagicSyncNetwork.sendFull(player, state.getMana(uuid), state.getMaxMana(uuid), cds, worldTime, learning);
     }
 }

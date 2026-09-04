@@ -40,7 +40,7 @@ public record ProjectileEffect(EntityType<?> entity, float speed, int count, flo
         Vec3 eye = ctx.origin();
         Vec3 look = ctx.lookDir();
         RandomSource random = ctx.caster().getRandom();
-        for (int i = 0; i < Math.max(1, count); i++) {
+        for (int i = 0; i < EffectPower.count(ctx, count); i++) {
             Vec3 dir = look;
             if (spread > 0) {
                 dir = look.add(
