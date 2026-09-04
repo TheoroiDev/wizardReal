@@ -1,0 +1,17 @@
+{
+  "id": "wizardreal:bench_sample",
+  "schools": ["arcane"],
+  "mana_cost": 10,
+  "cooldown_ticks": 40,
+  "trigger": {
+    "languages": {
+      "en": ["ignis", "firebolt"],
+      "zh": ["火球", "烈焰"],
+      "ja": ["イグニス", "ファイア"]
+    },
+    "ipa": []
+  },
+  "effects": [
+    { "type": "wizardreal:sound", "sound": "minecraft:entity.blaze.shoot" }
+  ]
+}
