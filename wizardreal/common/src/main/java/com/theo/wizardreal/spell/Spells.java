@@ -3,9 +3,11 @@ package com.theo.wizardreal.spell;
 /**
  * Built-in Java spells. As of M6 every shipped spell is defined as datapack
  * JSON ({@code data/wizardreal/voicecast/spells/*.json}) composed from the
- * effect primitives in {@code com.theo.wizardreal.effect} — see
- * {@code docs/spell_json.md} (workspace-root docs/). This hook stays for future built-ins that need
- * bespoke Java logic; datapack definitions with the same id override them.
+ * effect primitives in {@code com.theo.wizardreal.effect} — schema source of
+ * truth: {@code schema/spell.schema.json} (repo root) + {@link SpellDefinition#CODEC};
+ * field docs: {@code docs/spells/spell_json.md} (workspace-root docs/). This hook stays for
+ * future built-ins that need bespoke Java logic; datapack definitions with the same id
+ * override them.
  */
 public final class Spells {
 

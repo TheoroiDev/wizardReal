@@ -297,7 +297,7 @@ public final class WizardRealCommands {
                     final int variant = v + 1;
                     final int index = i + 1;
                     source.sendSuccess(() -> Component.translatable("wizardreal.cmd.spellinfo.chantline",
-                            variant, index, Component.translatable(line.displayKey())), false);
+                            variant, index, Component.literal(line.displayText())), false);
                 }
             }
         }

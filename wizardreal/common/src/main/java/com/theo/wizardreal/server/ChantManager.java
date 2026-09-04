@@ -73,7 +73,7 @@ public final class ChantManager {
         List<List<String>> variantLines = new ArrayList<>();
         for (Chant c : spell.chants()) {
             List<String> keys = new ArrayList<>();
-            for (ChantLine line : c.lines()) keys.add(line.displayKey());
+            for (ChantLine line : c.lines()) keys.add(line.displayText());
             variantLines.add(keys);
         }
         ChantNetwork.sendStart(player, spell.id(), variantLines);

@@ -31,7 +31,7 @@ public final class SpellCatalogBuilder {
                     .map(school -> school.name().toLowerCase(Locale.ROOT)).toList();
             List<List<String>> chants = new ArrayList<>();
             for (var chant : spell.chants()) {
-                chants.add(chant.lines().stream().map(ChantLine::displayKey).toList());
+                chants.add(chant.lines().stream().map(ChantLine::displayText).toList());
             }
             var pronunciation = spell.pronunciation();
             var entry = new CatalogPayload.CatalogSpell(

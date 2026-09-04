@@ -4,7 +4,7 @@
 
 > [← 返回管理员目录](Home-zh.md) · 上一篇：[性能与容量（VoiceCast wiki）](https://github.com/TheoroiDev/voiceCast/wiki/Performance) · 下一篇：[服务器 FAQ](Server-FAQ-zh)
 
-法术是**数据包驱动**的：不需要写 Java 代码，往数据包里加 JSON 就能新增或覆盖法术。完整 schema 与效果参数表随模组内部文档提供，本页给管理员最小可用流程。
+法术是**数据包驱动**的：不需要写 Java 代码，往数据包里加 JSON 就能新增或覆盖法术。schema 现状的权威是仓库根 `schema/spell.schema.json`（与 `SpellDefinition.CODEC` 对齐，可用于编辑器校验），本页给管理员最小可用流程。
 
 ## 放置位置
 
@@ -22,20 +22,22 @@
   "mana_cost": 15,
   "cooldown_ticks": 100,
   "schools": ["earth"],
-  "aliases": ["petra", "stone", "岩石"],
-  "ipa": ["ˈpɛtɹə", "ʃan˥˩ tʂɤ"],
+  "trigger": {
+    "aliases": ["petra", "stone", "岩石"],
+    "ipa": ["ˈpɛtɹə", "ʃan˥˩ tʂɤ"]
+  },
   "effects": [
-    { "type": "sound", "sound": "minecraft:block.stone.break", "volume": 1.0, "pitch": 0.8 },
-    { "type": "knockback", "range": 4.0, "angle_cos": 0.5, "power": 0.8 }
+    { "type": "wizardreal:sound", "sound": "minecraft:block.stone.break", "volume": 1.0, "pitch": 0.8 },
+    { "type": "wizardreal:knockback", "range": 4.0, "angle_cos": 0.5, "power": 0.8 }
   ]
 }
 ```
 
-- **显示名**来自语言文件键 `spell.<id>.name`——JSON 中不写 `name` 字段（未知字段会被忽略）；
+- **显示名**来自语言文件键 `spell.<id>.name`——JSON 中不写 `name` 字段（运行时忽略未知键，但 JSON Schema 会拒绝——typo 防护）；
 - `id`：命名空间 id（同名 id 会**覆盖内置法术**，含内置数据包条目）；
-- `aliases`：**触发词**（多个同义），`ipa` 是 IPA 引擎的发音模板——中文触发词建议同时给拼音模板；
+- `trigger.aliases`：**触发词**（多个同义），`trigger.ipa` 是 IPA 引擎的发音模板——中文触发词建议同时给拼音模板；
 - `mana_cost` 默认 10、`cooldown_ticks` 默认 40、`requires_learning` 默认 false、`origin` 默认 `wizardreal:wizardry`；
-- `effects` 按顺序执行，可用类型：`projectile` / `lightning` / `heal` / `status_effect` / `knockback` / `explosion` / `beam` / `sound` / `particles`（参数见 spell_json.md）。
+- `effects` 按顺序执行，可用类型（完整 id）：`wizardreal:projectile` / `wizardreal:lightning` / `wizardreal:heal` / `wizardreal:status_effect` / `wizardreal:knockback` / `wizardreal:explosion` / `wizardreal:beam` / `wizardreal:sound` / `wizardreal:particles`（参数见仓库根 `schema/spell.schema.json`）。
 
 ## 仪式法术（逐句咏唱）
 
@@ -43,15 +45,15 @@
 
 ```json
 "chants": [
-  [
+  { "lines": [
     { "display_key": "myspells.chant.petra.zh.l1", "aliases": ["岩石低语"], "ipa": ["jaŋ ʂɤ ti ju˥"] },
     { "display_key": "myspells.chant.petra.zh.l2", "aliases": ["大地回应"], "ipa": ["ta ti xuɪ ɪŋ"] },
     { "display_key": "myspells.chant.petra.zh.l3", "aliases": ["petra", "岩石"], "ipa": ["ˈpɛtɹə"] }
-  ]
+  ] }
 ]
 ```
 
-- 每个法术可给多组 `chants`（变体），**第一句锁定**使用哪个变体；
+- 每个法术可给多组 `chants`（变体），念出某变体的**第一句（L1）即锁定**该变体；
 - `display_key` 需要在语言文件中提供翻译（`assets/<ns>/lang/zh_cn.json` 等），HUD 按玩家游戏语言显示；
 - 最后一句建议就是触发词（与内置法术一致的体验）。
 

@@ -50,14 +50,21 @@
     },
     "trigger": {
       "type": "object",
-      "required": ["aliases"],
       "additionalProperties": false,
+      "anyOf": [ { "required": ["aliases"] }, { "required": ["languages"] } ],
       "properties": {
         "aliases": {
           "type": "array",
           "minItems": 1,
           "items": { "type": "string" },
-          "description": "Text recognition vocabulary. Flat multilingual list (en words + pinyin/romaji); only entries matching the loaded engine's language are recognized via text path. Do not pile synonyms: larger grammar = more confusion."
+          "description": "Legacy flat multilingual list (0.3.x compat): entries form the legacy bucket routed into every engine's grammar. Omit when languages is provided."
+        },
+        "languages": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-z]{2}$" },
+          "additionalProperties": { "type": "array", "items": { "type": "string" } },
+          "description": "0.4.0 language buckets keyed by two-letter codes (en/zh/ja/ko). The player's selected engine decides which bucket reaches their recognizer; aliases[0] of a bucket is that language's primary word."
         },
         "ipa": {
           "type": "array",
@@ -67,9 +74,15 @@
       }
     },
     "chants": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/chant" },
-      "description": "Ritual chant variants. Non-empty = ritual spell: speaking the trigger word enters the chant, then every line must be spoken in order before casting. First matched line locks the variant."
+      "oneOf": [
+        { "$ref": "#/$defs/languageKeyedChants" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/chant" },
+          "description": "Legacy variant array (0.3.x compat; retires with the spell-matrix rewrite)."
+        }
+      ],
+      "description": "Ritual chant variants. Non-empty = ritual spell. In the 0.4.0 language-keyed shape each language declares a fixed trigger (first line / L1 entry gate) and cast (spell-name release line), plus body variants (two per language expected)."
     },
     "effects": {
       "type": "array",
@@ -96,6 +109,59 @@
       "type": "string",
       "pattern": "^[a-z0-9_.-]+:[a-z0-9_./-]+$"
     },
+    "languageKeyedChants": {
+      "type": "object",
+      "required": ["languages"],
+      "additionalProperties": false,
+      "properties": {
+        "languages": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-z]{2}$" },
+          "additionalProperties": { "$ref": "#/$defs/langChant" }
+        }
+      }
+    },
+    "langChant": {
+      "type": "object",
+      "required": ["trigger", "cast"],
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "$ref": "#/$defs/lineMeta",
+          "description": "First line (L1) — the idle-state entry gate; fixed per language across all variants."
+        },
+        "cast": {
+          "$ref": "#/$defs/lineMeta",
+          "description": "Last line — the spell-name release line (early-release anchor); fixed per language across all variants."
+        },
+        "body": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/lineMeta" }
+          },
+          "description": "Variant middle lines: one element per variant (an ordered list of middle lines); two variants per language are expected."
+        }
+      }
+    },
+    "lineMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Text recognition metadata for this line; aliases[0] is the text displayed on the HUD."
+        },
+        "ipa": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IPA templates for this line (ipa-phonemes engine)."
+        }
+      }
+    },
     "chant": {
       "type": "object",
       "required": ["lines"],
@@ -120,7 +186,7 @@
         "aliases": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Text recognition metadata for this line; the first line spoken locks the variant."
+          "description": "Text recognition metadata for this line; a variant locks in when its first line (L1, index 0) is spoken."
         },
         "ipa": {
           "type": "array",
@@ -248,16 +314,18 @@
       "origin": "wizardreal:wizardry",
       "threshold": -1.0,
       "trigger": {
-        "aliases": ["ignis", "fire", "flame", "火球"],
-        "ipa": ["ˈɪɡnɪs"]
+        "languages": { "en": ["ignis", "fire"], "zh": ["火球"], "ja": ["イグニス"], "ko": [] },
+        "ipa": []
       },
-      "chants": [
-        {
-          "lines": [
-            { "display_key": "wizardreal.chant.example.l1", "aliases": ["line one"], "ipa": [] }
-          ]
+      "chants": {
+        "languages": {
+          "en": {
+            "trigger": { "aliases": ["o flame"] },
+            "cast": { "aliases": ["ignis"] },
+            "body": [ [ { "aliases": ["variant-a mid"] } ], [ { "aliases": ["variant-b mid"] } ] ]
+          }
         }
-      ],
+      },
       "effects": [
         { "type": "wizardreal:projectile", "entity": "minecraft:small_fireball", "speed": 1.5 },
         { "type": "wizardreal:sound", "sound": "minecraft:entity.blaze.shoot", "volume": 1.0, "pitch": 1.2 }
