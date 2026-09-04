@@ -31,6 +31,9 @@
 
   "wizardreal.chant.prompt": "Chant the first line...",
   "wizardreal.chant.retry": "✗ Repeat this line",
+  "wizardreal.chant.interrupted": "✦ The chant wavers — repeat the line",
+  "wizardreal.chant.blind": "✦ The chant backfires — darkness swallows you",
+  "wizardreal.chant.skip_locked": "Not mastered enough to skip the chant",
 
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",

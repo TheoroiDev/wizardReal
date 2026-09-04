@@ -84,6 +84,38 @@
       ],
       "description": "Ritual chant variants. Non-empty = ritual spell. In the 0.4.0 language-keyed shape each language declares a fixed trigger (first line / L1 entry gate) and cast (spell-name release line), plus body variants (two per language expected)."
     },
+    "chant_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "0.4.0 chant tuning. Defaults: every completion at power 1.0, skipping allowed, interruptible, no pact.",
+      "properties": {
+        "power_per_line": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "description": "Power multiplier for the Nth completed line (index 0 = line 1); lines beyond the table clamp to the last entry. Empty/absent = 1.0 for every completion."
+        },
+        "skip_allowed": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the spell-name jump (mid-chant early release) and the idle skip-cast (learning-gated) are permitted. Forbidden chants set false."
+        },
+        "interruptible": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether damage may interrupt the chant (rolls back one line for 3+ line chants, fails shorter ones)."
+        },
+        "pact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["require"],
+          "properties": {
+            "require": { "const": "all_lines", "description": "Self-restriction: the full chant must be spoken." },
+            "power_multiplier": { "type": "number", "default": 1.5 }
+          },
+          "description": "Optional self-restriction multiplier."
+        }
+      }
+    },
     "effects": {
       "type": "array",
       "minItems": 1,

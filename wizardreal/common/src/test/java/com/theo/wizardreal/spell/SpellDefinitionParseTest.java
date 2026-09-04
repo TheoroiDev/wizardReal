@@ -136,4 +136,22 @@ class SpellDefinitionParseTest {
         assertEquals(1, chants.size());
         assertEquals(2, chants.get(0).lines().size());
     }
+
+    @Test
+    void chantPolicyParsesIntoDataSpell() {
+        SpellDefinition def = parse(HEAD + """
+                "trigger":{"aliases":["x"]},
+                "chant_policy":{"power_per_line":[0.5,0.75,1.0],"skip_allowed":false,
+                    "pact":{"require":"all_lines","power_multiplier":1.5}}
+                }""");
+        com.theo.wizardreal.api.ChantPolicy p = def.toSpell().chantPolicy();
+        org.junit.jupiter.api.Assertions.assertFalse(p.skipAllowed());
+        assertTrue(p.interruptible());
+        assertEquals(3, p.powerPerLine().length);
+        assertEquals(0.5f, p.powerFor(1));
+        assertEquals(1.0f, p.powerFor(3));
+        // Beyond the table: clamps to the last entry.
+        assertEquals(1.0f, p.powerFor(6));
+        assertEquals(1.5f, p.pact().powerMultiplier());
+    }
 }

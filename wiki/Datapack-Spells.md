@@ -57,6 +57,13 @@ Add `chants` to make a spell ritual (each line has a display key and pronunciati
 - `display_key` needs a translation in your language files (`assets/<ns>/lang/zh_cn.json` etc.); the HUD renders it in each player's game language;
 - Make the last line the trigger word (matches the built-in spell experience).
 
+### Entry & skip (0.4.0)
+
+- The chant **starts on the first line (L1)**: speaking any variant's L1 enters the chant with that line already counted — the trigger word is no longer the entry;
+- Speaking the **spell name (last line) mid-chant releases early** at the completed-lines power tier (`chant_policy.skip_allowed`, default true; forbidden chants set false);
+- Saying the trigger word / spell name while idle attempts a **skip-cast** (chant mastery gated);
+- Optional `chant_policy` block: `power_per_line` (power per completed line), `skip_allowed`, `interruptible` (damage rolls the chant back one line for 3+ line chants), `pact` — see `schema/spell.schema.json`.
+
 ## Applying & validation
 
 1. Drop the datapack in and run **`/reload`**;

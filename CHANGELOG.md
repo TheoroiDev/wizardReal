@@ -7,10 +7,15 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 ### Changes
 
 - Wiki Server-FAQ updated for voicecast 0.3.2 (defer removal); docs/ref paths fixed
+- Chant entry reworked (voice overhaul D9): the first line (L1) of a ritual chant now enters the chant and locks the variant (the entry utterance counts as line 1); saying the trigger word / spell name while idle attempts a skip-cast instead, which requires chant mastery (denied until the learning system ships)
+- Speaking the spell name mid-chant releases early at the completed-lines power tier (`chant_policy.skip_allowed`; forbidden chants refuse the jump)
+- Damage mid-chant interrupts the chant (07 M1): 3+ line chants roll back one line, shorter chants fail; failed chants apply a stacking darkness penalty (config `[chant]`: timeout mode per-line (10s x lines, default) or fixed, darkness base/step/window)
+- New `chant_policy` spell JSON block: power tiers per completed line, skip permission, interruptibility, optional pact; new language-keyed `chants` shape with per-language trigger/cast/body variants (legacy chant arrays keep parsing)
 
 ### Modding/API
 
-- Machine-readable JSON Schema for the datapack spell format, validating spell JSONs offline: `schema/spell.schema.json` in the repo root
+- Machine-readable JSON Schema for the datapack spell format, validating spell JSONs offline: `schema/spell.schema.json` in the repo root (now covers `trigger.languages`, language-keyed `chants` and `chant_policy`)
+- Spell gains a default `chantPolicy()`; `DataSpell` gained a `ChantPolicy` constructor overload (old arity keeps working)
 
 ### Infrastructure
 

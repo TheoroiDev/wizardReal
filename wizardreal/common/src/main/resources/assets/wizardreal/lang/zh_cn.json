@@ -31,6 +31,9 @@
 
   "wizardreal.chant.prompt": "咏唱第一句……",
   "wizardreal.chant.retry": "✗ 重复本句",
+  "wizardreal.chant.interrupted": "✦ 咏唱被打断——请重复本句",
+  "wizardreal.chant.blind": "✦ 咏唱反噬——黑暗吞没了你",
+  "wizardreal.chant.skip_locked": "熟练度不足，无法省略咏唱",
 
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",

@@ -10,8 +10,8 @@ import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.item.StaffItem;
-import com.theo.wizardreal.match.PhonemeMatcher;
-import com.theo.wizardreal.match.SpellMatcher;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.server.MinecraftServer;
@@ -24,8 +24,10 @@ import java.util.Map;
 /**
  * Server-side voice -> spell wiring. Builds the recognizer vocabulary from
  * registered spells (trigger words + every chant line) and routes each
- * recognized utterance: an in-progress chant gets fed the line, a ritual
- * spell's trigger word enters chanting, an instant spell casts immediately.
+ * recognized utterance via the {@link ChantGate} idle router (D9): a ritual
+ * spell's first line (L1) enters the chant pre-locked (首行即门), a ritual
+ * trigger / spell-name becomes a skip-cast candidate (破弃, learning-gated),
+ * an instant spell casts immediately. Damage mid-chant interrupts (07 M1).
  */
 public final class ServerVoiceCast {
     /**
@@ -53,6 +55,13 @@ public final class ServerVoiceCast {
         PlayerEvent.PLAYER_QUIT.register(player -> ChantManager.get().onQuit(player));
         // Periodic timeout sweep.
         TickEvent.SERVER_POST.register(server -> ChantManager.get().tick(server));
+        // 07 M1 咏唱打断: damage taken mid-chant rolls the chant back (or fails it).
+        EntityEvent.LIVING_HURT.register((entity, source, amount) -> {
+            if (entity instanceof ServerPlayer sp) {
+                ChantManager.get().onPlayerDamaged(sp, amount);
+            }
+            return EventResult.pass();
+        });
     }
 
     /** Build vocabulary (trigger words + all chant lines) and push to the server. */
@@ -99,55 +108,30 @@ public final class ServerVoiceCast {
             return;
         }
 
-        // 2) Match the utterance to a spell. Preferred: exact CTC forward
-        //    scores from the IPA engine (robust to the systematic greedy-decode
-        //    errors in workspace-root docs/IPA识别问题.md). Fallbacks: token-based phoneme
-        //    matching, then text-alias matching.
-        SpellMatcher.Match match = matchByScores(templateScores);
-        if (match == null && heardIpa != null && !heardIpa.isEmpty()) {
-            PhonemeMatcher.Match pm = PhonemeMatcher.match(heardIpa);
-            if (pm != null) match = new SpellMatcher.Match(pm.spell(), pm.score());
-        }
-        if (match == null && heard != null && !heard.isBlank()) {
-            match = SpellMatcher.match(heard);
-        }
-        if (match == null) {
-            WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match", heard,
-                    heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa));
-            return;
-        }
-
-        Spell spell = match.spell();
-        // 3) Ritual spell (has chants) -> start chanting; instant spell -> cast now.
-        if (!spell.chants().isEmpty()) {
-            ChantManager.get().start(player, spell);
-        } else {
-            SpellCastHandler.handleCast(player, spell.id(), Math.min(confidence, match.score()));
-        }
-        WizardReal.LOGGER.info("Server matched '{}' / [{}] -> {} score={} (ritual={})",
-                heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
-                spell.id(), String.format(java.util.Locale.ROOT, "%.2f", match.score()),
-                !spell.chants().isEmpty());
-    }
-
-    /**
-     * Best spell by CTC forward posterior (pronunciation id -> probability in
-     * [0,1]), or null when no template clears its threshold.
-     */
-    private static SpellMatcher.Match matchByScores(Map<String, Float> scores) {
-        if (scores == null || scores.isEmpty()) return null;
-        Spell bestSpell = null;
-        float bestScore = 0f;
-        for (Spell spell : SpellRegistry.all()) {
-            Float s = scores.get(spell.pronunciation().id());
-            if (s != null && s > bestScore) {
-                bestScore = s;
-                bestSpell = spell;
+        // 2) Idle routing (D9): L1 entry gate (首行即门) / instant cast /
+        //    skip-cast candidate (破弃). ChantGate owns the matcher chain
+        //    (templateScores -> phoneme -> text) and the priority rules.
+        ChantGate.Decision gate = ChantGate.route(heard, heardIpa, templateScores);
+        switch (gate.kind()) {
+            case ENTER -> {
+                ChantManager.get().startAtLine(player, gate.spell(), gate.variant());
+                WizardReal.LOGGER.info("Server heard '{}' / [{}] -> chant entry {} variant {}",
+                        heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
+                        gate.spell().id(), gate.variant());
             }
+            case INSTANT -> {
+                SpellCastHandler.handleCast(player, gate.spell().id(), Math.min(confidence, gate.score()));
+                WizardReal.LOGGER.info("Server matched '{}' / [{}] -> {} score={} (instant)",
+                        heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
+                        gate.spell().id(), String.format(java.util.Locale.ROOT, "%.2f", gate.score()));
+            }
+            case SKIP -> {
+                WizardReal.LOGGER.info("Server heard '{}' -> skip-cast candidate {}",
+                        heard, gate.spell().id());
+                ChantManager.get().trySkipCast(player, gate.spell());
+            }
+            case NONE -> WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match", heard,
+                    heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa));
         }
-        if (bestSpell == null) return null;
-        float threshold = bestSpell.threshold() >= 0 ? bestSpell.threshold() : FORWARD_MATCH_THRESHOLD;
-        if (bestScore < threshold) return null;
-        return new SpellMatcher.Match(bestSpell, bestScore);
     }
 }

@@ -59,6 +59,7 @@ public record SpellDefinition(
         float threshold,
         TriggerDef trigger,
         ChantsDef chants,
+        ChantPolicyDef chantPolicy,
         List<SpellEffect> effects
 ) {
     public static final Codec<School> SCHOOL_CODEC = Codec.STRING.comapFlatMap(
@@ -89,6 +90,8 @@ public record SpellDefinition(
                     Codec.FLOAT.optionalFieldOf("threshold", -1.0f).forGetter(SpellDefinition::threshold),
                     TriggerDef.CODEC.fieldOf("trigger").forGetter(SpellDefinition::trigger),
                     ChantsDef.CODEC.optionalFieldOf("chants", ChantsDef.EMPTY).forGetter(SpellDefinition::chants),
+                    ChantPolicyDef.CODEC.optionalFieldOf("chant_policy", ChantPolicyDef.EMPTY)
+                            .forGetter(SpellDefinition::chantPolicy),
                     EffectRegistry.codec().listOf().fieldOf("effects").forGetter(SpellDefinition::effects)
             ).apply(instance, SpellDefinition::new));
 
@@ -102,7 +105,7 @@ public record SpellDefinition(
         }
         Pronunciation pronunciation = trigger.pronunciation(id.toString());
         return new DataSpell(id, schools, manaCost, cooldownTicks, requiresLearning, origin,
-                threshold, pronunciation, builtChants, effects);
+                threshold, pronunciation, builtChants, effects, chantPolicy.toPolicy());
     }
 
     /** 0.4.0 language-keyed expansion: for each language, every {@code body}
@@ -227,6 +230,47 @@ public record SpellDefinition(
                         Codec.STRING.listOf().optionalFieldOf("aliases", List.of()).forGetter(LineMeta::aliases),
                         Codec.STRING.listOf().optionalFieldOf("ipa", List.of()).forGetter(LineMeta::ipa)
                 ).apply(instance, LineMeta::new));
+    }
+
+    /** The {@code chant_policy} block (0.4.0): power tiers, skip permission,
+     * interruptibility and the optional pact. Unset booleans default to true;
+     * an absent/inert pact ({@code power_multiplier} 1.0) maps to {@code null}. */
+    public record ChantPolicyDef(List<Float> powerPerLine, boolean skipAllowed, boolean interruptible,
+                                 PactDef pact) {
+        public static final ChantPolicyDef EMPTY = new ChantPolicyDef(List.of(), true, true, PactDef.INERT);
+
+        public static final Codec<ChantPolicyDef> CODEC = RecordCodecBuilder.create(instance ->
+                instance.group(
+                        Codec.FLOAT.listOf().optionalFieldOf("power_per_line", List.of())
+                                .forGetter(ChantPolicyDef::powerPerLine),
+                        Codec.BOOL.optionalFieldOf("skip_allowed", true).forGetter(ChantPolicyDef::skipAllowed),
+                        Codec.BOOL.optionalFieldOf("interruptible", true).forGetter(ChantPolicyDef::interruptible),
+                        PactDef.CODEC.optionalFieldOf("pact", PactDef.INERT).forGetter(ChantPolicyDef::pact)
+                ).apply(instance, ChantPolicyDef::new));
+
+        public com.theo.wizardreal.api.ChantPolicy toPolicy() {
+            float[] tiers = powerPerLine.isEmpty() ? null : new float[powerPerLine.size()];
+            if (tiers != null) {
+                for (int i = 0; i < tiers.length; i++) tiers[i] = powerPerLine.get(i);
+            }
+            boolean inertPact = pact == null || PactDef.INERT.equals(pact);
+            return new com.theo.wizardreal.api.ChantPolicy(tiers, skipAllowed, interruptible,
+                    inertPact ? null
+                            : new com.theo.wizardreal.api.ChantPolicy.Pact(pact.require(), pact.powerMultiplier()));
+        }
+
+        public record PactDef(String require, float powerMultiplier) {
+            /** Absent-pact placeholder: all-lines requirement with no multiplier. */
+            public static final PactDef INERT = new PactDef(
+                    com.theo.wizardreal.api.ChantPolicy.Pact.ALL_LINES, 1.0f);
+
+            public static final Codec<PactDef> CODEC = RecordCodecBuilder.create(instance ->
+                    instance.group(
+                            Codec.STRING.optionalFieldOf("require",
+                                    com.theo.wizardreal.api.ChantPolicy.Pact.ALL_LINES).forGetter(PactDef::require),
+                            Codec.FLOAT.optionalFieldOf("power_multiplier", 1.5f).forGetter(PactDef::powerMultiplier)
+                    ).apply(instance, PactDef::new));
+        }
     }
 
     /** Ritual chant variants (empty for instant spells). Legacy array format. */

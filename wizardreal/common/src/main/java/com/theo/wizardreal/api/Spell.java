@@ -47,11 +47,22 @@ public interface Spell {
     }
 
     /**
-     * Long incantations for a ritual spell. Non-empty means saying the trigger
-     * word enters chanting state and these lines must be spoken (sentence by
-     * sentence) before the spell casts. Empty (default) = instant spell.
+     * Long incantations for a ritual spell. Non-empty means the spell is cast
+     * through chanting: the first spoken line (L1) enters the chant and locks
+     * the variant (D9 首行即门), speaking the last line (spell name) mid-chant
+     * releases early at the completed-lines power tier (咒名跳章), and finishing
+     * every line casts at full power. Empty (default) = instant spell.
      */
     default List<Chant> chants() {
         return List.of();
+    }
+
+    /**
+     * Chant tuning (power tiers / skip permission / interruptibility / pact),
+     * parsed from the {@code chant_policy} JSON block. Default = full power on
+     * every completion, skipping allowed, interruptible, no pact.
+     */
+    default ChantPolicy chantPolicy() {
+        return ChantPolicy.DEFAULT;
     }
 }

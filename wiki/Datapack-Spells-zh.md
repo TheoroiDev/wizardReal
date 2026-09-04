@@ -57,6 +57,13 @@
 - `display_key` 需要在语言文件中提供翻译（`assets/<ns>/lang/zh_cn.json` 等），HUD 按玩家游戏语言显示；
 - 最后一句建议就是触发词（与内置法术一致的体验）。
 
+### 入口与跳章（0.4.0）
+
+- 咏唱**由第一句（L1）开始**：念出任意变体的 L1 即进入咏唱且该句计为已完成——触发词不再是入口；
+- 吟唱中念出**咒名（末句）即提前施放**，威力按已完成行数取档（`chant_policy.skip_allowed`，默认 true；禁咒设 false）；
+- 空闲态念触发词/咒名会尝试**破弃快施**（需咏唱熟练度达标）；
+- 可选 `chant_policy` 块：`power_per_line`（各行威力档）、`skip_allowed`、`interruptible`（≥3 行法术被打断回退一行）、`pact`——见 `schema/spell.schema.json`。
+
 ## 生效与校验
 
 1. 放入数据包后执行 **`/reload`**；

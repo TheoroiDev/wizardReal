@@ -7,10 +7,15 @@
 ### Changes
 
 - Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径
+- 咏唱入口改版（语音改版 D9）：仪式法术的**第一句（L1）**现在用于进入咏唱并锁定变体（入口语句计为第 1 行）；空闲态念触发词/咒名改为尝试破弃快施，需咏唱熟练度（学习系统上线前一律拒绝）
+- 吟唱中念出咒名即提前施放，威力按已完成行数取档（`chant_policy.skip_allowed`；禁咒拒绝跳章）
+- 吟唱中受击会被打断（07 M1）：≥3 行法术回退一行，更短的直接失败；失败的咏唱施加可叠加的黑暗惩罚（`[chant]` 配置：超时模式按行数（默认 10s×行数）或固定值，黑暗基值/步长/窗口）
+- 法术 JSON 新增 `chant_policy` 块：逐行威力档、跳章许可、可打断性、可选自缚；`chants` 支持语言 keyed 新格式（每语言 trigger/cast/body 变体，legacy 数组继续可读）
 
 ### Modding/API
 
-- 数据包法术格式的机器可读 JSON Schema，可离线校验法术 JSON：仓库根 `schema/spell.schema.json`
+- 数据包法术格式的机器可读 JSON Schema，可离线校验法术 JSON：仓库根 `schema/spell.schema.json`（现覆盖 `trigger.languages`、语言 keyed `chants` 与 `chant_policy`）
+- `Spell` 新增默认方法 `chantPolicy()`；`DataSpell` 新增带 `ChantPolicy` 的构造器重载（旧参数列表继续可用）
 
 ### Infrastructure
 

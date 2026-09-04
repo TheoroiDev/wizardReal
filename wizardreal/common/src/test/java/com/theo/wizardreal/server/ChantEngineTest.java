@@ -95,7 +95,7 @@ class ChantEngineTest {
     void idleChantTimesOut() {
         ChantEngine engine = new ChantEngine(ritualSpell(), T0);
         engine.feed("ignis", null, T0);
-        ChantEngine.FeedResult r = engine.feed("fire burn", null, T0 + ChantEngine.TIMEOUT_MS + 1);
+        ChantEngine.FeedResult r = engine.feed("fire burn", null, T0 + ChantEngine.DEFAULT_TIMEOUT_MS + 1);
         assertTrue(r.consumed());
         assertTrue(r.timeout());
         assertFalse(r.finished());
@@ -159,11 +159,86 @@ class ChantEngineTest {
     @Test
     void timeoutIsPureClockMath() {
         ChantEngine engine = new ChantEngine(ritualSpell(), T0);
-        assertFalse(engine.timedOut(T0 + ChantEngine.TIMEOUT_MS));
-        assertTrue(engine.timedOut(T0 + ChantEngine.TIMEOUT_MS + 1));
+        assertFalse(engine.timedOut(T0 + ChantEngine.DEFAULT_TIMEOUT_MS));
+        assertTrue(engine.timedOut(T0 + ChantEngine.DEFAULT_TIMEOUT_MS + 1));
         // A consumed (non-timeout) feed resets the idle clock.
         engine.feed("ignis", null, T0 + 5000);
-        assertFalse(engine.timedOut(T0 + 5000 + ChantEngine.TIMEOUT_MS));
-        assertTrue(engine.timedOut(T0 + 5000 + ChantEngine.TIMEOUT_MS + 1));
+        assertFalse(engine.timedOut(T0 + 5000 + ChantEngine.DEFAULT_TIMEOUT_MS));
+        assertTrue(engine.timedOut(T0 + 5000 + ChantEngine.DEFAULT_TIMEOUT_MS + 1));
+    }
+
+    // ---- D9 entry rework -------------------------------------------------
+
+    @Test
+    void preLockedStartCountsEntryAsLineOne() {
+        // The idle L1 gate matched the entry utterance: the engine starts
+        // pre-locked at variant 0 with line 1 already complete.
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0, 90_000L, 0);
+        assertEquals(3, engine.currentLineCount());
+        ChantEngine.FeedResult r = engine.feed("fire burn", null, T0 + 100);
+        assertEquals(new ChantEngine.Progress(0, 2, false), r.progress().get(0));
+        assertFalse(r.earlyRelease());
+    }
+
+    @Test
+    void spellNameMidChantReleasesEarly() {
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0);
+        engine.feed("ignis", null, T0);
+        // Line 2 expected, but the spell name (last line) is spoken -> 断章.
+        ChantEngine.FeedResult r = engine.feed("Explosion!!!", null, T0 + 2000);
+        assertTrue(r.consumed());
+        assertTrue(r.earlyRelease());
+        assertFalse(r.finished());
+        assertEquals(1, r.completedLines());
+    }
+
+    @Test
+    void injectedTimeoutReplacesDefault() {
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0, 30_000L, 0);
+        assertFalse(engine.timedOut(T0 + 30_000L));
+        assertTrue(engine.timedOut(T0 + 30_000L + 1));
+    }
+
+    @Test
+    void consecutiveWrongLinesFailTheChant() {
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0);
+        engine.feed("ignis", null, T0);
+        long t = T0 + 10_000;
+        ChantEngine.FeedResult third = null;
+        for (int i = 0; i < 3; i++) {
+            third = engine.feed("totally different words", null, t);
+            t += 1500;
+        }
+        assertTrue(third.failed());
+        assertTrue(third.consumed());
+        assertFalse(third.finished());
+    }
+
+    @Test
+    void wrongLineThenCorrectLineResetsStreak() {
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0);
+        engine.feed("ignis", null, T0);
+        long t = T0 + 10_000;
+        engine.feed("wrong words here", null, t);
+        engine.feed("more wrong stuff", null, t + 1500);
+        // Correct line: streak resets; two more wrong lines must NOT fail.
+        ChantEngine.FeedResult ok = engine.feed("fire burn", null, t + 3000);
+        assertTrue(ok.progress().get(0).lineIndex() == 2);
+        engine.feed("wrong again now", null, t + 4500);
+        ChantEngine.FeedResult notFailed = engine.feed("still wrong here", null, t + 6000);
+        assertFalse(notFailed.failed());
+    }
+
+    @Test
+    void rollbackLineRetreatsOneLine() {
+        ChantEngine engine = new ChantEngine(ritualSpell(), T0);
+        engine.feed("ignis", null, T0);
+        engine.feed("fire burn", null, T0 + 1000);
+        assertEquals(2, engine.currentLineCount() - 1); // on line index 2
+        ChantEngine.Progress p = engine.rollbackLine(T0 + 2000);
+        assertEquals(new ChantEngine.Progress(0, 1, false), p);
+        // The retreated line must be spoken again.
+        ChantEngine.FeedResult r = engine.feed("fire burn", null, T0 + 3000);
+        assertEquals(new ChantEngine.Progress(0, 2, false), r.progress().get(0));
     }
 }
