@@ -31,6 +31,13 @@ public interface Spell {
     default float threshold() { return -1f; }
 
     /**
+     * Learning difficulty (D4): the mastery requirement scales as
+     * {@code 100 x difficulty} points, so the same effort converts into less
+     * mastery. Range 0.5-3.0 (forbidden chants 2.0-3.0).
+     */
+    default float difficulty() { return 1.0f; }
+
+    /**
      * Origin / source of the spell. Used by staves to restrict which origins
      * a caster may channel. All built-in spells use {@code "wizardreal:wizardry"}.
      */

@@ -34,6 +34,8 @@
   "wizardreal.chant.interrupted": "✦ The chant wavers — repeat the line",
   "wizardreal.chant.blind": "✦ The chant backfires — darkness swallows you",
   "wizardreal.chant.skip_locked": "Not mastered enough to skip the chant",
+  "wizardreal.chant.weak_skip": "Skip-cast! Chant skipped (reduced power)",
+  "wizardreal.learning.not_ready": "Not mastered yet (%s%%) — study the tome or practice the chant",
 
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",
@@ -151,6 +153,11 @@
   "wizardreal.tome.invalid": "This tome is corrupted.",
   "wizardreal.tome.already_known": "You already know %s.",
   "wizardreal.tome.learn": "Learned: %s",
+  "wizardreal.tome.practiced": "Studied %s — mastery %s%%",
+  "wizardreal.tome.mastered": "%s is fully studied (75% cap) — practice the chant instead",
+  "wizardreal.cmd.learning_set": "Learning %s for %s: %s%%",
+  "wizardreal.cmd.invalid_amount": "Invalid amount '%s' (use a number for +/- points, or 'N%%' to set)",
+  "wizardreal.cmd.spellinfo.difficulty": "Difficulty: %s (your mastery: %s)",
 
   "wizardreal.cmd.unknown_spell": "Unknown spell: %s",
   "wizardreal.cmd.learned": "Taught %s to %s",

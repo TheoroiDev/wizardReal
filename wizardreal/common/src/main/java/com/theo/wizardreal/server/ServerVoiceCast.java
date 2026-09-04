@@ -120,7 +120,9 @@ public final class ServerVoiceCast {
                         gate.spell().id(), gate.variant());
             }
             case INSTANT -> {
-                SpellCastHandler.handleCast(player, gate.spell().id(), Math.min(confidence, gate.score()));
+                // Instant voice cast: base power 1.0 (recognition confidence is
+                // not a power factor — the performance layer owns that in P2).
+                SpellCastHandler.handleCast(player, gate.spell().id(), 1.0f);
                 WizardReal.LOGGER.info("Server matched '{}' / [{}] -> {} score={} (instant)",
                         heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
                         gate.spell().id(), String.format(java.util.Locale.ROOT, "%.2f", gate.score()));

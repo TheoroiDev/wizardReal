@@ -4,6 +4,11 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ## Unreleased
 
+### Features
+
+- Learning system rework (voice overhaul D4/D-D2): every spell's mastery starts at 10% and grows only on successful casts (voice +2%, tome study up to the 75% cap, scrolls later); power scales with mastery (0.5x at 10% -> 1.0x at 100%, global 2.5x cap), `requires_learning` spells are blocked below 10% mastery, and "known" is derived from mastery (the knownSpells/forgottenSpells sets are gone - old saves migrate: forgotten spells pin to 0%, everything else starts at the baseline)
+- `/wr (un)learn [player] <spell> [amount]`: bare number = +/- mastery points, `N%` = set absolute mastery (default +/-10%); `/wr known` and the spell catalog derive from mastery
+
 ### Changes
 
 - Wiki Server-FAQ updated for voicecast 0.3.2 (defer removal); docs/ref paths fixed

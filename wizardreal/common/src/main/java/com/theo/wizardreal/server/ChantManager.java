@@ -80,7 +80,7 @@ public final class ChantManager {
         WizardRealConfig.ChantSettings s = settings;
         if (s == null) {
             MinecraftServer server = player.getServer();
-            s = WizardRealConfig.load(server != null ? server.getServerDirectory().toPath()
+            s = WizardRealConfig.loadCached(server != null ? server.getServerDirectory().toPath()
                     : WizardRealConfig.DEFAULT_GAME_DIR).chant();
             settings = s;
         }
@@ -224,10 +224,9 @@ public final class ChantManager {
 
     /**
      * 破弃快施 (skip-cast) gate: the idle trigger/spell-name path. Requires
-     * {@code chant_policy.skip_allowed} AND the learning threshold
-     * ({@code t >= skipChantThreshold}). The learning system lands with SS4 —
-     * until then the learning gate denies every skip (default learning 10% is
-     * below the 50% threshold anyway).
+     * {@code chant_policy.skip_allowed} AND mastery t >= [learning].
+     * skipChantThreshold (D9: 熟练=免咏唱). Performs the cast at the spell's
+     * lowest power tier.
      * @return true when the skip cast was performed.
      */
     public boolean trySkipCast(ServerPlayer player, Spell spell) {
@@ -236,10 +235,20 @@ public final class ChantManager {
             hint(player, "wizardreal.chant.skip_locked");
             return false;
         }
-        // TODO(SS4 learning): skip requires learningPercent(spell) >= [learning].skipChantThreshold.
-        hint(player, "wizardreal.chant.skip_locked");
-        WizardReal.LOGGER.debug("Skip-cast for {} denied (learning gate pending SS4)", spell.id());
-        return false;
+        var settings = WizardRealConfig.loadCached(player.getServer().getServerDirectory().toPath());
+        PlayerMagicState state = PlayerMagicState.get(player.getServer());
+        float t = state.learningPercent(player.getUUID(), spell.id(), spell.difficulty());
+        if (t < settings.learning().skipChantThreshold() * 100f) {
+            hint(player, "wizardreal.chant.skip_locked");
+            WizardReal.LOGGER.debug("Skip-cast for {} denied (t={} < threshold)", spell.id(), t);
+            return false;
+        }
+        lock(player, COMPLETION_LOCKOUT_MS);
+        hint(player, "wizardreal.chant.weak_skip");
+        // 破弃 = lowest power tier (chant_policy.power_per_line[0]; default 1.0)
+        SpellCastHandler.handleCast(player, spell.id(), policy == null ? 1.0f : policy.powerFor(1));
+        WizardReal.LOGGER.info("{} skip-cast {} (t={})", player.getName().getString(), spell.id(), t);
+        return true;
     }
 
     /** Failed chant: darkness with stacking duration (短时间连续失败叠加). */

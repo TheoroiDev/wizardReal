@@ -27,6 +27,11 @@ import java.util.Locale;
  * failBlindnessBase = 3.0                 # first failure: darkness seconds
  * failBlindnessStep = 3.0                 # extra seconds per consecutive failure
  * failBlindnessWindowSeconds = 30         # consecutive-failure window
+ *
+ * [learning]
+ * overlearning = false                    # t>100 keeps growing power (PvP servers opt in)
+ * skipChantThreshold = 0.5                # skip-cast (破弃) requires t >= 50%
+ * knownThreshold = 10                     # known = t strictly above this
  * </pre>
  */
 public final class WizardRealConfig {
@@ -49,17 +54,36 @@ public final class WizardRealConfig {
         }
     }
 
+    /** {@code [learning]} section (D4/D-D2): overlearning switch, skip-cast
+     * mastery threshold (fraction of 100), known derivation threshold. */
+    public record LearningSettings(boolean overlearning, float skipChantThreshold, float knownThreshold) {
+        public static final LearningSettings DEFAULT = new LearningSettings(false, 0.5f, 10f);
+    }
+
     private static final String HEADER =
             "wizardreal configuration. Delete a key to fall back to its default.";
 
     private final FileMode fileMode;
     private final PushMode pushMode;
     private final ChantSettings chant;
+    private final LearningSettings learning;
+    private static volatile WizardRealConfig cache;
 
-    private WizardRealConfig(FileMode fileMode, PushMode pushMode, ChantSettings chant) {
+    private WizardRealConfig(FileMode fileMode, PushMode pushMode, ChantSettings chant, LearningSettings learning) {
         this.fileMode = fileMode;
         this.pushMode = pushMode;
         this.chant = chant;
+        this.learning = learning;
+    }
+
+    /** Cached load for per-cast/per-utterance readers (file reread only when cleared). */
+    public static WizardRealConfig loadCached(Path gameDir) {
+        WizardRealConfig c = cache;
+        if (c == null) {
+            c = load(gameDir);
+            cache = c;
+        }
+        return c;
     }
 
     public FileMode fileMode() {
@@ -72,6 +96,10 @@ public final class WizardRealConfig {
 
     public ChantSettings chant() {
         return chant;
+    }
+
+    public LearningSettings learning() {
+        return learning;
     }
 
     public static Path file(Path gameDir) {
@@ -92,7 +120,11 @@ public final class WizardRealConfig {
                         toml.getBool("chant", "failBlindness", true),
                         (float) toml.getDouble("chant", "failBlindnessBase", 3.0),
                         (float) toml.getDouble("chant", "failBlindnessStep", 3.0),
-                        (int) toml.getInt("chant", "failBlindnessWindowSeconds", 30)));        if (!existed) {
+                        (int) toml.getInt("chant", "failBlindnessWindowSeconds", 30)),
+                new LearningSettings(
+                        toml.getBool("learning", "overlearning", false),
+                        (float) toml.getDouble("learning", "skipChantThreshold", 0.5),
+                        (float) toml.getDouble("learning", "knownThreshold", 10.0)));        if (!existed) {
             writeDefaults(file);
         }
         return config;
@@ -110,6 +142,9 @@ public final class WizardRealConfig {
                 .setDouble("chant", "failBlindnessBase", 3.0)
                 .setDouble("chant", "failBlindnessStep", 3.0)
                 .setInt("chant", "failBlindnessWindowSeconds", 30)
+                .setBool("learning", "overlearning", false)
+                .setDouble("learning", "skipChantThreshold", 0.5)
+                .setDouble("learning", "knownThreshold", 10.0)
                 .save(file);
     }
 

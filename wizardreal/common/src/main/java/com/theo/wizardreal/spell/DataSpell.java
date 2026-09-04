@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class DataSpell extends AbstractSpell {
     private final float thresholdOverride;
+    private final float difficulty;
     private final List<SpellEffect> effects;
     private final List<Chant> chants;
     private final ChantPolicy chantPolicy;
@@ -25,15 +26,16 @@ public final class DataSpell extends AbstractSpell {
                      boolean requiresLearning, String origin, float thresholdOverride,
                      Pronunciation pronunciation, List<Chant> chants, List<SpellEffect> effects) {
         this(id, schools, manaCost, cooldownTicks, requiresLearning, origin, thresholdOverride,
-                pronunciation, chants, effects, ChantPolicy.DEFAULT);
+                1.0f, pronunciation, chants, effects, ChantPolicy.DEFAULT);
     }
 
     public DataSpell(ResourceLocation id, Set<School> schools, int manaCost, int cooldownTicks,
-                     boolean requiresLearning, String origin, float thresholdOverride,
+                     boolean requiresLearning, String origin, float thresholdOverride, float difficulty,
                      Pronunciation pronunciation, List<Chant> chants, List<SpellEffect> effects,
                      ChantPolicy chantPolicy) {
         super(id, schools, manaCost, cooldownTicks, pronunciation, origin, requiresLearning);
         this.thresholdOverride = thresholdOverride;
+        this.difficulty = difficulty;
         this.effects = List.copyOf(effects);
         this.chants = List.copyOf(chants);
         this.chantPolicy = chantPolicy == null ? ChantPolicy.DEFAULT : chantPolicy;
@@ -43,6 +45,11 @@ public final class DataSpell extends AbstractSpell {
     @Override
     public float threshold() {
         return thresholdOverride;
+    }
+
+    @Override
+    public float difficulty() {
+        return difficulty;
     }
 
     @Override

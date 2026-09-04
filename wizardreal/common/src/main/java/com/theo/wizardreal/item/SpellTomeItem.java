@@ -3,6 +3,9 @@ package com.theo.wizardreal.item;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
+import com.theo.wizardreal.config.WizardRealConfig;
+import com.theo.wizardreal.server.LearningCurve;
+import com.theo.wizardreal.server.LearningService;
 import com.theo.wizardreal.server.PlayerMagicState;
 import com.theo.wizardreal.server.SpellCatalogService;
 import net.minecraft.ChatFormatting;
@@ -50,13 +53,22 @@ public class SpellTomeItem extends Item {
         }
 
         PlayerMagicState state = PlayerMagicState.get(player.getServer());
-        if (state.knowsSpell(player.getUUID(), spellId)) {
-            player.displayClientMessage(Component.translatable("wizardreal.tome.already_known",
+        float t = state.learningPercent(player.getUUID(), spellId, spell.difficulty());
+        float gain = LearningService.onTomeUse(player, spell);
+        if (gain <= 0f) {
+            // 75% cap: books teach, practice masters (D4 修正 3).
+            player.displayClientMessage(Component.translatable("wizardreal.tome.mastered",
                     Component.translatable(spell.nameKey())).withStyle(ChatFormatting.YELLOW), true);
             return InteractionResultHolder.fail(stack);
         }
-
-        state.learnSpell(player.getUUID(), spellId);
+        boolean firstAcquisition = !LearningCurve.known(t, knownThreshold(player));
+        if (!firstAcquisition) {
+            // Practice read: the tome stays (reading your own book).
+            player.displayClientMessage(Component.translatable("wizardreal.tome.practiced",
+                    Component.translatable(spell.nameKey()),
+                    String.format(java.util.Locale.ROOT, "%.0f", t + gain)), true);
+            return InteractionResultHolder.success(stack);
+        }
         stack.shrink(1);
         world.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP,
                 SoundSource.PLAYERS, 0.5f, 1.2f);
@@ -67,6 +79,11 @@ public class SpellTomeItem extends Item {
         SpellCatalogService.publish(player);
 
         return InteractionResultHolder.success(stack);
+    }
+
+    private static float knownThreshold(ServerPlayer player) {
+        return WizardRealConfig.loadCached(player.getServer().getServerDirectory().toPath())
+                .learning().knownThreshold();
     }
 
     @Override

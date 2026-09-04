@@ -4,6 +4,11 @@
 
 ## Unreleased（未发布）
 
+### Features
+
+- 学习体系重做（语音改版 D4/D-D2）：所有法术熟练度从 10% 起步，只在实际施法成功时增长（语音 +2%、典籍研读至 75% 封顶、卷轴后续）；威力随熟练度成长（10%→0.5×、100%→1.0×、全局 2.5× 封顶），`requires_learning` 法术熟练度不足 10% 不可施法；"已掌握"由熟练度派生（knownSpells/forgottenSpells 集合删除——老档自动迁移：已遗忘法术钉在 0%，其余回到基线）
+- `/wr (un)learn [player] <spell> [amount]`：数字 = 增减百分点、`N%` = 设为绝对值（默认 ±10%）；`/wr known` 与法术图录均由熟练度派生
+
 ### Changes
 
 - Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径

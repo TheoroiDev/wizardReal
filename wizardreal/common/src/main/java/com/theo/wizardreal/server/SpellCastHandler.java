@@ -6,6 +6,7 @@ import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.api.event.SpellCastEvent;
 import com.theo.wizardreal.api.event.SpellEvents;
+import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.item.StaffItem;
 import java.util.EnumSet;
 import java.util.Set;
@@ -44,17 +45,20 @@ public final class SpellCastHandler {
     }
 
     /** Standard path (voice casting, chant completion): no bypasses. */
-    public static void handleCast(Player rawPlayer, String spellId, float confidence) {
-        castValidated(rawPlayer, spellId, confidence, EnumSet.noneOf(CastFlag.class));
+    public static void handleCast(Player rawPlayer, String spellId, float power) {
+        castValidated(rawPlayer, spellId, power, EnumSet.noneOf(CastFlag.class));
     }
 
     /**
      * Full validated cast shared by every entry point. Sends action-bar
      * feedback on failure and fires the cancelable {@link SpellCastEvent}.
+     * The incoming {@code power} (chant tier or 1.0) is multiplied by the
+     * learning curve via {@link PowerResolver}; a successful standard cast
+     * settles voice learning (D4: only success teaches).
      *
      * @return true if the spell was executed
      */
-    public static boolean castValidated(Player rawPlayer, String spellId, float confidence,
+    public static boolean castValidated(Player rawPlayer, String spellId, float power,
                                         Set<CastFlag> flags) {
         if (!(rawPlayer instanceof ServerPlayer player)) return false;
         if (player.isSpectator()) return false;
@@ -70,11 +74,14 @@ public final class SpellCastHandler {
         long now = player.level().getGameTime();
         ItemStack mainHand = player.getMainHandItem();
         boolean bypassStaff = mainHand.getItem() instanceof StaffItem staff && staff.bypassAll();
+        float learningT = state.learningPercent(uuid, spellId, spell.difficulty());
 
-        // 1. Learning check (a bypass-all staff — dev/test — waives it)
+        // 1. Learning check (a bypass-all staff — dev/test — waives it).
+        //    requires_learning spells need t >= 10% (D-D1 hard gate).
         if (!flags.contains(CastFlag.SKIP_LEARNING) && !bypassStaff && spell.requiresLearning()
-                && !state.knowsSpell(uuid, spellId)) {
-            actionBar(player, Component.translatable("wizardreal.cast.unknown_spell"));
+                && !LearningCurve.castable(learningT)) {
+            actionBar(player, Component.translatable("wizardreal.learning.not_ready",
+                    String.format(java.util.Locale.ROOT, "%.0f", learningT)));
             return false;
         }
 
@@ -123,7 +130,11 @@ public final class SpellCastHandler {
 
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1.0f);
-        CastContext ctx = new CastContext(player, eye, look.normalize(), 1.0f);
+        // Power synthesis (voice overhaul): base x learning curve, global cap.
+        boolean overlearning = WizardRealConfig.loadCached(
+                player.getServer().getServerDirectory().toPath()).learning().overlearning();
+        CastContext ctx = new CastContext(player, eye, look.normalize(),
+                PowerResolver.resolve(power, learningT, overlearning));
 
         SpellCastEvent event = new SpellCastEvent(spell, ctx);
         SpellEvents.postCast(event);
@@ -139,12 +150,17 @@ public final class SpellCastHandler {
         spell.cast(ctx);
         state.setCooldown(uuid, spellId, now + cooldownTicks);
         MagicSyncHandler.send(player, state);
+        // D4: only successful casts teach (dev/command paths skip learning).
+        if (!flags.contains(CastFlag.SKIP_LEARNING)) {
+            LearningService.onCastSuccess(player, spell);
+        }
 
         actionBar(player, Component.translatable("wizardreal.cast.success",
                 Component.translatable(spell.nameKey())));
-        WizardReal.LOGGER.info("{} cast {} (conf={}, mana={}, flags={})",
+        WizardReal.LOGGER.info("{} cast {} (power={}, t={}, mana={}, flags={})",
                 player.getName().getString(), spellId,
-                String.format(java.util.Locale.ROOT, "%.2f", confidence),
+                String.format(java.util.Locale.ROOT, "%.2f", power),
+                String.format(java.util.Locale.ROOT, "%.0f", learningT),
                 cost,
                 flags.isEmpty() ? "none" : flags);
         return true;

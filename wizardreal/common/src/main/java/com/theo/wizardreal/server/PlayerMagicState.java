@@ -28,19 +28,13 @@ public final class PlayerMagicState {
     private static final float DEFAULT_MAX_MANA = 200f;
     private static final float MANA_PER_TICK = 0.1f; // 2 per second at 20 tps
 
-    private static final Set<String> DEFAULT_SPELLS = Set.of(
-            "wizardreal:ignis", "wizardreal:fulmen", "wizardreal:vitae",
-            "wizardreal:aegis", "wizardreal:ictus"
-    );
-
     // player uuid -> current mana
     private final Map<UUID, Float> mana = new HashMap<>();
     // player uuid -> max mana
     private final Map<UUID, Float> maxMana = new HashMap<>();
-    // player uuid -> known spell ids
-    private final Map<UUID, Set<String>> knownSpells = new HashMap<>();
-    // player uuid -> explicitly forgotten spell ids (overrides the implicit DEFAULT_SPELLS)
-    private final Map<UUID, Set<String>> forgottenSpells = new HashMap<>();
+    // player uuid -> spell id -> learning points (0.4.0 D-D2: single source of
+    // truth for progression; absent entry = the 10% starting baseline).
+    private final Map<UUID, Map<String, Float>> learning = new HashMap<>();
     // player uuid -> spell id -> world time when cooldown ends
     private final Map<UUID, Map<String, Long>> cooldownUntil = new HashMap<>();
 
@@ -106,47 +100,38 @@ public final class PlayerMagicState {
     }
 
     // ------------------------------------------------------------------
-    // Known spells
+    // Learning (0.4.0 D-D2: points are the single progression source;
+    // known = t > [learning].knownThreshold, derived — never stored)
     // ------------------------------------------------------------------
-    public boolean knowsSpell(UUID player, String spellId) {
-        if (isForgotten(player, spellId)) return false;
-        return knownSpells.computeIfAbsent(player, k -> {
-            HashSet<String> set = new HashSet<>(DEFAULT_SPELLS);
-            return set;
-        }).contains(spellId);
+
+    /** Raw stored points, or {@link Float#NaN} when the spell sits at the baseline. */
+    public float learningPoints(UUID player, String spellId) {
+        Map<String, Float> m = learning.get(player);
+        Float v = m == null ? null : m.get(spellId);
+        return v == null ? Float.NaN : v;
     }
 
-    public void learnSpell(UUID player, String spellId) {
-        forgottenSpells.computeIfAbsent(player, k -> new HashSet<>()).remove(spellId);
-        knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)).add(spellId);
+    /** Mastery percentage: absent entries read as the 10% starting baseline. */
+    public float learningPercent(UUID player, String spellId, float difficulty) {
+        float stored = learningPoints(player, spellId);
+        if (Float.isNaN(stored)) return LearningCurve.GATE_PERCENT;
+        return stored / Math.max(0.01f, difficulty);
     }
 
-    /**
-     * Command/ops path to unlearn a spell. Works for the implicit
-     * {@link #DEFAULT_SPELLS} too: forgetting is tracked in a separate
-     * "forgotten" set that {@link #knowsSpell} consults before anything else.
-     */
-    public void forgetSpell(UUID player, String spellId) {
-        knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)).remove(spellId);
-        forgottenSpells.computeIfAbsent(player, k -> new HashSet<>()).add(spellId);
+    public void addLearningPercent(UUID player, String spellId, float deltaPercent, float difficulty) {
+        setLearningPercent(player, spellId, learningPercent(player, spellId, difficulty) + deltaPercent, difficulty);
     }
 
-    public Set<String> getKnownSpells(UUID player) {
-        Set<String> effective = new HashSet<>(
-                knownSpells.computeIfAbsent(player, k -> new HashSet<>(DEFAULT_SPELLS)));
-        effective.addAll(DEFAULT_SPELLS);
-        Set<String> forgotten = forgottenSpells.get(player);
-        if (forgotten != null) effective.removeAll(forgotten);
-        return Collections.unmodifiableSet(effective);
+    /** Set mastery directly (command/admin path); clamped to [0, 625]. */
+    public void setLearningPercent(UUID player, String spellId, float percent, float difficulty) {
+        float clamped = Math.max(0f, Math.min(percent, LearningCurve.MAX_PERCENT));
+        learning.computeIfAbsent(player, k -> new HashMap<>()).put(spellId, clamped * Math.max(0.01f, difficulty));
     }
 
-    public boolean isForgotten(UUID player, String spellId) {
-        return forgottenSpells.getOrDefault(player, Collections.emptySet()).contains(spellId);
-    }
-
-    public Set<String> getForgottenSpells(UUID player) {
-        return Collections.unmodifiableSet(
-                forgottenSpells.getOrDefault(player, Collections.emptySet()));
+    /** Stored entries only (sync/debug); absent spells sit at the baseline. */
+    public Map<String, Float> learningSnapshot(UUID player) {
+        return Collections.unmodifiableMap(
+                learning.getOrDefault(player, Collections.emptyMap()));
     }
 
     // ------------------------------------------------------------------
@@ -225,21 +210,15 @@ public final class PlayerMagicState {
         }
         nbt.put("maxMana", maxTag);
 
-        CompoundTag knownTag = new CompoundTag();
-        for (Map.Entry<UUID, Set<String>> e : knownSpells.entrySet()) {
-            ListTag list = new ListTag();
-            for (String s : e.getValue()) list.add(StringTag.valueOf(s));
-            knownTag.put(e.getKey().toString(), list);
+        CompoundTag learningTag = new CompoundTag();
+        for (Map.Entry<UUID, Map<String, Float>> e : learning.entrySet()) {
+            CompoundTag inner = new CompoundTag();
+            for (Map.Entry<String, Float> le : e.getValue().entrySet()) {
+                inner.putFloat(le.getKey(), le.getValue());
+            }
+            learningTag.put(e.getKey().toString(), inner);
         }
-        nbt.put("knownSpells", knownTag);
-
-        CompoundTag forgottenTag = new CompoundTag();
-        for (Map.Entry<UUID, Set<String>> e : forgottenSpells.entrySet()) {
-            ListTag list = new ListTag();
-            for (String s : e.getValue()) list.add(StringTag.valueOf(s));
-            forgottenTag.put(e.getKey().toString(), list);
-        }
-        nbt.put("forgottenSpells", forgottenTag);
+        nbt.put("learning", learningTag);
 
         CompoundTag cdTag = new CompoundTag();
         for (Map.Entry<UUID, Map<String, Long>> e : cooldownUntil.entrySet()) {
@@ -268,27 +247,32 @@ public final class PlayerMagicState {
                 catch (IllegalArgumentException ignored) {}
             }
         }
-        if (nbt.contains("knownSpells", Tag.TAG_COMPOUND)) {
-            CompoundTag tag = nbt.getCompound("knownSpells");
+        if (nbt.contains("learning", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = nbt.getCompound("learning");
             for (String key : tag.getAllKeys()) {
                 try {
                     UUID uuid = UUID.fromString(key);
-                    ListTag list = tag.getList(key, Tag.TAG_STRING);
-                    Set<String> set = new HashSet<>();
-                    for (int i = 0; i < list.size(); i++) set.add(list.getString(i));
-                    knownSpells.put(uuid, set);
+                    CompoundTag inner = tag.getCompound(key);
+                    Map<String, Float> map = new HashMap<>();
+                    for (String s : inner.getAllKeys()) map.put(s, inner.getFloat(s));
+                    learning.put(uuid, map);
                 } catch (IllegalArgumentException ignored) {}
             }
         }
+        // Legacy migration (0.3.x -> 0.4.0, D-D2): knownSpells carried the
+        // castable set — every spell now sits at the 10% baseline by default,
+        // so known entries need no storage. forgottenSpells meant "cannot
+        // cast" -> store 0 points so the gate keeps blocking them.
         if (nbt.contains("forgottenSpells", Tag.TAG_COMPOUND)) {
             CompoundTag tag = nbt.getCompound("forgottenSpells");
             for (String key : tag.getAllKeys()) {
                 try {
                     UUID uuid = UUID.fromString(key);
                     ListTag list = tag.getList(key, Tag.TAG_STRING);
-                    Set<String> set = new HashSet<>();
-                    for (int i = 0; i < list.size(); i++) set.add(list.getString(i));
-                    if (!set.isEmpty()) forgottenSpells.put(uuid, set);
+                    for (int i = 0; i < list.size(); i++) {
+                        learning.computeIfAbsent(uuid, k -> new HashMap<>())
+                                .put(list.getString(i), 0f);
+                    }
                 } catch (IllegalArgumentException ignored) {}
             }
         }

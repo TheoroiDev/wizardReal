@@ -14,6 +14,7 @@ import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
+import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.effect.SpellEffect;
 import com.theo.wizardreal.spell.DataSpell;
 import com.theo.voicecast.api.Pronunciation;
@@ -83,13 +84,29 @@ public final class WizardRealCommands {
         return Commands.literal(name)
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("learn")
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .then(spellArg("spell")
+                                        .executes(ctx -> learn(ctx, EntityArgument.getPlayer(ctx, "target"), null))
+                                        .then(amountArg()
+                                                .executes(ctx -> learn(ctx, EntityArgument.getPlayer(ctx, "target"),
+                                                        StringArgumentType.getString(ctx, "amount"))))))
                         .then(spellArg("spell")
-                                .executes(ctx -> learn(ctx, self(ctx)))
-                                .then(targetThen(WizardRealCommands::learn))))
+                                .executes(ctx -> learn(ctx, self(ctx), null))
+                                .then(amountArg()
+                                        .executes(ctx -> learn(ctx, self(ctx),
+                                                StringArgumentType.getString(ctx, "amount"))))))
                 .then(Commands.literal("unlearn")
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .then(spellArg("spell")
+                                        .executes(ctx -> unlearn(ctx, EntityArgument.getPlayer(ctx, "target"), null))
+                                        .then(amountArg()
+                                                .executes(ctx -> unlearn(ctx, EntityArgument.getPlayer(ctx, "target"),
+                                                        StringArgumentType.getString(ctx, "amount"))))))
                         .then(spellArg("spell")
-                                .executes(ctx -> unlearn(ctx, self(ctx)))
-                                .then(targetThen(WizardRealCommands::unlearn))))
+                                .executes(ctx -> unlearn(ctx, self(ctx), null))
+                                .then(amountArg()
+                                        .executes(ctx -> unlearn(ctx, self(ctx),
+                                                StringArgumentType.getString(ctx, "amount"))))))
                 .then(Commands.literal("cast")
                         .then(spellArg("spell")
                                 .executes(ctx -> cast(ctx, 1.0f))
@@ -144,6 +161,11 @@ public final class WizardRealCommands {
         return Commands.argument(name, ResourceLocationArgument.id()).suggests(SPELL_SUGGESTIONS);
     }
 
+    /** Optional learn/unlearn amount: bare number = +/- percentage points, "N%" = set absolute. */
+    private static RequiredArgumentBuilder<CommandSourceStack, String> amountArg() {
+        return Commands.argument("amount", StringArgumentType.word());
+    }
+
     private static String spellId(CommandContext<CommandSourceStack> ctx, String name) {
         return ctx.getArgument(name, ResourceLocation.class).toString();
     }
@@ -163,6 +185,11 @@ public final class WizardRealCommands {
             source.sendFailure(Component.translatable("wizardreal.cmd.unknown_spell", spellId));
         }
         return spell;
+    }
+
+    /** Difficulty for a stored spell id (unregistered ids read as 1.0). */
+    private static float difficultyOf(String spellId) {
+        return SpellRegistry.get(spellId).map(Spell::difficulty).orElse(1.0f);
     }
 
     private static Component spellDisplayName(Spell spell) {
@@ -187,30 +214,59 @@ public final class WizardRealCommands {
         return String.format(Locale.ROOT, "%.1f", ticks / 20.0f);
     }
 
-    private static int learn(CommandContext<CommandSourceStack> ctx, ServerPlayer target) throws CommandSyntaxException {
+    /** D-D2 command semantics: bare amount = +/- percentage points (default
+     * +10/-10), "N%" = set absolute mastery. Learning is the single source of
+     * truth; known is derived. */
+    private static int learn(CommandContext<CommandSourceStack> ctx, ServerPlayer target, String amount)
+            throws CommandSyntaxException {
         String spellId = spellId(ctx, "spell");
         Spell spell = requireSpell(ctx.getSource(), spellId);
         if (spell == null) return 0;
         PlayerMagicState state = PlayerMagicState.get(target.getServer());
-        state.learnSpell(target.getUUID(), spellId);
+        if (!applyLearningDelta(ctx, state, target, spell, amount, +1)) return 0;
         state.save();
         SpellCatalogService.publish(target);
-        ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.learned",
-                spellDisplayName(spell), target.getName()), true);
+        float t = state.learningPercent(target.getUUID(), spellId, spell.difficulty());
+        ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.learning_set",
+                spellDisplayName(spell), target.getName(),
+                String.format(Locale.ROOT, "%.0f", t)), true);
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int unlearn(CommandContext<CommandSourceStack> ctx, ServerPlayer target) throws CommandSyntaxException {
+    private static int unlearn(CommandContext<CommandSourceStack> ctx, ServerPlayer target, String amount)
+            throws CommandSyntaxException {
         String spellId = spellId(ctx, "spell");
         Spell spell = requireSpell(ctx.getSource(), spellId);
         if (spell == null) return 0;
         PlayerMagicState state = PlayerMagicState.get(target.getServer());
-        state.forgetSpell(target.getUUID(), spellId);
+        if (!applyLearningDelta(ctx, state, target, spell, amount, -1)) return 0;
         state.save();
         SpellCatalogService.publish(target);
-        ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.unlearned",
-                spellDisplayName(spell), target.getName()), true);
+        float t = state.learningPercent(target.getUUID(), spellId, spell.difficulty());
+        ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.learning_set",
+                spellDisplayName(spell), target.getName(),
+                String.format(Locale.ROOT, "%.0f", t)), true);
         return Command.SINGLE_SUCCESS;
+    }
+
+    /** @return false when the amount string is malformed (feedback sent). */
+    private static boolean applyLearningDelta(CommandContext<CommandSourceStack> ctx, PlayerMagicState state,
+                                              ServerPlayer target, Spell spell, String amount, int sign) {
+        float difficulty = spell.difficulty();
+        try {
+            if (amount == null) {
+                state.addLearningPercent(target.getUUID(), spell.id(), sign * 10f, difficulty);
+            } else if (amount.endsWith("%")) {
+                float percent = Float.parseFloat(amount.substring(0, amount.length() - 1).trim());
+                state.setLearningPercent(target.getUUID(), spell.id(), percent, difficulty);
+            } else {
+                state.addLearningPercent(target.getUUID(), spell.id(), sign * Float.parseFloat(amount.trim()), difficulty);
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            ctx.getSource().sendFailure(Component.translatable("wizardreal.cmd.invalid_amount", amount));
+            return false;
+        }
     }
 
     private static int cast(CommandContext<CommandSourceStack> ctx, float confidence) throws CommandSyntaxException {
@@ -246,10 +302,14 @@ public final class WizardRealCommands {
             return 0;
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.spells.header", matches.size()), false);
+        float knownThreshold = viewer == null ? LearningCurve.DEFAULT_KNOWN_THRESHOLD
+                : WizardRealConfig.loadCached(viewer.getServer().getServerDirectory().toPath())
+                        .learning().knownThreshold();
         for (Spell spell : matches) {
             Component knownText = state == null
                     ? Component.translatable("wizardreal.cmd.common.na")
-                    : yesNo(state.knowsSpell(viewerId, spell.id()));
+                    : yesNo(LearningCurve.known(
+                            state.learningPercent(viewerId, spell.id(), spell.difficulty()), knownThreshold));
             ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.spells.entry",
                     spellDisplayName(spell),
                     spell.id(),
@@ -275,6 +335,14 @@ public final class WizardRealCommands {
                 spell.manaCost(), formatSeconds(spell.cooldownTicks())), false);
         source.sendSuccess(() -> Component.translatable("wizardreal.cmd.spellinfo.learning",
                 yesNo(spell.requiresLearning())), false);
+        ServerPlayer viewer = ctx.getSource().getEntity() instanceof ServerPlayer p ? p : null;
+        Component masteryText = viewer == null
+                ? Component.translatable("wizardreal.cmd.common.na")
+                : Component.literal(String.format(Locale.ROOT, "%.0f%%",
+                        PlayerMagicState.get(viewer.getServer())
+                                .learningPercent(viewer.getUUID(), spellId, spell.difficulty())));
+        source.sendSuccess(() -> Component.translatable("wizardreal.cmd.spellinfo.difficulty",
+                String.format(Locale.ROOT, "%.1f", spell.difficulty()), masteryText), false);
         float threshold = spell.threshold();
         Component thresholdText = threshold < 0
                 ? Component.translatable("wizardreal.cmd.common.default")
@@ -324,7 +392,15 @@ public final class WizardRealCommands {
 
     private static int known(CommandContext<CommandSourceStack> ctx, ServerPlayer target) {
         PlayerMagicState state = PlayerMagicState.get(target.getServer());
-        List<String> ids = new ArrayList<>(state.getKnownSpells(target.getUUID()));
+        float knownThreshold = WizardRealConfig.loadCached(target.getServer().getServerDirectory().toPath())
+                .learning().knownThreshold();
+        List<String> ids = new ArrayList<>();
+        for (Spell spell : SpellRegistry.all()) {
+            if (LearningCurve.known(state.learningPercent(target.getUUID(), spell.id(), spell.difficulty()),
+                    knownThreshold)) {
+                ids.add(spell.id());
+            }
+        }
         Collections.sort(ids);
         ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.known.header",
                 target.getName(), ids.size(), joinOrNone(ids)), false);
@@ -407,12 +483,15 @@ public final class WizardRealCommands {
         source.sendSuccess(() -> Component.translatable("wizardreal.cmd.state.dump.player", target.getName()), false);
         source.sendSuccess(() -> Component.translatable("wizardreal.cmd.state.dump.mana",
                 formatMana(state.getMana(uuid)), formatMana(state.getMaxMana(uuid))), false);
-        List<String> known = new ArrayList<>(state.getKnownSpells(uuid));
-        Collections.sort(known);
-        source.sendSuccess(() -> Component.translatable("wizardreal.cmd.state.dump.known", joinOrNone(known)), false);
-        List<String> forgotten = new ArrayList<>(state.getForgottenSpells(uuid));
-        Collections.sort(forgotten);
-        source.sendSuccess(() -> Component.translatable("wizardreal.cmd.state.dump.forgotten", joinOrNone(forgotten)), false);
+        // Learning snapshot (D-D2): stored points only; absent spells sit at the 10% baseline.
+        List<String> learning = new ArrayList<>();
+        for (Map.Entry<String, Float> e : state.learningSnapshot(uuid).entrySet()) {
+            learning.add(e.getKey() + "=" + String.format(Locale.ROOT, "%.0f%%",
+                    e.getValue() / Math.max(0.01f, difficultyOf(e.getKey()))));
+        }
+        Collections.sort(learning);
+        source.sendSuccess(() -> Component.translatable("wizardreal.cmd.state.dump.known",
+                joinOrNone(learning)), false);
         List<String> cooldowns = new ArrayList<>();
         for (Map.Entry<String, Long> entry : state.getCooldowns(uuid).entrySet()) {
             long remaining = entry.getValue() - now;

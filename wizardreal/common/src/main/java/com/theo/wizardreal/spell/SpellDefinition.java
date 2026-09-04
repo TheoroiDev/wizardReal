@@ -60,6 +60,7 @@ public record SpellDefinition(
         TriggerDef trigger,
         ChantsDef chants,
         ChantPolicyDef chantPolicy,
+        float difficulty,
         List<SpellEffect> effects
 ) {
     public static final Codec<School> SCHOOL_CODEC = Codec.STRING.comapFlatMap(
@@ -92,6 +93,8 @@ public record SpellDefinition(
                     ChantsDef.CODEC.optionalFieldOf("chants", ChantsDef.EMPTY).forGetter(SpellDefinition::chants),
                     ChantPolicyDef.CODEC.optionalFieldOf("chant_policy", ChantPolicyDef.EMPTY)
                             .forGetter(SpellDefinition::chantPolicy),
+                    Codec.floatRange(0.5f, 3.0f).optionalFieldOf("difficulty", 1.0f)
+                            .forGetter(SpellDefinition::difficulty),
                     EffectRegistry.codec().listOf().fieldOf("effects").forGetter(SpellDefinition::effects)
             ).apply(instance, SpellDefinition::new));
 
@@ -105,7 +108,7 @@ public record SpellDefinition(
         }
         Pronunciation pronunciation = trigger.pronunciation(id.toString());
         return new DataSpell(id, schools, manaCost, cooldownTicks, requiresLearning, origin,
-                threshold, pronunciation, builtChants, effects, chantPolicy.toPolicy());
+                threshold, difficulty, pronunciation, builtChants, effects, chantPolicy.toPolicy());
     }
 
     /** 0.4.0 language-keyed expansion: for each language, every {@code body}

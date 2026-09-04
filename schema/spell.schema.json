@@ -48,6 +48,13 @@
       "default": -1,
       "description": "Match threshold override. -1 = use matcher default (text 0.8 / IPA 0.6); >=0 replaces the default outright (no template-level thresholds exist)."
     },
+    "difficulty": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 3,
+      "default": 1,
+      "description": "Learning difficulty (0.4.0): the mastery requirement scales as 100 x difficulty points, so the same practice converts into less mastery. Forbidden chants use 2.0-3.0."
+    },
     "trigger": {
       "type": "object",
       "additionalProperties": false,

@@ -23,9 +23,14 @@ public final class SpellCatalogBuilder {
 
     public static CatalogPayload build(MinecraftServer server, UUID player) {
         PlayerMagicState state = PlayerMagicState.get(server);
+        float knownThreshold = com.theo.wizardreal.config.WizardRealConfig
+                .loadCached(server.getServerDirectory().toPath()).learning().knownThreshold();
         Map<String, List<CatalogPayload.CatalogSpell>> byOrigin = new LinkedHashMap<>();
         for (Spell spell : SpellRegistry.all()) {
-            boolean learned = state.knowsSpell(player, spell.id());
+            float t = state.learningPercent(player, spell.id(), spell.difficulty());
+            // D-D2: known is derived from learning points (wizardpedia could
+            // not reconcile the old knownSpells/forgottenSpells sets).
+            boolean learned = LearningCurve.known(t, knownThreshold);
             boolean requiresLearning = spell.requiresLearning();
             List<String> schools = spell.schools().stream()
                     .map(school -> school.name().toLowerCase(Locale.ROOT)).toList();

@@ -34,6 +34,8 @@
   "wizardreal.chant.interrupted": "✦ 咏唱被打断——请重复本句",
   "wizardreal.chant.blind": "✦ 咏唱反噬——黑暗吞没了你",
   "wizardreal.chant.skip_locked": "熟练度不足，无法省略咏唱",
+  "wizardreal.chant.weak_skip": "破弃施放！已省略咏唱（威力降低）",
+  "wizardreal.learning.not_ready": "尚未掌握（%s%%）——请研读典籍或练习咏唱",
 
   "wizardreal.chant.explosion.en.l1": "Cloak the sky in black",
   "wizardreal.chant.explosion.en.l2": "Wake the crimson thunder",
@@ -151,6 +153,11 @@
   "wizardreal.tome.invalid": "这本典籍已损毁。",
   "wizardreal.tome.already_known": "你已经掌握 %s。",
   "wizardreal.tome.learn": "习得：%s",
+  "wizardreal.tome.practiced": "研读 %s——熟练度 %s%%",
+  "wizardreal.tome.mastered": "%s 已研读殆尽（75% 上限）——请实战咏唱精进",
+  "wizardreal.cmd.learning_set": "%2$s 的 %1$s 熟练度：%3$s%%",
+  "wizardreal.cmd.invalid_amount": "无效数值 '%s'（数字 = 增减百分点，'N%%' = 设为绝对值）",
+  "wizardreal.cmd.spellinfo.difficulty": "难度：%s（你的熟练度：%s）",
 
   "wizardreal.cmd.unknown_spell": "未知咒语：%s",
   "wizardreal.cmd.learned": "已让 %2$s 学会 %1$s",
