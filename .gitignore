@@ -65,12 +65,12 @@ __pycache__/
 run/config/
 *.hprof
 
-# IPA backtest lab (wizardreal/tools/ipa — wr-specific tools, see workspace-root
+# IPA backtest lab (wizardreal/tools/benchmark — wr-specific tools, see workspace-root
 # ipa/README.md + docs/plans/voice_overhaul_implementation.md SS2). Same policy
 # as the workspace-root /ipa lab: fixtures (deterministic test inputs) are
 # tracked; generated/licensed data stays local-only. *.wav / __pycache__/ are
 # covered by the global rules above.
-/tools/ipa/corpus/
-/tools/ipa/out/
-/tools/ipa/libs/
-/tools/ipa/build/
+/tools/benchmark/corpus/
+/tools/benchmark/out/
+/tools/benchmark/libs/
+/tools/benchmark/build/
