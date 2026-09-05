@@ -7,6 +7,7 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import io.netty.buffer.Unpooled;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 /**
  * Zero-compile-time-dependency push of the spell catalog into the
  * <b>wizardpedia</b> compendium, over wizardpedia's public S2C channel
- * {@code wizardpedia:catalog} (PROVIDER_PUSH; contract FINAL v1 — see the
+ * {@code wizardpedia:catalog} (PROVIDER_PUSH; contract v2 — see the
  * wizardpedia README "Provider integration").
  *
  * <p>Mapping (catalog contract):
@@ -25,8 +26,9 @@ import net.minecraft.server.level.ServerPlayer;
  *   <li>categories = spell origins ({@code origin.<id>} name key, one entry
  *       per origin present in the payload);</li>
  *   <li>entries = spells: {@code titleKey} = spell name key,
- *       {@code locked} = !learned, aliases = trigger text aliases + IPA,
- *       lines = flattened ritual chant display keys.</li>
+ *       {@code locked} = !learned, aliases = trigger words per language
+ *       bucket + IPA (neutral), lines = chant lines per language
+ *       (legacy lines are lang keys, language-keyed lines literal text).</li>
  * </ul>
  *
  * <p>Channel id + formatVersion are hardcoded here BY DESIGN — that is the
@@ -42,8 +44,8 @@ import net.minecraft.server.level.ServerPlayer;
  */
 public final class WizardpediaPublisher {
 
-    /** wizardpedia:catalog wire contract (hardcoded per contract, v1). */
-    private static final int FORMAT_VERSION = 1;
+    /** wizardpedia:catalog wire contract (hardcoded per contract, v2). */
+    private static final int FORMAT_VERSION = 2;
     private static final byte TYPE_PROVIDER_PUSH = 1;
     private static final ResourceLocation CHANNEL = new ResourceLocation("wizardpedia", "catalog");
 
@@ -69,7 +71,7 @@ public final class WizardpediaPublisher {
         WizardReal.LOGGER.debug("wizardpedia catalog push sent to {}", player.getName().getString());
     }
 
-    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v1. */
+    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v2. */
     static FriendlyByteBuf encode(CatalogPayload payload, WizardRealConfig.PushMode pushMode) {
         List<CatalogPayload.CatalogOrigin> origins = filterOrigins(payload, pushMode);
 
@@ -95,17 +97,36 @@ public final class WizardpediaPublisher {
                 buf.writeUtf(spell.nameKey(), 128);
                 buf.writeBoolean(spell.learned() || !spell.requiresLearning()); // locked = not unlocked yet
                 buf.writeUtf("wizardreal:spell_tome", 128);
-                List<String> aliases = new ArrayList<>(spell.aliases());
-                aliases.addAll(spell.ipa()); // trigger words + IPA ride the alias list
-                buf.writeVarInt(aliases.size());
-                for (String alias : aliases) buf.writeUtf(alias, 96);
-                List<String> lines = new ArrayList<>();
-                for (List<String> variant : spell.chantDisplayKeys()) lines.addAll(variant);
-                buf.writeVarInt(lines.size());
-                for (String line : lines) buf.writeUtf(line, 160);
+                // Trigger words per language bucket; IPA rides the neutral bucket.
+                // Mutable copies: buckets come from the payload as immutable lists.
+                Map<String, List<String>> aliases = new LinkedHashMap<>();
+                for (Map.Entry<String, List<String>> e : spell.triggerAliases().entrySet()) {
+                    aliases.put(e.getKey(), new ArrayList<>(e.getValue()));
+                }
+                aliases.computeIfAbsent("", k -> new ArrayList<>()).addAll(spell.ipa());
+                writeLangBuckets(buf, aliases, 96);
+                // Chant lines per language (legacy lines are lang keys, language-keyed
+                // lines literal text — the client's translatable fallback shows both).
+                Map<String, List<String>> linesByLang = new LinkedHashMap<>();
+                for (Map.Entry<String, List<List<String>>> e : spell.chantVariants().entrySet()) {
+                    List<String> flat = new ArrayList<>();
+                    for (List<String> variant : e.getValue()) flat.addAll(variant);
+                    linesByLang.put(e.getKey(), flat);
+                }
+                writeLangBuckets(buf, linesByLang, 160);
             }
         }
         return buf;
+    }
+
+    /** varInt bucket count, then per language: utf lang code + varInt values. */
+    private static void writeLangBuckets(FriendlyByteBuf buf, Map<String, List<String>> buckets, int maxLen) {
+        buf.writeVarInt(buckets.size());
+        for (Map.Entry<String, List<String>> e : buckets.entrySet()) {
+            buf.writeUtf(e.getKey(), 8);
+            buf.writeVarInt(e.getValue().size());
+            for (String value : e.getValue()) buf.writeUtf(value, maxLen);
+        }
     }
 
     /** castable mode keeps only spells the player can actually cast. */

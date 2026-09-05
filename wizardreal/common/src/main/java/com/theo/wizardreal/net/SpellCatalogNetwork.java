@@ -9,26 +9,34 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * S2C {@code wizardreal:spell_catalog}: full spell-catalog snapshot for the
- * receiving player (keys only). The client caches it (future HUD/tooling
- * use) and exports {@code <game-dir>/wizardreal/spell_catalog.json}.
+ * receiving player (keys or literal text). The client caches it (future
+ * HUD/tooling use) and exports {@code <game-dir>/wizardreal/spell_catalog.json}.
  *
- * <p>Layout (formatVersion 1):
+ * <p>Layout (formatVersion 2 — catalog v2, voice overhaul SS8: language
+ * annotation + mastery scalars):
  * <pre>
- * byte formatVersion = 1
+ * byte formatVersion = 2
  * varInt originCount { utf originId≤128, utf nameKey≤160,
  *     varInt spellCount { utf id≤128, utf nameKey≤160, bool learned, bool requiresLearning,
  *         bool ritual, varInt schoolCount{utf school≤32}, varInt manaCost,
- *         float cooldownSeconds, varInt aliasCount{utf alias≤96},
- *         varInt ipaCount{utf ipa≤96}, varInt chantCount{varInt lineCount{utf key≤160}} } }
+ *         float cooldownSeconds, float difficulty, float learning, bool skipAllowed,
+ *         varInt ipaCount{utf ipa≤96},
+ *         varInt aliasLangCount { utf lang≤8, varInt n{utf alias≤96} },
+ *         varInt chantLangCount { utf lang≤8,
+ *             varInt variantCount { varInt lineCount{utf line≤160} } } } }
  * </pre>
+ *
+ * <p>{@code ""} is the language-neutral bucket (legacy flat data).
  */
 public final class SpellCatalogNetwork {
     public static final ResourceLocation CHANNEL = WizardReal.id("spell_catalog");
-    public static final byte FORMAT_VERSION = 1;
+    public static final byte FORMAT_VERSION = 2;
 
     private SpellCatalogNetwork() {}
 
@@ -59,18 +67,37 @@ public final class SpellCatalogNetwork {
                 for (String school : spell.schools()) buf.writeUtf(school, 32);
                 buf.writeVarInt(spell.manaCost());
                 buf.writeFloat(spell.cooldownSeconds());
-                buf.writeVarInt(spell.aliases().size());
-                for (String alias : spell.aliases()) buf.writeUtf(alias, 96);
+                buf.writeFloat(spell.difficulty());
+                buf.writeFloat(spell.learning());
+                buf.writeBoolean(spell.skipAllowed());
                 buf.writeVarInt(spell.ipa().size());
                 for (String ipa : spell.ipa()) buf.writeUtf(ipa, 96);
-                buf.writeVarInt(spell.chantDisplayKeys().size());
-                for (List<String> lines : spell.chantDisplayKeys()) {
-                    buf.writeVarInt(lines.size());
-                    for (String key : lines) buf.writeUtf(key, 160);
-                }
+                writeLangMap(buf, spell.triggerAliases(), (b, aliases) -> {
+                    b.writeVarInt(aliases.size());
+                    for (String alias : aliases) b.writeUtf(alias, 96);
+                });
+                writeLangMap(buf, spell.chantVariants(), (b, variants) -> {
+                    b.writeVarInt(variants.size());
+                    for (List<String> lines : variants) {
+                        b.writeVarInt(lines.size());
+                        for (String line : lines) b.writeUtf(line, 160);
+                    }
+                });
             }
         }
         return buf;
+    }
+
+    private static <T> void writeLangMap(FriendlyByteBuf buf, Map<String, T> map, LangWriter<T> writer) {
+        buf.writeVarInt(map.size());
+        for (Map.Entry<String, T> e : map.entrySet()) {
+            buf.writeUtf(e.getKey(), 8);
+            writer.write(buf, e.getValue());
+        }
+    }
+
+    private interface LangWriter<T> {
+        void write(FriendlyByteBuf buf, T value);
     }
 
     static CatalogPayload read(FriendlyByteBuf buf) {
@@ -94,27 +121,46 @@ public final class SpellCatalogNetwork {
                 for (int k = 0; k < schoolCount; k++) schools.add(buf.readUtf(32));
                 int manaCost = buf.readVarInt();
                 float cooldownSeconds = buf.readFloat();
-                int aliasCount = buf.readVarInt();
-                List<String> aliases = new ArrayList<>(aliasCount);
-                for (int k = 0; k < aliasCount; k++) aliases.add(buf.readUtf(96));
+                float difficulty = buf.readFloat();
+                float learning = buf.readFloat();
+                boolean skipAllowed = buf.readBoolean();
                 int ipaCount = buf.readVarInt();
                 List<String> ipa = new ArrayList<>(ipaCount);
                 for (int k = 0; k < ipaCount; k++) ipa.add(buf.readUtf(96));
-                int chantCount = buf.readVarInt();
-                List<List<String>> chants = new ArrayList<>(chantCount);
-                for (int c = 0; c < chantCount; c++) {
-                    int lineCount = buf.readVarInt();
-                    List<String> lines = new ArrayList<>(lineCount);
-                    for (int l = 0; l < lineCount; l++) lines.add(buf.readUtf(160));
-                    chants.add(List.copyOf(lines));
-                }
+                Map<String, List<String>> triggerAliases = readLangMap(buf, b -> {
+                    int n = b.readVarInt();
+                    List<String> out = new ArrayList<>(n);
+                    for (int k = 0; k < n; k++) out.add(b.readUtf(96));
+                    return List.copyOf(out);
+                });
+                Map<String, List<List<String>>> chants = readLangMap(buf, b -> {
+                    int variantCount = b.readVarInt();
+                    List<List<String>> variants = new ArrayList<>(variantCount);
+                    for (int v = 0; v < variantCount; v++) {
+                        int lineCount = b.readVarInt();
+                        List<String> lines = new ArrayList<>(lineCount);
+                        for (int l = 0; l < lineCount; l++) lines.add(b.readUtf(160));
+                        variants.add(List.copyOf(lines));
+                    }
+                    return List.copyOf(variants);
+                });
                 spells.add(new CatalogPayload.CatalogSpell(spellId, spellNameKey, learned, requiresLearning,
                         ritual, List.copyOf(schools), manaCost, cooldownSeconds,
-                        List.copyOf(aliases), List.copyOf(ipa), List.copyOf(chants)));
+                        difficulty, learning, skipAllowed, List.copyOf(ipa),
+                        triggerAliases, chants));
             }
             origins.add(new CatalogPayload.CatalogOrigin(id, nameKey, List.copyOf(spells)));
         }
         return new CatalogPayload(List.copyOf(origins));
+    }
+
+    private static <T> Map<String, T> readLangMap(FriendlyByteBuf buf, java.util.function.Function<FriendlyByteBuf, T> reader) {
+        int langCount = buf.readVarInt();
+        Map<String, T> out = new LinkedHashMap<>(langCount);
+        for (int i = 0; i < langCount; i++) {
+            out.put(buf.readUtf(8), reader.apply(buf));
+        }
+        return out;
     }
 
     private static void handle(FriendlyByteBuf buf, NetworkManager.PacketContext ctx) {

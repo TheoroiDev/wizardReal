@@ -55,7 +55,7 @@ public final class SpellCatalogState {
             Path file = mc.gameDirectory.toPath().resolve("wizardreal").resolve("spell_catalog.json");
 
             Map<String, Object> root = new LinkedHashMap<>();
-            root.put("format", 1);
+            root.put("format", 2);
             root.put("player", mc.getUser().getName());
             root.put("language", mc.getLanguageManager().getSelected());
 
@@ -84,6 +84,12 @@ public final class SpellCatalogState {
         }
     }
 
+    /**
+     * Export schema v2: language-annotated trigger/chants + mastery scalars.
+     * Line {@code text} is the resolved display text (legacy lang keys go
+     * through I18n; language-keyed lines are literal text that passes through
+     * unchanged); {@code key} keeps the raw wire value for traceability.
+     */
     private static Map<String, Object> spellJson(CatalogPayload.CatalogSpell spell) {
         Map<String, Object> json = new LinkedHashMap<>();
         json.put("id", spell.id());
@@ -94,24 +100,31 @@ public final class SpellCatalogState {
         json.put("schools", spell.schools());
         json.put("mana_cost", spell.manaCost());
         json.put("cooldown_seconds", spell.cooldownSeconds());
+        json.put("difficulty", spell.difficulty());
+        json.put("learning", spell.learning());
+        json.put("skip_allowed", spell.skipAllowed());
 
         Map<String, Object> trigger = new LinkedHashMap<>();
-        trigger.put("aliases", spell.aliases());
+        trigger.put("aliases", spell.triggerAliases());
         trigger.put("ipa", spell.ipa());
         json.put("trigger", trigger);
 
-        List<Object> chants = new ArrayList<>();
-        for (List<String> lines : spell.chantDisplayKeys()) {
-            List<Object> lineJson = new ArrayList<>();
-            for (String key : lines) {
-                Map<String, Object> line = new LinkedHashMap<>();
-                line.put("key", key);
-                line.put("text", I18n.get(key));
-                lineJson.add(line);
+        Map<String, Object> chants = new LinkedHashMap<>();
+        for (Map.Entry<String, List<List<String>>> e : spell.chantVariants().entrySet()) {
+            List<Object> variants = new ArrayList<>();
+            for (List<String> lines : e.getValue()) {
+                List<Object> lineJson = new ArrayList<>();
+                for (String key : lines) {
+                    Map<String, Object> line = new LinkedHashMap<>();
+                    line.put("key", key);
+                    line.put("text", I18n.get(key));
+                    lineJson.add(line);
+                }
+                Map<String, Object> chant = new LinkedHashMap<>();
+                chant.put("lines", lineJson);
+                variants.add(chant);
             }
-            Map<String, Object> chant = new LinkedHashMap<>();
-            chant.put("lines", lineJson);
-            chants.add(chant);
+            chants.put(e.getKey(), variants);
         }
         json.put("chants", chants);
         return json;
