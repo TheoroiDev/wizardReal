@@ -12,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 
@@ -29,6 +30,10 @@ public final class SpellCatalogBuilder {
 
     /** Neutral language-bucket key for legacy (language-less) data. */
     public static final String LANG_NEUTRAL = "";
+
+    /** Pure feedback primitives — not shown in effect summaries. */
+    private static final Set<String> COSMETIC_EFFECTS = Set.of(
+            "wizardreal:sound", "wizardreal:particles", "wizardreal:visual");
 
     private SpellCatalogBuilder() {}
 
@@ -52,7 +57,9 @@ public final class SpellCatalogBuilder {
                     spell.difficulty(), t, spell.chantPolicy().skipAllowed(),
                     pronunciation == null ? List.of() : pronunciation.ipa(),
                     triggerAliases(pronunciation),
-                    chantVariants(spell.chants()));
+                    chantVariants(spell.chants()),
+                    descKeys(effectsOf(spell)),
+                    stages(spell));
             byOrigin.computeIfAbsent(spell.origin(), k -> new ArrayList<>()).add(entry);
         }
         List<CatalogPayload.CatalogOrigin> origins = new ArrayList<>();
@@ -63,6 +70,37 @@ public final class SpellCatalogBuilder {
             origins.add(new CatalogPayload.CatalogOrigin(e.getKey(), nameKey, e.getValue()));
         }
         return new CatalogPayload(List.copyOf(origins));
+    }
+
+    private static List<com.theo.wizardreal.effect.SpellEffect> effectsOf(Spell spell) {
+        return spell instanceof com.theo.wizardreal.spell.DataSpell data
+                ? data.effects() : List.of();
+    }
+
+    /** Effect-summary lang keys ({@code wizardreal.effect.<type>}), cosmetic
+     *  primitives (sound/particles/visual) skipped. */
+    private static List<String> descKeys(List<com.theo.wizardreal.effect.SpellEffect> effects) {
+        List<String> out = new ArrayList<>();
+        for (var effect : effects) {
+            if (effect == null) continue;
+            String id = effect.effectId().toString();
+            if (COSMETIC_EFFECTS.contains(id)) continue;
+            out.add("wizardreal.effect." + effect.effectId().getPath());
+        }
+        return List.copyOf(out);
+    }
+
+    /** Chant-stage ladder mapped for the catalog (mana/cooldown -1 = inherit). */
+    private static List<CatalogPayload.CatalogStage> stages(Spell spell) {
+        List<CatalogPayload.CatalogStage> out = new ArrayList<>();
+        for (var stage : spell.chantStages()) {
+            out.add(new CatalogPayload.CatalogStage(
+                    stage.afterLines(), stage.masteryThreshold(),
+                    stage.manaCost() == null ? -1 : stage.manaCost(),
+                    stage.cooldownTicks() == null ? -1f : stage.cooldownTicks() / 20f,
+                    descKeys(stage.effects())));
+        }
+        return List.copyOf(out);
     }
 
     /** Trigger words per language bucket; unclaimed flat aliases stay neutral. */

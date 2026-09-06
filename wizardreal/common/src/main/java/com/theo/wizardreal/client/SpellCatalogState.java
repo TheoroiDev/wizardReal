@@ -55,7 +55,7 @@ public final class SpellCatalogState {
             Path file = mc.gameDirectory.toPath().resolve("wizardreal").resolve("spell_catalog.json");
 
             Map<String, Object> root = new LinkedHashMap<>();
-            root.put("format", 2);
+            root.put("format", 3);
             root.put("player", mc.getUser().getName());
             root.put("language", mc.getLanguageManager().getSelected());
 
@@ -109,6 +109,8 @@ public final class SpellCatalogState {
         trigger.put("ipa", spell.ipa());
         json.put("trigger", trigger);
 
+        json.put("effects", spell.descKeys());
+
         Map<String, Object> chants = new LinkedHashMap<>();
         for (Map.Entry<String, List<List<String>>> e : spell.chantVariants().entrySet()) {
             List<Object> variants = new ArrayList<>();
@@ -127,6 +129,18 @@ public final class SpellCatalogState {
             chants.put(e.getKey(), variants);
         }
         json.put("chants", chants);
+
+        List<Object> stages = new ArrayList<>();
+        for (CatalogPayload.CatalogStage stage : spell.stages()) {
+            Map<String, Object> stageJson = new LinkedHashMap<>();
+            stageJson.put("after_lines", stage.afterLines());
+            stageJson.put("mastery", stage.mastery());
+            if (stage.manaCost() >= 0) stageJson.put("mana_cost", stage.manaCost());
+            if (stage.cooldownSeconds() >= 0) stageJson.put("cooldown_seconds", stage.cooldownSeconds());
+            stageJson.put("effects", stage.descKeys());
+            stages.add(stageJson);
+        }
+        if (!stages.isEmpty()) json.put("chant_stages", stages);
         return json;
     }
 }

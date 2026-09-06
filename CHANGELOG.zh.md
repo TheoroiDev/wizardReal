@@ -6,10 +6,21 @@
 
 ### Features
 
+- 目录 v3（配合 wizardpedia 双页图鉴）：条目携带 `entity`（mob 条目实时实体预览）、学派 tags（右轨筛选）、基础+各阶效果摘要（`wizardreal.effect.<type>` lang 键，覆盖全部 22 个内置效果类型 en+zh——未来法术自动覆盖）、按语言嵌套的咏唱变体、阶梯咏唱数据（`chant_stages`：门=完成行数/熟练度 + 耗魔/冷却覆盖），以及熟练度/耗魔/冷却/难度标量（wizardreal#27）
+
+### Changes
+
+- breaking: `wizardreal:spell_catalog` S2C 升 formatVersion 3；`spell_catalog.json` 导出升 format 3，新增 `effects` 与 `chant_stages`
+### Features
+
+- 阶梯咏唱（magic_eco 03）：法术可定义 `chant_stages` 升级阶——咏唱念得更深即切换到该阶自己的效果列表（可覆盖耗魔/冷却），解锁门槛=已完成行数×施法者熟练度百分比**双门槛**；熟练度不足时向下结算到已解锁的最高阶——用低阶练习成长解锁高阶
+- 法术生态扩军（magic_eco 04）：内置法术增至 75 个家族（10 流派 × 7+，禁咒 rift/domain/vincula/blade 与爆裂同列 6 行全念仪式），覆盖探索/移动、战斗、挖矿、种地生态位；每家族配 5-6 行三语咏唱 × 2 重掷变体，入口行全库互异（L1 冲突检查清零）
+- 新增 13 个数据包效果原语：`hex`（对敌锥面/球域状态）、`bind`（移动锁）、`pull`（漩涡/磁吸）、`blink`（安全步进传送）、`surface`（到期复原的地表覆盖：火/冰/荆棘）、`barrier`（墙/环/囚笼结构，到期复原）、`summon`（临时归属仆从）、`excavate`（隧道/区域挖掘）、`harvest`（作物收割/补种/催熟）、`smelt`（触点熔炼）、`visual`（编排粒子演出——ring/helix/pillar/burst/trail/cone/cross/orbit 形状 + 彩色 dust，随时间回放）、`weather` 与 `light`（发光标记 + 夜视）
 - 目录 v2（语音改版 SS8）：法术目录携带语言维度——触发词按语言桶分组、吟唱行按语言分组（legacy 行保持中立 lang key）；每法术新增 `difficulty`/`learning`（熟练度 %）/`skip_allowed`，随目录推送到客户端与 wizardpedia（wizardreal#26）
 
 ### Changes
 
+- 施法验证前先解析咏唱阶：耗魔与冷却取该阶覆盖值（法杖乘区照常生效），执行效果切换为该阶列表
 - breaking: `spell_catalog.json` 导出升到 format 2 —— `trigger.aliases`/`chants` 按语言分组（`""` = 中立 legacy 桶），并新增 `difficulty`/`learning`/`skip_allowed` 字段
 - Wizardpedia 条目可按语言页渲染：触发词与吟唱行按语言交付，图鉴据此实现语言子页
 

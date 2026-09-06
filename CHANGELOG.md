@@ -6,10 +6,21 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ### Features
 
+- Catalog v3 (with wizardpedia's two-page compendium): entries now carry `entity` (mob entries get a live entity preview), school tags (right-rail filter), base + per-stage effect summaries (`wizardreal.effect.<type>` lang keys, all 22 built-in effect types, en+zh — future spells are covered automatically), nested per-language chant variants, and the chant-stage ladder (`chant_stages`: gate lines/mastery + mana/cooldown overrides), plus mastery %/mana/cost/difficulty scalars (wizardreal#27)
+
+### Changes
+
+- breaking: `wizardreal:spell_catalog` S2C bumps to formatVersion 3; `spell_catalog.json` export bumps to format 3 with `effects` and `chant_stages`
+### Features
+
+- Chant-stage ladder (magic_eco 03): spells can define `chant_stages` upgrade tiers — chanting deeper into a ritual swaps the spell to that tier's own effect list (and optional mana/cooldown overrides), gated by BOTH completed lines and the caster's mastery percent; casting deeper than your mastery resolves down to the highest unlocked tier, so using lower tiers trains the next one
+- Spell ecosystem expansion (magic_eco 04): the shipped roster grows to 75 spell families (10 schools x 7+, plus the forbidden-chant ranks rift/domain/vincula/blade joining explosion as full 6-line rituals) with exploration/movement, combat, mining and farming coverage; every family gained 5-6 line per-language chants with two re-roll variants, and entry lines are mutually distinct (L1 conflict check clean)
+- 13 new datapack effect primitives: `hex` (enemy status cone/sphere), `bind` (movement lock), `pull` (vortex/magnet), `blink` (safe-march teleport), `surface` (expiring ground cover: fire/ice/thorns), `barrier` (wall/ring/cage structures with restore-on-expiry), `summon` (temporary, owner-attributed allies), `excavate` (tunnel/area mining), `harvest` (crop harvest/replant/grow), `smelt` (touch-smelting), `visual` (choreographed particle shapes - ring/helix/pillar/burst/trail/cone/cross/orbit with colored dust - played back over time), `weather` and `light` (glow marking + night vision)
 - Catalog v2 (voice overhaul SS8): the spell catalog now carries the language dimension — trigger words are grouped per language bucket and chant lines per language (legacy lines stay neutral lang keys); adds `difficulty`, `learning` (mastery %) and `skip_allowed` per spell, pushed to clients and wizardpedia (wizardreal#26)
 
 ### Changes
 
+- Casts now resolve their chant stage before validation: mana cost and cooldown come from the resolved tier (staff modifiers still apply) and the executed effects are the stage's list
 - breaking: `spell_catalog.json` export bumps to format 2 — `trigger.aliases`/`chants` are grouped per language (`""` = neutral legacy bucket), plus the new `difficulty`/`learning`/`skip_allowed` fields
 - Wizardpedia entries render per language page: trigger words and chant lines are delivered per language so the compendium can show language sub-pages
 

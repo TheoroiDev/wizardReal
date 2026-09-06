@@ -26,9 +26,10 @@ import net.minecraft.server.level.ServerPlayer;
  *   <li>categories = spell origins ({@code origin.<id>} name key, one entry
  *       per origin present in the payload);</li>
  *   <li>entries = spells: {@code titleKey} = spell name key,
- *       {@code locked} = !learned, aliases = trigger words per language
- *       bucket + IPA (neutral), lines = chant lines per language
- *       (legacy lines are lang keys, language-keyed lines literal text).</li>
+ *       {@code locked} = !learned, tags = schools (right-rail filter),
+ *       aliases = trigger words per language bucket + IPA (neutral),
+ *       desc = base effect-summary lang keys, chants = per-language nested
+ *       variants, stages = the chant-stage ladder.</li>
  * </ul>
  *
  * <p>Channel id + formatVersion are hardcoded here BY DESIGN — that is the
@@ -44,8 +45,8 @@ import net.minecraft.server.level.ServerPlayer;
  */
 public final class WizardpediaPublisher {
 
-    /** wizardpedia:catalog wire contract (hardcoded per contract, v2). */
-    private static final int FORMAT_VERSION = 2;
+    /** wizardpedia:catalog wire contract (hardcoded per contract, v3). */
+    private static final int FORMAT_VERSION = 3;
     private static final byte TYPE_PROVIDER_PUSH = 1;
     private static final ResourceLocation CHANNEL = new ResourceLocation("wizardpedia", "catalog");
 
@@ -71,7 +72,7 @@ public final class WizardpediaPublisher {
         WizardReal.LOGGER.debug("wizardpedia catalog push sent to {}", player.getName().getString());
     }
 
-    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v2. */
+    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v3. */
     static FriendlyByteBuf encode(CatalogPayload payload, WizardRealConfig.PushMode pushMode) {
         List<CatalogPayload.CatalogOrigin> origins = filterOrigins(payload, pushMode);
 
@@ -96,7 +97,15 @@ public final class WizardpediaPublisher {
                 buf.writeUtf(origin.id(), 128);
                 buf.writeUtf(spell.nameKey(), 128);
                 buf.writeBoolean(spell.learned() || !spell.requiresLearning()); // locked = not unlocked yet
+                buf.writeFloat(spell.learning()); // mastery % for stage-gate marking
+                buf.writeVarInt(spell.manaCost());
+                buf.writeFloat(spell.cooldownSeconds());
+                buf.writeFloat(spell.difficulty());
                 buf.writeUtf("wizardreal:spell_tome", 128);
+                buf.writeUtf("", 128); // entityId: spells have no entity preview
+                // tags = schools (right-rail filter tabs)
+                buf.writeVarInt(spell.schools().size());
+                for (String school : spell.schools()) buf.writeUtf(school, 32);
                 // Trigger words per language bucket; IPA rides the neutral bucket.
                 // Mutable copies: buckets come from the payload as immutable lists.
                 Map<String, List<String>> aliases = new LinkedHashMap<>();
@@ -105,15 +114,19 @@ public final class WizardpediaPublisher {
                 }
                 aliases.computeIfAbsent("", k -> new ArrayList<>()).addAll(spell.ipa());
                 writeLangBuckets(buf, aliases, 96);
-                // Chant lines per language (legacy lines are lang keys, language-keyed
-                // lines literal text — the client's translatable fallback shows both).
-                Map<String, List<String>> linesByLang = new LinkedHashMap<>();
-                for (Map.Entry<String, List<List<String>>> e : spell.chantVariants().entrySet()) {
-                    List<String> flat = new ArrayList<>();
-                    for (List<String> variant : e.getValue()) flat.addAll(variant);
-                    linesByLang.put(e.getKey(), flat);
+                // desc = base effect-summary lang keys (neutral bucket).
+                writeLangBuckets(buf, Map.of("", spell.descKeys()), 160);
+                // Chant lines per language, variants nested (variant switching).
+                writeVariantBuckets(buf, spell.chantVariants());
+                // Chant-stage ladder (tier cycling in the compendium UI).
+                buf.writeVarInt(spell.stages().size());
+                for (CatalogPayload.CatalogStage stage : spell.stages()) {
+                    buf.writeVarInt(stage.afterLines());
+                    buf.writeFloat(stage.mastery());
+                    buf.writeVarInt(stage.manaCost());
+                    buf.writeFloat(stage.cooldownSeconds());
+                    writeLangBuckets(buf, Map.of("", stage.descKeys()), 160);
                 }
-                writeLangBuckets(buf, linesByLang, 160);
             }
         }
         return buf;
@@ -126,6 +139,19 @@ public final class WizardpediaPublisher {
             buf.writeUtf(e.getKey(), 8);
             buf.writeVarInt(e.getValue().size());
             for (String value : e.getValue()) buf.writeUtf(value, maxLen);
+        }
+    }
+
+    /** varInt language count, then per language: utf lang + nested variant lists. */
+    private static void writeVariantBuckets(FriendlyByteBuf buf, Map<String, List<List<String>>> variants) {
+        buf.writeVarInt(variants.size());
+        for (Map.Entry<String, List<List<String>>> e : variants.entrySet()) {
+            buf.writeUtf(e.getKey(), 8);
+            buf.writeVarInt(e.getValue().size());
+            for (List<String> lines : e.getValue()) {
+                buf.writeVarInt(lines.size());
+                for (String line : lines) buf.writeUtf(line, 160);
+            }
         }
     }
 

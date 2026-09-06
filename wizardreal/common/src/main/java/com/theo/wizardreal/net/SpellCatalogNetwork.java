@@ -18,10 +18,10 @@ import java.util.Map;
  * receiving player (keys or literal text). The client caches it (future
  * HUD/tooling use) and exports {@code <game-dir>/wizardreal/spell_catalog.json}.
  *
- * <p>Layout (formatVersion 2 — catalog v2, voice overhaul SS8: language
- * annotation + mastery scalars):
+ * <p>Layout (formatVersion 3 — catalog v3: language annotation + mastery
+ * scalars + effect descriptions + chant-stage ladder):
  * <pre>
- * byte formatVersion = 2
+ * byte formatVersion = 3
  * varInt originCount { utf originId≤128, utf nameKey≤160,
  *     varInt spellCount { utf id≤128, utf nameKey≤160, bool learned, bool requiresLearning,
  *         bool ritual, varInt schoolCount{utf school≤32}, varInt manaCost,
@@ -29,14 +29,17 @@ import java.util.Map;
  *         varInt ipaCount{utf ipa≤96},
  *         varInt aliasLangCount { utf lang≤8, varInt n{utf alias≤96} },
  *         varInt chantLangCount { utf lang≤8,
- *             varInt variantCount { varInt lineCount{utf line≤160} } } } }
+ *             varInt variantCount { varInt lineCount{utf line≤160} } },
+ *         varInt descCount { utf key≤160 },
+ *         varInt stageCount { varInt afterLines, float mastery, varInt manaCost(-1=inherit),
+ *             float cooldownSeconds(-1=inherit), varInt descCount { utf key≤160 } } } }
  * </pre>
  *
  * <p>{@code ""} is the language-neutral bucket (legacy flat data).
  */
 public final class SpellCatalogNetwork {
     public static final ResourceLocation CHANNEL = WizardReal.id("spell_catalog");
-    public static final byte FORMAT_VERSION = 2;
+    public static final byte FORMAT_VERSION = 3;
 
     private SpellCatalogNetwork() {}
 
@@ -83,6 +86,17 @@ public final class SpellCatalogNetwork {
                         for (String line : lines) b.writeUtf(line, 160);
                     }
                 });
+                buf.writeVarInt(spell.descKeys().size());
+                for (String key : spell.descKeys()) buf.writeUtf(key, 160);
+                buf.writeVarInt(spell.stages().size());
+                for (CatalogPayload.CatalogStage stage : spell.stages()) {
+                    buf.writeVarInt(stage.afterLines());
+                    buf.writeFloat(stage.mastery());
+                    buf.writeVarInt(stage.manaCost());
+                    buf.writeFloat(stage.cooldownSeconds());
+                    buf.writeVarInt(stage.descKeys().size());
+                    for (String key : stage.descKeys()) buf.writeUtf(key, 160);
+                }
             }
         }
         return buf;
@@ -144,10 +158,26 @@ public final class SpellCatalogNetwork {
                     }
                     return List.copyOf(variants);
                 });
+                int descCount = buf.readVarInt();
+                List<String> descKeys = new ArrayList<>(descCount);
+                for (int k = 0; k < descCount; k++) descKeys.add(buf.readUtf(160));
+                int stageCount = buf.readVarInt();
+                List<CatalogPayload.CatalogStage> stages = new ArrayList<>(stageCount);
+                for (int st = 0; st < stageCount; st++) {
+                    int afterLines = buf.readVarInt();
+                    float mastery = buf.readFloat();
+                    int stageMana = buf.readVarInt();
+                    float stageCooldown = buf.readFloat();
+                    int stageDescCount = buf.readVarInt();
+                    List<String> stageDesc = new ArrayList<>(stageDescCount);
+                    for (int k = 0; k < stageDescCount; k++) stageDesc.add(buf.readUtf(160));
+                    stages.add(new CatalogPayload.CatalogStage(afterLines, mastery, stageMana,
+                            stageCooldown, List.copyOf(stageDesc)));
+                }
                 spells.add(new CatalogPayload.CatalogSpell(spellId, spellNameKey, learned, requiresLearning,
                         ritual, List.copyOf(schools), manaCost, cooldownSeconds,
                         difficulty, learning, skipAllowed, List.copyOf(ipa),
-                        triggerAliases, chants));
+                        triggerAliases, chants, List.copyOf(descKeys), List.copyOf(stages)));
             }
             origins.add(new CatalogPayload.CatalogOrigin(id, nameKey, List.copyOf(spells)));
         }
