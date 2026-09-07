@@ -103,9 +103,8 @@ public final class KanaIpa {
                     if (smallGlide && !out.isEmpty()) {
                         String prev = out.remove(out.size() - 1);
                         String vowel = ch.equals("ゃ") ? "a" : ch.equals("ゅ") ? "ɯ" : "o";
-                        String tail = prev.length() >= 2 ? prev.substring(prev.length() - 2) : "";
-                        boolean sibilantI = prev.endsWith("i")
-                                && (tail.equals("ɕi") || tail.equals("dʑi") || tail.equals("tɕi"));
+                        boolean sibilantI = prev.endsWith("ɕi") || prev.endsWith("dʑi")
+                                || prev.endsWith("tɕi");
                         String head;
                         if (sibilantI) {
                             head = prev.substring(0, prev.length() - 1); // keep bare sibilant
