@@ -1,0 +1,281 @@
+{
+  "id": "wizardreal:portus",
+  "schools": [
+    "arcane"
+  ],
+  "mana_cost": 10,
+  "cooldown_ticks": 120,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "portus"
+      ],
+      "zh": [
+        "传送"
+      ],
+      "ja": [
+        "ポルトゥス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:blink",
+      "distance": 12
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.enderman.teleport",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "portus rises on sigil wings"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "portus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the sigil answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave aether into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the nexus to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "aether wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the nexus remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o sigil unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "传送乘以太而至"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "传送"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以秘印之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织以太入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚枢纽于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "以太随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "枢纽识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之秘印"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ポルトゥスは印に乗て立つ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ポルトゥス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "印よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に以太を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "環を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし以太"
+              ]
+            },
+            {
+              "aliases": [
+                "環は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ印"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 20
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 100,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              120,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 1.5,
+          "count": 40,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 14,
+      "cooldown_ticks": 130
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 30
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 200,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:slow_falling",
+          "duration": 100,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              120,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 2.5,
+          "count": 60,
+          "duration_ticks": 18,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.enderman.teleport",
+          "volume": 1.1,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 24,
+      "cooldown_ticks": 320
+    }
+  ]
+}

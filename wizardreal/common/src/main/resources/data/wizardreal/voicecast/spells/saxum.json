@@ -4,7 +4,7 @@
     "earth"
   ],
   "mana_cost": 10,
-  "cooldown_ticks": 50,
+  "cooldown_ticks": 60,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -31,11 +31,248 @@
     {
       "type": "wizardreal:projectile",
       "entity": "minecraft:arrow",
-      "speed": 2.6
+      "speed": 2.0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:block.stone.hit"
+      "sound": "minecraft:block.stone.break",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "saxum, stone of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "saxum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the stone answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bedrock into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mountain to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bedrock wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mountain remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o stone unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "石矛初现，磐石为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "石矛"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以磐石之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织大地入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚山岳于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "大地随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "山岳识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之磐石"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "サクスムよ、岩とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "サクスム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "岩よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に大地を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "山を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし大地"
+              ]
+            },
+            {
+              "aliases": [
+                "山は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ岩"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:arrow",
+          "speed": 2.0,
+          "count": 5,
+          "spread": 0.08
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 1.5,
+          "count": 30,
+          "duration_ticks": 12,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 15,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:fireball",
+          "speed": 1.0
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 5,
+          "power": 3,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 18,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.stone.break",
+          "volume": 1.2,
+          "pitch": 0.7
+        }
+      ],
+      "mana_cost": 26,
+      "cooldown_ticks": 320
     }
   ]
 }

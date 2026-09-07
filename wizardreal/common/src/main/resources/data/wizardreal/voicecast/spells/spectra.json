@@ -1,0 +1,289 @@
+{
+  "id": "wizardreal:spectra",
+  "schools": [
+    "illusion"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 140,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "spectra"
+      ],
+      "zh": [
+        "幻墙"
+      ],
+      "ja": [
+        "スペクトラ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:barrier",
+      "block": "minecraft:white_stained_glass",
+      "shape": "wall",
+      "width": 4,
+      "height": 3,
+      "radius": 2,
+      "duration_ticks": 200
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.glass.place",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let veil crown spectra"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "spectra"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the shade answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave veil into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mirror to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "veil wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mirror remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o shade unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以帷幕加冕幻墙"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "幻墙"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幻影之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织帷幕入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚镜界于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "帷幕随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "镜界识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幻影"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "幻をもってスペクトラを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "スペクトラ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "幻よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に帷を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし帷"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ幻"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:white_stained_glass",
+          "shape": "wall",
+          "width": 5,
+          "height": 4,
+          "radius": 2,
+          "duration_ticks": 300
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 3.0,
+          "count": 36,
+          "duration_ticks": 14,
+          "y_offset": 0.5,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:white_stained_glass",
+          "shape": "ring",
+          "width": 3,
+          "height": 3,
+          "radius": 3,
+          "duration_ticks": 320
+        },
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:white_stained_glass",
+          "shape": "wall",
+          "width": 5,
+          "height": 4,
+          "radius": 2,
+          "duration_ticks": 320
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 4.0,
+          "count": 48,
+          "duration_ticks": 16,
+          "y_offset": 0.5,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.glass.place",
+          "volume": 1.1,
+          "pitch": 0.9
+        }
+      ],
+      "mana_cost": 29,
+      "cooldown_ticks": 330
+    }
+  ]
+}

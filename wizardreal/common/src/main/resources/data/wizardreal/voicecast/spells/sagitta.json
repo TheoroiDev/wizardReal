@@ -3,8 +3,8 @@
   "schools": [
     "holy"
   ],
-  "mana_cost": 9,
-  "cooldown_ticks": 45,
+  "mana_cost": 8,
+  "cooldown_ticks": 40,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -31,11 +31,250 @@
     {
       "type": "wizardreal:projectile",
       "entity": "minecraft:spectral_arrow",
-      "speed": 2.4
+      "speed": 2.0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.arrow.shoot"
+      "sound": "minecraft:block.beacon.activate",
+      "volume": 0.8,
+      "pitch": 1.4
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "sagitta, light of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "sagitta"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the light answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave hymn into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the halo to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "hymn wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the halo remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o light unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "圣光矢初现，圣光为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "圣光矢"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以圣光之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织圣咏入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚辉环于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "圣咏随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "辉环识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之圣光"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "サギッタよ、光とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "サジッタ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "光よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に聖歌を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし聖歌"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ光"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:spectral_arrow",
+          "speed": 2.0,
+          "count": 3,
+          "spread": 0.08
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 1.8,
+          "count": 32,
+          "duration_ticks": 12,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 12,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:spectral_arrow",
+          "speed": 1.8,
+          "count": 2,
+          "spread": 0.05
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 4,
+          "power": 2,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.0,
+          "count": 46,
+          "duration_ticks": 16,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.beacon.activate",
+          "volume": 1.0,
+          "pitch": 1.2
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 310
     }
   ]
 }

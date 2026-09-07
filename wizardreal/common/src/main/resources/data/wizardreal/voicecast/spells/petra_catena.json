@@ -1,0 +1,295 @@
+{
+  "id": "wizardreal:petra_catena",
+  "schools": [
+    "earth"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 160,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.3,
+  "trigger": {
+    "languages": {
+      "en": [
+        "petra catena",
+        "petra",
+        "catena"
+      ],
+      "zh": [
+        "石棺"
+      ],
+      "ja": [
+        "ペトラ・カテナ",
+        "ペトラカテナ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:barrier",
+      "block": "minecraft:cobblestone",
+      "shape": "cage",
+      "width": 3,
+      "height": 3,
+      "radius": 1.5,
+      "duration_ticks": 120
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.stone.place",
+      "volume": 1,
+      "pitch": 0.8
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "petra catena, mountain of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "petra catena"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the stone answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bedrock into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mountain to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bedrock wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mountain remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o stone unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "石棺初现，大地为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "石棺"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以磐石之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织大地入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚山岳于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "大地随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "山岳识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之磐石"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ペトラ・カテナよ、岩とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ペトラ・カテナ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "岩よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に大地を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "山を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし大地"
+              ]
+            },
+            {
+              "aliases": [
+                "山は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ岩"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "cage",
+          "width": 3,
+          "height": 3,
+          "radius": 2,
+          "duration_ticks": 180
+        },
+        {
+          "type": "wizardreal:bind",
+          "duration": 60,
+          "range": 8,
+          "group": false
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 2.5,
+          "count": 40,
+          "duration_ticks": 15,
+          "y_offset": 1.0,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "cage",
+          "width": 3,
+          "height": 3,
+          "radius": 2,
+          "duration_ticks": 240
+        },
+        {
+          "type": "wizardreal:bind",
+          "duration": 120,
+          "range": 12,
+          "group": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 4.0,
+          "count": 60,
+          "duration_ticks": 20,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.stone.place",
+          "volume": 1.2,
+          "pitch": 0.7
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 340
+    }
+  ]
+}

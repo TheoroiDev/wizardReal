@@ -1,0 +1,306 @@
+{
+  "id": "wizardreal:suctus",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 110,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "suctus",
+        "drain cone"
+      ],
+      "zh": [
+        "汲取",
+        "汲取锥"
+      ],
+      "ja": [
+        "スクトゥス",
+        "吸収のブレス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:beam",
+      "range": 14,
+      "width": 1,
+      "damage": 7,
+      "set_fire": false,
+      "fire_seconds": 3
+    },
+    {
+      "type": "wizardreal:heal",
+      "amount": 3
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.enchantment_table.use",
+      "volume": 0.9,
+      "pitch": 1.2
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "by wraith, suctus awakens"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "suctus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以幽冢为引，汲取苏醒"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "汲取"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "墓に導かれ、スクトゥス顕現せり"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "スクトゥス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 18,
+          "width": 1,
+          "damage": 9,
+          "set_fire": false,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:heal",
+          "amount": 5
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 0,
+          "duration": 60,
+          "range": 18,
+          "angle_cos": 0.3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 2.2,
+          "count": 40,
+          "duration_ticks": 16,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 22,
+          "width": 1.5,
+          "damage": 13,
+          "set_fire": false,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:heal",
+          "amount": 8
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 1,
+          "duration": 100,
+          "range": 22,
+          "angle_cos": 0.3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 3.2,
+          "count": 55,
+          "duration_ticks": 20,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.enchantment_table.use",
+          "volume": 1.0,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 31,
+      "cooldown_ticks": 330
+    }
+  ]
+}

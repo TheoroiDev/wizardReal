@@ -1,0 +1,298 @@
+{
+  "id": "wizardreal:vireo",
+  "schools": [
+    "nature"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 120,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "vireo",
+        "binding vine"
+      ],
+      "zh": [
+        "束缚藤",
+        "藤缚"
+      ],
+      "ja": [
+        "ウィレオ",
+        "束縛蔓"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:bind",
+      "duration": 60,
+      "range": 14,
+      "group": false
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          100,
+          220,
+          120
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "trail",
+      "radius": 1.0,
+      "count": 24,
+      "duration_ticks": 12,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "vireo, hear the thorn"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "vireo"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the root answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bloom into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the thorn to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bloom wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the thorn remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o root unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "束缚藤啊，谛听根须"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "束缚藤"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以根须之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织新芽入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚荆棘于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "新芽随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "荆棘识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之根须"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ウィレオよ、根を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ウィレオ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "根よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に芽を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "茨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし芽"
+              ]
+            },
+            {
+              "aliases": [
+                "茨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ根"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:bind",
+          "duration": 120,
+          "range": 16,
+          "group": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:poison",
+          "amplifier": 0,
+          "duration": 100,
+          "range": 14,
+          "angle_cos": 0.6
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 1.5,
+          "count": 34,
+          "duration_ticks": 15,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:bind",
+          "duration": 160,
+          "range": 18,
+          "group": true
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 1,
+          "duration": 160,
+          "range": 18,
+          "angle_cos": 0.5
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 3.5,
+          "count": 52,
+          "duration_ticks": 20,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.grass.place",
+          "volume": 1.1,
+          "pitch": 0.9
+        }
+      ],
+      "mana_cost": 30,
+      "cooldown_ticks": 330
+    }
+  ]
+}

@@ -24,6 +24,7 @@ python engbench.py --spells-dir <.../data/wizardreal/voicecast/spells> \
     [--langs en,zh,ja,ko] [--backends edge,sapi,piper]
     [--conditions clean,pink@5,white@0] [--engines id1,id2]
     [--limit N] [--threshold-ipa 0.85] [--fatjar <jar>]
+    [--audio-dir audio] [--pick random|all] [--seed N]
 ```
 
 - **Engines** come from the v2 catalog (`models.<name>.properties.type` in
@@ -41,10 +42,20 @@ python engbench.py --spells-dir <.../data/wizardreal/voicecast/spells> \
   similarity, threshold 0.8 — ported into `EngineBench.java`, keep in sync);
   the IPA engine keeps its CTC-template score vs `--threshold-ipa`.
 
+- **Audio store** (`--audio-dir`, default `tools/benchmark/audio/`): all
+  renders live OUTSIDE the per-run report dir, in `clean/<backend>/` and
+  `noisy/<tag>/<backend>/`. Runs are APPEND-only — only missing files are
+  synthesized, so growing the spell matrix costs just the new aliases, and
+  manual takes dropped into the store join the candidate pool automatically.
+- **`--pick random|all`** (default `random`, seed via `--seed`): `random`
+  tests each alias x condition against ONE randomly chosen available take;
+  `all` enumerates every take (legacy exhaustive matrix).
+
 Outputs land in `out/engbench/<timestamp>/`: `report.md` (engine x language
 hit-rate matrix + engine x language x condition breakdown + per-item
 detail), `report.json` (aggregates), `raw.jsonl` (one line per engine x
-item), plus the synthesized corpus under `wavs/`.
+item). The synthesized corpus is NOT inside the report dir — it stays in
+the audio store for reuse.
 
 Typical session:
 
@@ -55,6 +66,10 @@ python engbench.py --spells-dir <spells> --limit 3 \
 
 # full matrix, all engines, both local + cloud TTS
 python engbench.py --spells-dir <spells>
+
+# exhaustive backend matrix (legacy), reproducible random pick
+python engbench.py --spells-dir <spells> --pick all
+python engbench.py --spells-dir <spells> --seed 42
 ```
 
 Deps: ffmpeg, JDK (`javac`/`java` on PATH), numpy (noise conditions),

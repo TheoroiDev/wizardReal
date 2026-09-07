@@ -1,0 +1,294 @@
+{
+  "id": "wizardreal:spiritus",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 8,
+  "cooldown_ticks": 120,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "spiritus"
+      ],
+      "zh": [
+        "魂灯"
+      ],
+      "ja": [
+        "スピリトゥス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:light",
+      "glow_range": 0,
+      "glow_duration": 0,
+      "night_vision_seconds": 240
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          170,
+          110,
+          220
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "orbit",
+      "radius": 1.5,
+      "count": 28,
+      "duration_ticks": 25,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "spiritus, bone of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "spiritus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "魂灯初现，亡影为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "魂灯"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "スピリトゥスよ、墓とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "スピリトゥス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:light",
+          "glow_range": 10,
+          "glow_duration": 160,
+          "night_vision_seconds": 480
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.0,
+          "count": 36,
+          "duration_ticks": 26,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 10,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:light",
+          "glow_range": 20,
+          "glow_duration": 240,
+          "night_vision_seconds": 600
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:glowing",
+          "amplifier": 0,
+          "duration": 240,
+          "range": 24,
+          "radius": 24,
+          "mob_filter": "minecraft:undead"
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:night_vision",
+          "duration": 600,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.enchantment_table.use",
+          "volume": 0.9,
+          "pitch": 1.1
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 280
+    }
+  ]
+}

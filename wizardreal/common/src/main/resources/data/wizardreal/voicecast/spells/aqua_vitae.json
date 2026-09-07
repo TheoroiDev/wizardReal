@@ -1,0 +1,300 @@
+{
+  "id": "wizardreal:aqua_vitae",
+  "schools": [
+    "water"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 140,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "aqua vitae",
+        "aqua",
+        "vitae"
+      ],
+      "zh": [
+        "净水"
+      ],
+      "ja": [
+        "アクア・ウィタエ",
+        "アクアウィタエ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:heal",
+      "amount": 4
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:regeneration",
+      "duration": 80,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:item.bottle.empty",
+      "volume": 0.9,
+      "pitch": 1.2
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let deep crown aqua vitae"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "aqua vitae"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the tide answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave deep into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mist to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "deep wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mist remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o tide unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以深渊加冕净水"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "净水"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以潮汐之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织深渊入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚烟波于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "深渊随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "烟波识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之潮汐"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "潮をもってアクア・ウィタエを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "アクア・ウィタエ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "潮よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に深淵を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "霧を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし深淵"
+              ]
+            },
+            {
+              "aliases": [
+                "霧は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ潮"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:heal",
+          "amount": 6
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:regeneration",
+          "duration": 120,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:fire_resistance",
+          "amplifier": 0,
+          "duration": 120,
+          "range": 4,
+          "radius": 4
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              80,
+              180,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 2.5,
+          "count": 30,
+          "duration_ticks": 12,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 21,
+      "cooldown_ticks": 160
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:heal",
+          "amount": 8
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:regeneration",
+          "duration": 160,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:regeneration",
+          "amplifier": 0,
+          "duration": 160,
+          "range": 6,
+          "radius": 6
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              80,
+              180,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:item.bottle.empty",
+          "volume": 1.1,
+          "pitch": 1.2
+        }
+      ],
+      "mana_cost": 34,
+      "cooldown_ticks": 340
+    }
+  ]
+}

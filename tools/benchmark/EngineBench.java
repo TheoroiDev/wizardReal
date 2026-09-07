@@ -51,7 +51,37 @@ import java.util.concurrent.atomic.AtomicReference;
  * per (engine, item) on stdout.
  */
 public final class EngineBench {
-    private static final float MATCH_THRESHOLD = 0.8f;
+    private static final float MATCH_THRESHOLD = 0.65f;
+    private static com.theo.voicecast.audio.NoiseSuppression SHARED_NS;
+
+    /** Cross-spell alias collision audit (per language, best-of-pairs). */
+    private static void auditCollisions(List<Object> items) {
+        record Ent(String spell, String lang, String alias) { }
+        List<Ent> ents = new ArrayList<>();
+        for (Object io : items) {
+            Map<String, Object> it = Json.asMap(io);
+            ents.add(new Ent(Json.getString(it, "spell", ""), Json.getString(it, "lang", ""),
+                    Json.getString(it, "alias", "")));
+        }
+        for (String lang : ents.stream().map(e -> e.lang).distinct().sorted().toList()) {
+            List<Ent> pool = ents.stream().filter(e -> e.lang.equals(lang)).toList();
+            float max = 0f;
+            String pair = "";
+            for (int i = 0; i < pool.size(); i++) {
+                for (int j = i + 1; j < pool.size(); j++) {
+                    Ent a = pool.get(i), b = pool.get(j);
+                    if (a.spell.equals(b.spell)) continue;
+                    float s = Mirror.scoreAlias(a.alias, b.alias);
+                    if (s > max) {
+                        max = s;
+                        pair = a.alias + " <-> " + b.alias;
+                    }
+                }
+            }
+            System.out.printf("[collision audit] lang=%s maxCrossSpellSimilarity=%.2f (%s)%n",
+                    lang, max, pair);
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
@@ -64,6 +94,21 @@ public final class EngineBench {
 
         List<Object> engines = Json.getList(input, "engines");
         List<Object> items = Json.getList(input, "items");
+        String gameDir = Json.getString(input, "gameDir", "");
+        boolean denoise = Json.getBool(input, "denoise", false); // getString returns dflt for booleans!
+        if (denoise) {
+            // production noiseSuppression=true config: GTCRN cleans every mic
+            // frame before recognition — mirror that in the bench
+            com.theo.voicecast.audio.NoiseSuppression ns = com.theo.voicecast.audio.NoiseSuppression.create(
+                    Path.of(gameDir), com.theo.voicecast.model.ModelConfig.load(Path.of(gameDir)));
+            SHARED_NS = ns;
+            System.out.println("[EngineBench] denoise-in-the-loop: " + (ns != null ? "gtcrn active" : "unavailable (passthrough)"));
+        }
+
+        // Collision audit: max Mirror similarity between aliases of DIFFERENT
+        // spells, per language. Informs the match threshold — anything above
+        // it can confuse the matcher into casting the wrong spell.
+        auditCollisions(items);
 
         for (Object eo : engines) {
             Map<String, Object> e = Json.asMap(eo);
@@ -128,8 +173,18 @@ public final class EngineBench {
                 done.countDown();
             });
             long t0 = System.nanoTime();
+            if (SHARED_NS != null) {
+                SHARED_NS.process(pcm, 0, pcm.length);
+            }
             recognizer.acceptPcm(pcm, 0, pcm.length);
+            // trailing silence mirrors a real PTT release (the mic keeps
+            // running briefly); without it the streaming transducer drops
+            // the trailing frames of the final token
+            recognizer.acceptPcm(new short[9600], 0, 9600); // 600 ms right-context for the trailing token
             recognizer.finishUtterance();
+            if (SHARED_NS != null) {
+                SHARED_NS.reset();
+            }
             boolean finished = done.await(30, TimeUnit.SECONDS);
             long latency = (System.nanoTime() - t0) / 1_000_000L;
             RecognitionResult res = latest.get();
@@ -155,6 +210,26 @@ public final class EngineBench {
     }
 
     private static void benchOffline(EngineSpec spec, List<Map<String, Object>> items) throws Exception {
+        // Hybrid language strategy (measured 20260906): auto mode is best for
+        // en/zh, but ja collapses (auto cross-lingual errors). ja items run a
+        // separate language=ja-pinned recognizer; everything else stays auto.
+        List<Map<String, Object>> auto = new ArrayList<>();
+        List<Map<String, Object>> ja = new ArrayList<>();
+        for (Map<String, Object> it : items) {
+            if ("ja".equals(Json.getString(it, "lang", ""))) ja.add(it);
+            else auto.add(it);
+        }
+        if (!auto.isEmpty()) runOfflineLang(spec, auto);
+        if (!ja.isEmpty()) {
+            Map<String, String> options = new LinkedHashMap<>(spec.options());
+            options.put("language", "ja");
+            EngineSpec pinned = new EngineSpec(spec.type(), spec.engineId(),
+                    spec.modelDir(), spec.languages(), options);
+            runOfflineLang(pinned, ja);
+        }
+    }
+
+    private static void runOfflineLang(EngineSpec spec, List<Map<String, Object>> items) throws Exception {
         SherpaSenseVoiceRecognizer recognizer = new SherpaSenseVoiceRecognizer(spec);
         recognizer.setVocabulary(List.of()); // no-op by contract (open vocabulary)
         recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true));
@@ -212,15 +287,25 @@ public final class EngineBench {
     /** Production session shape: one Pronunciation per spell, aliases = every
      * distinct alias seen for this engine's items. */
     private static List<Pronunciation> productionVocabulary(List<Map<String, Object>> items) {
-        Map<String, Set<String>> bySpell = new LinkedHashMap<>();
+        // Language-bucketed like production (wizardreal builds per-language
+        // Pronunciations; the session router only feeds the engine its own
+        // buckets). The flat constructor would dump every language's aliases
+        // into every engine's grammar and bias bilingual models toward CJK.
+        Map<String, Map<String, Set<String>>> bySpellLang = new LinkedHashMap<>();
         for (Map<String, Object> it : items) {
             String spell = Json.getString(it, "spell", "spell");
+            String lang = Json.getString(it, "lang", "en");
             String alias = Json.getString(it, "alias", "");
-            if (!alias.isBlank()) bySpell.computeIfAbsent(spell, k -> new LinkedHashSet<>()).add(alias);
+            if (!alias.isBlank()) {
+                bySpellLang.computeIfAbsent(spell, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(lang, k -> new LinkedHashSet<>()).add(alias);
+            }
         }
         List<Pronunciation> vocab = new ArrayList<>();
-        for (Map.Entry<String, Set<String>> en : bySpell.entrySet()) {
-            vocab.add(new Pronunciation(en.getKey(), List.of(), List.copyOf(en.getValue())));
+        for (Map.Entry<String, Map<String, Set<String>>> en : bySpellLang.entrySet()) {
+            Map<String, List<String>> buckets = new LinkedHashMap<>();
+            en.getValue().forEach((lang, aliases) -> buckets.put(lang, List.copyOf(aliases)));
+            vocab.add(new Pronunciation(en.getKey(), List.of(), List.of(), buckets));
         }
         return vocab;
     }
@@ -234,6 +319,7 @@ public final class EngineBench {
         out.put("lang", Json.getString(it, "lang", ""));
         out.put("alias", Json.getString(it, "alias", ""));
         out.put("condition", Json.getString(it, "condition", "clean"));
+        out.put("kind", Json.getString(it, "kind", "alias"));
         out.put("backend", Json.getString(it, "backend", ""));
         return out;
     }
@@ -255,7 +341,153 @@ public final class EngineBench {
             } else if (containsWord(t, a)) {
                 return 0.9f;
             }
-            return similarity(a, t);
+            // phonetic layer, mirrors production Phonetics (keep in sync)
+            return Math.max(similarity(a, t), phoneticScore(a, t));
+        }
+
+        /** Phonetic similarity — mirrors production Phonetics (keep in sync). */
+        static float phoneticScore(String a, String b) {
+            String la = latinize(a);
+            String lb = latinize(b);
+            float full = similarity(la, lb);
+            java.util.List<String> ta = tokenize(la);
+            java.util.List<String> tb = tokenize(lb);
+            if (ta.isEmpty() || tb.isEmpty()) return full;
+            java.util.List<String> concat = new java.util.ArrayList<>(tb);
+            for (int i = 0; i + 1 < tb.size(); i++) concat.add(tb.get(i) + tb.get(i + 1));
+            float total = 0f;
+            for (String x : ta) {
+                float best = 0f;
+                for (String y : concat) {
+                    float lev = similarity(x, y);
+                    float vowelless = 0f;
+                    if (Math.min(x.length(), y.length()) >= 4) {
+                        vowelless = similarity(stripVowels(x), stripVowels(y));
+                    }
+                    float meta = similarity(metaphone(x), metaphone(y));
+                    best = Math.max(best, Math.max(lev, Math.max(vowelless,
+                            Math.max(meta, jaccard(skeleton(x), skeleton(y))))));
+                }
+                total += best;
+            }
+            float token = total / ta.size();
+            return Math.max(full, token);
+        }
+
+        static String latinize(String s) {
+            if (s == null || s.isEmpty()) return "";
+            try {
+                com.ibm.icu.text.Transliterator t =
+                        com.ibm.icu.text.Transliterator.getInstance("Any-Latin; Latin-ASCII");
+                return t.transform(s).toLowerCase(Locale.ROOT);
+            } catch (Throwable e) {
+                return s.toLowerCase(Locale.ROOT);
+            }
+        }
+
+        static java.util.List<String> tokenize(String s) {
+            java.util.List<String> out = new java.util.ArrayList<>();
+            for (String t : s.split("[^\\p{L}\\p{N}']+")) {
+                if (!t.isBlank()) out.add(t);
+            }
+            return out;
+        }
+
+        /** Classic Metaphone key - mirrors production Phonetics.metaphone
+         *  (keep in sync). */
+        static String metaphone(String word) {
+            String w = word.toUpperCase(Locale.ROOT).replaceAll("[^A-Z]", "");
+            int n = w.length();
+            if (n == 0) return "";
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            if (w.startsWith("CH")) { sb.append('K'); i = 2; }
+            else if (w.startsWith("PH")) { sb.append('F'); i = 2; }
+            else if (w.startsWith("KN") || w.startsWith("GN") || w.startsWith("PN")
+                    || w.startsWith("WR") || w.startsWith("AE")) { i = 1; }
+            else if (w.startsWith("WH")) { sb.append('W'); i = 2; }
+            else if (w.startsWith("X")) { sb.append('S'); i = 1; }
+            else { sb.append(w.charAt(0)); i = 1; }
+            while (i < n) {
+                char cur = w.charAt(i);
+                char prev = i > 0 ? w.charAt(i - 1) : ' ';
+                char next = i + 1 < n ? w.charAt(i + 1) : ' ';
+                char after = i + 2 < n ? w.charAt(i + 2) : ' ';
+                if (cur == prev && cur != 'C') { i++; continue; }
+                switch (cur) {
+                    case 'A', 'E', 'I', 'O', 'U' -> { }
+                    case 'B' -> { if (!(prev == 'M' && i == n - 1)) sb.append('B'); }
+                    case 'C' -> {
+                        if (next == 'H') { sb.append('X'); i++; }
+                        else if (prev == 'S' && "EIY".indexOf(next) >= 0) { }
+                        else sb.append('K');
+                    }
+                    case 'D' -> {
+                        if (next == 'G' && "EIY".indexOf(after) >= 0) { sb.append('J'); i++; }
+                        else sb.append('T');
+                    }
+                    case 'G' -> {
+                        if (next == 'H') i++;
+                        else if (next == 'N') { }
+                        else if (prev == 'G') { }
+                        else if ("EIY".indexOf(next) >= 0) sb.append('J');
+                        else sb.append('K');
+                    }
+                    case 'H' -> { if (i == 0 || "CSPTG".indexOf(prev) < 0) sb.append('H'); }
+                    case 'K' -> { if (prev != 'C') sb.append('K'); }
+                    case 'P' -> { if (next == 'H') { sb.append('F'); i++; } else sb.append('P'); }
+                    case 'Q' -> sb.append('K');
+                    case 'S' -> { if (next == 'H') { sb.append('X'); i++; } else sb.append('S'); }
+                    case 'T' -> {
+                        if (next == 'I' && (after == 'O' || after == 'A')) sb.append('X');
+                        else if (next == 'H') { sb.append('T'); i++; }
+                        else sb.append('T');
+                    }
+                    case 'V' -> sb.append('F');
+                    case 'W', 'Y' -> { if (isVowel(next)) sb.append(cur); }
+                    case 'X' -> { sb.append('K'); sb.append('S'); }
+                    case 'Z' -> sb.append('S');
+                    case 'F', 'J', 'L', 'M', 'N', 'R' -> sb.append(cur);
+                    default -> { }
+                }
+                i++;
+            }
+            return sb.toString();
+        }
+
+        static boolean isVowel(char c) {
+            return "AEIOU".indexOf(c) >= 0;
+        }
+
+        static String stripVowels(String token) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (i == 0 || "aeiou".indexOf(c) < 0) sb.append(c);
+            }
+            return sb.toString();
+        }
+
+        static java.util.Set<String> skeleton(String token) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < token.length(); i++) {
+                char c = token.charAt(i);
+                if (i == 0 || "aeiou".indexOf(c) < 0) sb.append(c);
+            }
+            String skel = sb.toString();
+            java.util.Set<String> grams = new java.util.HashSet<>();
+            for (int i = 0; i + 1 < skel.length(); i++) grams.add(skel.substring(i, i + 2));
+            if (grams.isEmpty() && !skel.isEmpty()) grams.add(skel);
+            return grams;
+        }
+
+        static float jaccard(java.util.Set<String> a, java.util.Set<String> b) {
+            if (a.isEmpty() || b.isEmpty()) return 0f;
+            java.util.Set<String> inter = new java.util.HashSet<>(a);
+            inter.retainAll(b);
+            java.util.Set<String> union = new java.util.HashSet<>(a);
+            union.addAll(b);
+            return (float) inter.size() / union.size();
         }
 
         static String normalize(String s) {

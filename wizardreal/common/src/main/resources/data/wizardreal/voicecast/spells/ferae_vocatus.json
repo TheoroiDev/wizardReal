@@ -1,0 +1,284 @@
+{
+  "id": "wizardreal:ferae_vocatus",
+  "schools": [
+    "nature"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 300,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.4,
+  "trigger": {
+    "languages": {
+      "en": [
+        "ferae vocatus",
+        "ferae",
+        "vocatus"
+      ],
+      "zh": [
+        "兽唤"
+      ],
+      "ja": [
+        "フェライ・ウォカトゥス",
+        "フェライウォカトゥス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:summon",
+      "entity": "minecraft:wolf",
+      "count": 1,
+      "duration_ticks": 1200
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.wolf.ambient",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "ferae vocatus, thorn of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ferae vocatus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the root answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bloom into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the thorn to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bloom wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the thorn remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o root unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "兽唤初现，新芽为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "兽唤"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以根须之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织新芽入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚荆棘于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "新芽随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "荆棘识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之根须"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "フェライ・ウォカトゥスよ、根とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "フェライ・ウォカトゥス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "根よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に芽を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "茨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし芽"
+              ]
+            },
+            {
+              "aliases": [
+                "茨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ根"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:wolf",
+          "count": 2,
+          "duration_ticks": 1800
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.0,
+          "count": 36,
+          "duration_ticks": 20,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 21,
+      "cooldown_ticks": 160
+    },
+    {
+      "after_lines": 5,
+      "mastery": 60,
+      "effects": [
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:wolf",
+          "count": 2,
+          "duration_ticks": 2400
+        },
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:fox",
+          "count": 2,
+          "duration_ticks": 2400
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:strength",
+          "duration": 200,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 26,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.wolf.howl",
+          "volume": 1.1,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 36,
+      "cooldown_ticks": 360
+    }
+  ]
+}

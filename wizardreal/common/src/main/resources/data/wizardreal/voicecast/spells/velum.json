@@ -4,11 +4,11 @@
     "illusion"
   ],
   "mana_cost": 12,
-  "cooldown_ticks": 200,
+  "cooldown_ticks": 180,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
-  "difficulty": 1.0,
+  "difficulty": 1.2,
   "trigger": {
     "languages": {
       "en": [
@@ -31,12 +31,262 @@
     {
       "type": "wizardreal:status_effect",
       "effect": "minecraft:invisibility",
-      "duration": 160,
+      "duration": 200,
       "amplifier": 0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.enderman.teleport"
+      "sound": "minecraft:entity.illusioner.mirror_move",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o dream, lend velum thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "velum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the shade answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave veil into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mirror to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "veil wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mirror remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o shade unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "幻影啊，借隐幕以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "隐幕"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幻影之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织帷幕入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚镜界于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "帷幕随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "镜界识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幻影"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "幻よ、ウェルムに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ウェールム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "幻よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に帷を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし帷"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ幻"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:invisibility",
+          "duration": 400,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 400,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 1.5,
+          "count": 36,
+          "duration_ticks": 20,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:invisibility",
+          "duration": 600,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 600,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:invisibility",
+          "amplifier": 0,
+          "duration": 300,
+          "range": 6,
+          "radius": 6
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 2.2,
+          "count": 50,
+          "duration_ticks": 24,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 1.1,
+          "pitch": 1.1
+        }
+      ],
+      "mana_cost": 29,
+      "cooldown_ticks": 330
     }
   ]
 }

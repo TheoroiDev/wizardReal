@@ -1,0 +1,304 @@
+{
+  "id": "wizardreal:carnifex",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 16,
+  "cooldown_ticks": 180,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.3,
+  "trigger": {
+    "languages": {
+      "en": [
+        "carnifex"
+      ],
+      "zh": [
+        "尸爆"
+      ],
+      "ja": [
+        "カルニフェクス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:explosion",
+      "range": 5,
+      "power": 2,
+      "set_fire": false
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:wither",
+      "amplifier": 0,
+      "duration": 80,
+      "range": 5,
+      "radius": 5,
+      "at_target": true
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.generic.explode",
+      "volume": 0.9,
+      "pitch": 0.9
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let wraith crown carnifex"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "carnifex"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以亡影加冕尸爆"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "尸爆"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "墓をもってカルニフェクスを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "カルニフェクス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 7,
+          "power": 3,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 1,
+          "duration": 100,
+          "range": 7,
+          "radius": 7,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.5,
+          "count": 50,
+          "duration_ticks": 18,
+          "y_offset": 0.5,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 24,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 9,
+          "power": 4,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 9,
+          "power": 3,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 1,
+          "duration": 140,
+          "range": 10,
+          "radius": 10,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 5.0,
+          "count": 70,
+          "duration_ticks": 22,
+          "y_offset": 0.5,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.generic.explode",
+          "volume": 1.2,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 40,
+      "cooldown_ticks": 340
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.School;
+import com.theo.wizardreal.api.SpellStage;
 import com.theo.wizardreal.effect.EffectRegistry;
 import com.theo.wizardreal.effect.SpellEffect;
 import com.theo.voicecast.api.Pronunciation;
@@ -61,7 +62,8 @@ public record SpellDefinition(
         ChantsDef chants,
         ChantPolicyDef chantPolicy,
         float difficulty,
-        List<SpellEffect> effects
+        List<SpellEffect> effects,
+        List<StageDef> stages
 ) {
     public static final Codec<School> SCHOOL_CODEC = Codec.STRING.comapFlatMap(
             name -> {
@@ -95,7 +97,9 @@ public record SpellDefinition(
                             .forGetter(SpellDefinition::chantPolicy),
                     Codec.floatRange(0.5f, 3.0f).optionalFieldOf("difficulty", 1.0f)
                             .forGetter(SpellDefinition::difficulty),
-                    EffectRegistry.codec().listOf().fieldOf("effects").forGetter(SpellDefinition::effects)
+                    EffectRegistry.codec().listOf().fieldOf("effects").forGetter(SpellDefinition::effects),
+                    StageDef.CODEC.listOf().optionalFieldOf("chant_stages", List.of())
+                            .forGetter(SpellDefinition::stages)
             ).apply(instance, SpellDefinition::new));
 
     /** Convert to the live {@link Spell} instance registered in {@code SpellRegistry}. */
@@ -107,8 +111,13 @@ public record SpellDefinition(
             expandLegacyChants(builtChants);
         }
         Pronunciation pronunciation = trigger.pronunciation(id.toString());
+        List<SpellStage> builtStages = new ArrayList<>();
+        for (StageDef s : stages) {
+            builtStages.add(new SpellStage(s.afterLines(), s.mastery(), s.effects(),
+                    s.manaCost(), s.cooldownTicks()));
+        }
         return new DataSpell(id, schools, manaCost, cooldownTicks, requiresLearning, origin,
-                threshold, difficulty, pronunciation, builtChants, effects, chantPolicy.toPolicy());
+                threshold, difficulty, pronunciation, builtChants, effects, chantPolicy.toPolicy(), builtStages);
     }
 
     /** 0.4.0 language-keyed expansion: for each language, every {@code body}
@@ -274,6 +283,21 @@ public record SpellDefinition(
                             Codec.FLOAT.optionalFieldOf("power_multiplier", 1.5f).forGetter(PactDef::powerMultiplier)
                     ).apply(instance, PactDef::new));
         }
+    }
+
+    /** Chant-stage ladder entry ({@code chant_stages}, magic_eco 03): qualitative
+     * upgrade tiers gated by completed chant lines AND mastery percent. */
+    public record StageDef(int afterLines, float mastery, List<SpellEffect> effects,
+                           Integer manaCost, Integer cooldownTicks) {
+        public static final Codec<StageDef> CODEC = RecordCodecBuilder.create(instance ->
+                instance.group(
+                        Codec.INT.fieldOf("after_lines").forGetter(StageDef::afterLines),
+                        Codec.floatRange(0f, 100f).optionalFieldOf("mastery", 0f).forGetter(StageDef::mastery),
+                        EffectRegistry.codec().listOf().fieldOf("effects").forGetter(StageDef::effects),
+                        Codec.INT.optionalFieldOf("mana_cost").forGetter(s -> java.util.Optional.ofNullable(s.manaCost())),
+                        Codec.INT.optionalFieldOf("cooldown_ticks").forGetter(s -> java.util.Optional.ofNullable(s.cooldownTicks()))
+                ).apply(instance, (after, mastery, eff, mana, cd) ->
+                        new StageDef(after, mastery, eff, mana.orElse(null), cd.orElse(null))));
     }
 
     /** Ritual chant variants (empty for instant spells). Legacy array format. */

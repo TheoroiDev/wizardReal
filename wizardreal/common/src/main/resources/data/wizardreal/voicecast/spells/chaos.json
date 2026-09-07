@@ -1,0 +1,306 @@
+{
+  "id": "wizardreal:chaos",
+  "schools": [
+    "arcane"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 100,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "chaos",
+        "chaos beam"
+      ],
+      "zh": [
+        "混沌束",
+        "混沌"
+      ],
+      "ja": [
+        "カオス",
+        "混沌のブレス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:beam",
+      "range": 16,
+      "width": 1,
+      "damage": 8,
+      "set_fire": true,
+      "fire_seconds": 2
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:levitation",
+      "duration": 40,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.evoker.cast_spell",
+      "volume": 1,
+      "pitch": 0.9
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "by aether, chaos awakens"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "chaos"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the sigil answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave aether into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the nexus to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "aether wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the nexus remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o sigil unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以秘印为引，混沌束苏醒"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "混沌束"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以秘印之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织以太入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚枢纽于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "以太随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "枢纽识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之秘印"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "印に導かれ、カオス顕現せり"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "カオス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "印よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に以太を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "環を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし以太"
+              ]
+            },
+            {
+              "aliases": [
+                "環は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ印"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 20,
+          "width": 1.5,
+          "damage": 11,
+          "set_fire": true,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:levitation",
+          "amplifier": 0,
+          "duration": 60,
+          "range": 20,
+          "angle_cos": 0.3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              120,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 2.5,
+          "count": 44,
+          "duration_ticks": 16,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 24,
+          "width": 2,
+          "damage": 15,
+          "set_fire": true,
+          "fire_seconds": 4
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:levitation",
+          "amplifier": 1,
+          "duration": 80,
+          "range": 24,
+          "angle_cos": 0.3
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 5,
+          "power": 2,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              120,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 4.0,
+          "count": 60,
+          "duration_ticks": 20,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.evoker.cast_spell",
+          "volume": 1.2,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 31,
+      "cooldown_ticks": 330
+    }
+  ]
+}

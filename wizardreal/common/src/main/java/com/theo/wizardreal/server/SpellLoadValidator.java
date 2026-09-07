@@ -28,9 +28,11 @@ import java.util.Locale;
  *
  * Pure: warnings come back as strings; the loader logs them. Variant-count
  * warnings (<2 per language) are emitted at parse time by
- * {@code SpellDefinition.expandLanguageKeyedChants}.
+ * {@code SpellDefinition.expandLanguageKeyedChants}. Public so the
+ * shipped-resource test can run the same lint over the datapack JSONs
+ * (generator regression guard).
  */
-final class SpellLoadValidator {
+public final class SpellLoadValidator {
     /** L1 pairs closer than this (normalized similarity) trigger a warning. */
     public static final float L1_DISTINCT_THRESHOLD = 0.75f;
     /** difficulty at/above this marks a forbidden chant (禁咒). */
@@ -38,12 +40,45 @@ final class SpellLoadValidator {
 
     private SpellLoadValidator() {}
 
-    static List<String> validate(java.util.Collection<Spell> spells) {
+    public static List<String> validate(java.util.Collection<Spell> spells) {
         List<String> warnings = new ArrayList<>();
         l1Distinctness(spells, warnings);
         forbiddenGroup(spells, warnings);
         ipaCoverage(spells, warnings);
+        stageLadder(spells, warnings);
         return warnings;
+    }
+
+    // ---- magic_eco 03: 阶梯校验 ---------------------------------------------
+
+    /** chant_stages must ascend by after_lines; a stage beyond the chant's line
+     *  count is unreachable (generator/authoring bug). */
+    private static void stageLadder(java.util.Collection<Spell> spells, List<String> warnings) {
+        for (Spell spell : spells) {
+            var stages = spell.chantStages();
+            if (stages.isEmpty()) continue;
+            int prev = 0;
+            for (int i = 0; i < stages.size(); i++) {
+                var stage = stages.get(i);
+                if (stage.afterLines() <= prev) {
+                    warnings.add(String.format(Locale.ROOT,
+                            "chant_stages not ascending by after_lines (%d then %d): %s[%d]",
+                            prev, stage.afterLines(), spell.id(), i));
+                }
+                prev = Math.max(prev, stage.afterLines());
+                if (!spell.chants().isEmpty()) {
+                    int maxLines = 0;
+                    for (Chant chant : spell.chants()) {
+                        maxLines = Math.max(maxLines, chant.lines().size());
+                    }
+                    if (stage.afterLines() > maxLines) {
+                        warnings.add(String.format(Locale.ROOT,
+                                "chant_stages[%d] after_lines=%d exceeds the longest chant (%d lines): %s",
+                                i, stage.afterLines(), maxLines, spell.id()));
+                    }
+                }
+            }
+        }
     }
 
     // ---- 04 §8-6: L1 全库互异 ---------------------------------------------
@@ -64,6 +99,11 @@ final class SpellLoadValidator {
             for (String aliasA : chains.get(a).aliases()) {
                 if (aliasA.isBlank()) continue;
                 for (int b = a + 1; b < chains.size(); b++) {
+                    if (chains.get(a).spellId().equals(chains.get(b).spellId())) {
+                        // 0.4.0 language-keyed format guarantees all variants of one
+                        // spell share the trigger line — same-spell pairs are by design.
+                        continue;
+                    }
                     for (String aliasB : chains.get(b).aliases()) {
                         if (aliasB.isBlank()) continue;
                         float similarity = normalizedSimilarity(aliasA, aliasB);
@@ -80,13 +120,34 @@ final class SpellLoadValidator {
         }
     }
 
-    /** Normalized full-string similarity (same normalization as chant matching). */
+    /**
+     * Similarity in the SAME terms the lenient gate ({@link ChantEngine#lineMatches})
+     * accepts: for multi-word lines the symmetric token-coverage ratio (either
+     * direction reaching the threshold means one utterance matches both lines);
+     * for single-word lines the whole-string Levenshtein ratio. Whole-string
+     * Levenshtein on multi-word template lines would flag skeleton-sharing
+     * couplets the matcher itself never confuses.
+     */
     private static float normalizedSimilarity(String a, String b) {
         String na = ChantEngine.normalize(a);
         String nb = ChantEngine.normalize(b);
         if (na.isEmpty() || nb.isEmpty()) return 0f;
+        String[] ta = na.split(" ");
+        String[] tb = nb.split(" ");
+        if (ta.length >= 2 && tb.length >= 2) {
+            return Math.max(tokenCoverage(ta, nb), tokenCoverage(tb, na));
+        }
         int dist = Levenshtein.distance(na, nb);
         return 1.0f - (float) dist / Math.max(na.length(), nb.length());
+    }
+
+    /** Fraction of {@code tokens} found in {@code text} (ChantEngine.looseText rule). */
+    private static float tokenCoverage(String[] tokens, String text) {
+        int hit = 0;
+        for (String token : tokens) {
+            if (!token.isEmpty() && text.contains(token)) hit++;
+        }
+        return (float) hit / tokens.length;
     }
 
     // ---- C-5: 禁咒字段组 ---------------------------------------------------

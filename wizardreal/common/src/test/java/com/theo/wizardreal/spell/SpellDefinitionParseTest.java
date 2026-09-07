@@ -154,4 +154,33 @@ class SpellDefinitionParseTest {
         assertEquals(1.0f, p.powerFor(6));
         assertEquals(1.5f, p.pact().powerMultiplier());
     }
+
+    @Test
+    void chantStagesParseIntoDataSpell() {
+        SpellDefinition def = parse(HEAD + """
+                "trigger":{"aliases":["x"]},
+                "chant_stages":[
+                    {"after_lines":2, "effects":[{"type":"wizardreal:test_effect","n":1}]},
+                    {"after_lines":4, "mastery":40, "effects":[{"type":"wizardreal:test_effect","n":2}],
+                     "mana_cost":30, "cooldown_ticks":200}]
+                }""");
+        var spell = def.toSpell();
+        assertEquals(2, spell.chantStages().size());
+        var stage1 = spell.chantStages().get(0);
+        assertEquals(2, stage1.afterLines());
+        assertEquals(0f, stage1.masteryThreshold());
+        assertEquals(1, stage1.effects().size());
+        var stage2 = spell.chantStages().get(1);
+        assertEquals(40f, stage2.masteryThreshold());
+        assertEquals(30, stage2.manaCost());
+        assertEquals(200, stage2.cooldownTicks());
+    }
+
+    @Test
+    void defaultSpellHasNoStages() {
+        SpellDefinition def = parse(HEAD + """
+                "trigger":{"aliases":["x"]}}
+                """);
+        assertTrue(def.toSpell().chantStages().isEmpty());
+    }
 }

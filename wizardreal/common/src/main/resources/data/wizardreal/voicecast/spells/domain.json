@@ -1,0 +1,242 @@
+{
+  "id": "wizardreal:domain",
+  "schools": [
+    "arcane"
+  ],
+  "mana_cost": 28,
+  "cooldown_ticks": 600,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 2.5,
+  "trigger": {
+    "languages": {
+      "en": [
+        "domain",
+        "blade domain"
+      ],
+      "zh": [
+        "剑雨领域",
+        "剑域"
+      ],
+      "ja": [
+        "ドメイン",
+        "剣の領域"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:explosion",
+      "range": 8,
+      "power": 2,
+      "set_fire": false
+    },
+    {
+      "type": "wizardreal:projectile",
+      "entity": "minecraft:arrow",
+      "speed": 1.8,
+      "count": 12,
+      "spread": 0.35
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.evoker.prepare_summon",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "domain, hear the sigil"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "domain"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the sigil answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave aether into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the nexus to my will"
+              ]
+            },
+            {
+              "aliases": [
+                "by the first sigil, i swear"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "aether wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the nexus remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o sigil unbound"
+              ]
+            },
+            {
+              "aliases": [
+                "the rune leans close to listen"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "剑域啊，谛听枢纽"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "剑雨领域"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以秘印之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织以太入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚枢纽于我意"
+              ]
+            },
+            {
+              "aliases": [
+                "初火秘印为誓"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "以太随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "枢纽识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之秘印"
+              ]
+            },
+            {
+              "aliases": [
+                "符文侧耳聆听"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ドメインよ、印を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ドメイン"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "印よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に以太を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "環を我が意に縛れ"
+              ]
+            },
+            {
+              "aliases": [
+                "原初の印に誓う"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし以太"
+              ]
+            },
+            {
+              "aliases": [
+                "環は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ印"
+              ]
+            },
+            {
+              "aliases": [
+                "ルーンは耳を傾ける"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.46,
+      0.57,
+      0.68,
+      0.78,
+      0.89,
+      1.0
+    ],
+    "skip_allowed": false,
+    "interruptible": false
+  }
+}

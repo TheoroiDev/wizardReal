@@ -1,0 +1,286 @@
+{
+  "id": "wizardreal:procella",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 100,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "procella",
+        "gale burst"
+      ],
+      "zh": [
+        "气浪",
+        "风爆"
+      ],
+      "ja": [
+        "プロケラ",
+        "突風"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 8,
+      "angle_cos": 0.5,
+      "power": 1.8
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.phantom.flap",
+      "volume": 1,
+      "pitch": 0.8
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "procella rises on gale wings"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "procella"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "气浪乘清风而至"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "气浪"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "プロケラは疾風に乗て立つ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "プロケラ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 10,
+          "angle_cos": 0.5,
+          "power": 2.2
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:slowness",
+          "duration": 40,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 4.0,
+          "count": 50,
+          "duration_ticks": 18,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 14,
+          "angle_cos": 0.45,
+          "power": 2.8
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 1,
+          "duration": 80,
+          "range": 14,
+          "angle_cos": 0.4
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 5.5,
+          "count": 70,
+          "duration_ticks": 22,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 1.4,
+          "pitch": 0.7
+        }
+      ],
+      "mana_cost": 30,
+      "cooldown_ticks": 330
+    }
+  ]
+}

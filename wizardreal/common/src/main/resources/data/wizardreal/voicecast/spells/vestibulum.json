@@ -1,0 +1,305 @@
+{
+  "id": "wizardreal:vestibulum",
+  "schools": [
+    "fire"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 120,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "vestibulum"
+      ],
+      "zh": [
+        "火墙"
+      ],
+      "ja": [
+        "ウェスティブルム"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:barrier",
+      "block": "minecraft:iron_bars",
+      "shape": "wall",
+      "width": 3,
+      "height": 2,
+      "radius": 2,
+      "duration_ticks": 120
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          255,
+          120,
+          20
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "ring",
+      "radius": 2.5,
+      "count": 24,
+      "duration_ticks": 10,
+      "y_offset": 0.2,
+      "at_point": true
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let ash crown vestibulum"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "vestibulum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the ember answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave ash into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the pyre to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "ash wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the pyre remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o ember unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以灰烬加冕火墙"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "火墙"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以赤炎之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织灰烬入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚烈焰于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "灰烬随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "烈焰识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之赤炎"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "紅蓮をもってウェスティブルムを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ウェスティブルム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "紅蓮よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に灰を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "焔を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし灰"
+              ]
+            },
+            {
+              "aliases": [
+                "焔は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ紅蓮"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:iron_bars",
+          "shape": "wall",
+          "width": 5,
+          "height": 3,
+          "radius": 2,
+          "duration_ticks": 160
+        },
+        {
+          "type": "wizardreal:surface",
+          "block": "minecraft:fire",
+          "shape": "line",
+          "radius": 2,
+          "duration_ticks": 80
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 3.0,
+          "count": 36,
+          "duration_ticks": 12,
+          "y_offset": 0.2,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 21,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "cage",
+          "width": 3,
+          "height": 3,
+          "radius": 2.5,
+          "duration_ticks": 140
+        },
+        {
+          "type": "wizardreal:surface",
+          "block": "minecraft:fire",
+          "shape": "circle",
+          "radius": 2,
+          "duration_ticks": 100
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.5,
+          "count": 50,
+          "duration_ticks": 20,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.fire.ambient",
+          "volume": 1.2,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 320
+    }
+  ]
+}

@@ -1,0 +1,303 @@
+{
+  "id": "wizardreal:silva_voco",
+  "schools": [
+    "nature"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 200,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "silva voco",
+        "silva",
+        "voco"
+      ],
+      "zh": [
+        "唤林"
+      ],
+      "ja": [
+        "シルウァ・ウォコ",
+        "シルウァウォコ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:harvest",
+      "radius": 2,
+      "mode": "grow",
+      "replant": true
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          100,
+          220,
+          120
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "helix",
+      "radius": 1.8,
+      "count": 34,
+      "duration_ticks": 25,
+      "y_offset": 0.5,
+      "at_point": true
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let bloom crown silva voco"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "silva voco"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the root answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bloom into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the thorn to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bloom wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the thorn remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o root unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以新芽加冕唤林"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "唤林"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以根须之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织新芽入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚荆棘于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "新芽随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "荆棘识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之根须"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "根をもってシルウァ・ウォコを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "シルウァ・ウォコ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "根よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に芽を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "茨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし芽"
+              ]
+            },
+            {
+              "aliases": [
+                "茨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ根"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:harvest",
+          "radius": 4,
+          "mode": "grow",
+          "replant": true
+        },
+        {
+          "type": "wizardreal:harvest",
+          "radius": 3,
+          "mode": "harvest",
+          "replant": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 2.5,
+          "count": 46,
+          "duration_ticks": 28,
+          "y_offset": 0.5,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:harvest",
+          "radius": 7,
+          "mode": "grow",
+          "replant": true
+        },
+        {
+          "type": "wizardreal:harvest",
+          "radius": 5,
+          "mode": "harvest",
+          "replant": true
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:haste",
+          "duration": 200,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              100,
+              220,
+              120
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 4.0,
+          "count": 60,
+          "duration_ticks": 30,
+          "y_offset": 0.5,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.azalea.break",
+          "volume": 1.1,
+          "pitch": 0.9
+        }
+      ],
+      "mana_cost": 28,
+      "cooldown_ticks": 320
+    }
+  ]
+}

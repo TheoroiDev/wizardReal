@@ -1,0 +1,278 @@
+{
+  "id": "wizardreal:anima",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 300,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.4,
+  "trigger": {
+    "languages": {
+      "en": [
+        "anima",
+        "raise bones"
+      ],
+      "zh": [
+        "召骸",
+        "骸骨召唤"
+      ],
+      "ja": [
+        "アニマ",
+        "骸骨召喚"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:summon",
+      "entity": "minecraft:skeleton",
+      "count": 1,
+      "duration_ticks": 600
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.skeleton.ambient",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o dusk, lend anima thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "anima"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "幽冢啊，借召骸以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "召骸"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "墓よ、アニマに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "アニマ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:skeleton",
+          "count": 2,
+          "duration_ticks": 900
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.2,
+          "count": 40,
+          "duration_ticks": 22,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 21,
+      "cooldown_ticks": 160
+    },
+    {
+      "after_lines": 5,
+      "mastery": 60,
+      "effects": [
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:skeleton",
+          "count": 3,
+          "duration_ticks": 1200
+        },
+        {
+          "type": "wizardreal:summon",
+          "entity": "minecraft:zombie",
+          "count": 2,
+          "duration_ticks": 1200
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.2,
+          "count": 55,
+          "duration_ticks": 26,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.skeleton.ambient",
+          "volume": 1.1,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 36,
+      "cooldown_ticks": 360
+    }
+  ]
+}

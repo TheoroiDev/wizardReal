@@ -16,15 +16,23 @@ import net.minecraft.world.phys.Vec3;
  * @param blackboard per-cast scratch space shared between composed effects
  *                   (e.g. a projectile effect may publish its hit position for
  *                   a follow-up effect). Mutable; server main thread only.
+ * @param stage      resolved chant stage (0 = base tier, N = {@code chant_stages[N-1]});
+ *                   effects carrying a stage pick their tier's effect list from it.
  */
 public record CastContext(
         ServerPlayer caster,
         Vec3 origin,
         Vec3 lookDir,
         float power,
-        Map<ResourceLocation, Object> blackboard
+        Map<ResourceLocation, Object> blackboard,
+        int stage
 ) {
     public CastContext(ServerPlayer caster, Vec3 origin, Vec3 lookDir, float power) {
-        this(caster, origin, lookDir, power, new HashMap<>());
+        this(caster, origin, lookDir, power, new HashMap<>(), 0);
+    }
+
+    public CastContext(ServerPlayer caster, Vec3 origin, Vec3 lookDir, float power,
+                       Map<ResourceLocation, Object> blackboard) {
+        this(caster, origin, lookDir, power, blackboard, 0);
     }
 }

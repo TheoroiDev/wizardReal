@@ -1,0 +1,315 @@
+{
+  "id": "wizardreal:terra",
+  "schools": [
+    "earth"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 140,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "terra",
+        "ground sink"
+      ],
+      "zh": [
+        "地陷",
+        "大地沉陷"
+      ],
+      "ja": [
+        "テラ",
+        "地割れ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:slowness",
+      "amplifier": 1,
+      "duration": 100,
+      "range": 8,
+      "radius": 4,
+      "at_target": true
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          160,
+          110,
+          70
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "ring",
+      "radius": 3.0,
+      "count": 36,
+      "duration_ticks": 15,
+      "y_offset": 0.2,
+      "at_point": true
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "terra, hear the mountain"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "terra"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the stone answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bedrock into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mountain to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bedrock wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mountain remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o stone unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "地陷啊，谛听磐石"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "地陷"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以磐石之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织大地入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚山岳于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "大地随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "山岳识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之磐石"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "テラよ、岩を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "テラ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "岩よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に大地を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "山を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし大地"
+              ]
+            },
+            {
+              "aliases": [
+                "山は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ岩"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 4,
+          "power": 2,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 1,
+          "duration": 140,
+          "range": 6,
+          "radius": 5,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 4.0,
+          "count": 48,
+          "duration_ticks": 18,
+          "y_offset": 0.2,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 6,
+          "power": 3,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 2,
+          "duration": 200,
+          "range": 8,
+          "radius": 7,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:nausea",
+          "amplifier": 0,
+          "duration": 160,
+          "range": 8,
+          "radius": 7,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 5.5,
+          "count": 66,
+          "duration_ticks": 22,
+          "y_offset": 0.2,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.stone.break",
+          "volume": 1.3,
+          "pitch": 0.6
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 330
+    }
+  ]
+}

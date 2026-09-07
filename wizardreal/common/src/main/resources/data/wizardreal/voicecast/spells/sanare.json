@@ -3,12 +3,12 @@
   "schools": [
     "holy"
   ],
-  "mana_cost": 14,
-  "cooldown_ticks": 120,
+  "mana_cost": 12,
+  "cooldown_ticks": 140,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
-  "difficulty": 1.0,
+  "difficulty": 1.1,
   "trigger": {
     "languages": {
       "en": [
@@ -30,17 +30,273 @@
   "effects": [
     {
       "type": "wizardreal:heal",
-      "amount": 8
+      "amount": 5
     },
     {
       "type": "wizardreal:status_effect",
-      "effect": "minecraft:absorption",
-      "duration": 200,
-      "amplifier": 1
+      "effect": "minecraft:regeneration",
+      "duration": 80,
+      "amplifier": 0
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:block.beacon.power_select"
+      "sound": "minecraft:block.beacon.activate",
+      "volume": 0.9,
+      "pitch": 1.3
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o grace, lend sanare thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "sanare"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the light answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave hymn into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the halo to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "hymn wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the halo remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o light unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "圣光啊，借净化以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "净化"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以圣光之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织圣咏入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚辉环于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "圣咏随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "辉环识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之圣光"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "光よ、サナレに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "サナーレ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "光よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に聖歌を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし聖歌"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ光"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:heal",
+          "amount": 7
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:regeneration",
+          "duration": 120,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:absorption",
+          "amplifier": 1,
+          "duration": 200,
+          "range": 5,
+          "radius": 5
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 2.5,
+          "count": 34,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:heal",
+          "amount": 9
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:regeneration",
+          "amplifier": 1,
+          "duration": 160,
+          "range": 7,
+          "radius": 7
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:absorption",
+          "amplifier": 2,
+          "duration": 240,
+          "range": 7,
+          "radius": 7
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 3.5,
+          "count": 55,
+          "duration_ticks": 24,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.beacon.activate",
+          "volume": 1.1,
+          "pitch": 1.2
+        }
+      ],
+      "mana_cost": 29,
+      "cooldown_ticks": 340
     }
   ]
 }

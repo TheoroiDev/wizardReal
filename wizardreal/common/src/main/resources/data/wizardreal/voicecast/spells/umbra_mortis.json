@@ -1,0 +1,322 @@
+{
+  "id": "wizardreal:umbra_mortis",
+  "schools": [
+    "necromancy"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 150,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "umbra mortis",
+        "umbra",
+        "mortis"
+      ],
+      "zh": [
+        "惧影"
+      ],
+      "ja": [
+        "ウンブラ・モルティス",
+        "ウンブラモルティス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 7,
+      "angle_cos": 0.5,
+      "power": 1.2
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:darkness",
+      "amplifier": 0,
+      "duration": 100,
+      "range": 7,
+      "radius": 7
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.warden.ambient",
+      "volume": 0.8,
+      "pitch": 1.2
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "umbra mortis rises on grave wings"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "umbra mortis"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "惧影乘亡影而至"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "惧影"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ウンブラ・モルティスは墓に乗て立つ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ウンブラ・モルティス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 9,
+          "angle_cos": 0.5,
+          "power": 1.5
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:darkness",
+          "amplifier": 0,
+          "duration": 160,
+          "range": 9,
+          "radius": 9
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 1,
+          "duration": 120,
+          "range": 9,
+          "radius": 9
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 3.5,
+          "count": 44,
+          "duration_ticks": 20,
+          "y_offset": 1.0,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 11,
+          "angle_cos": 0.45,
+          "power": 1.9
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:darkness",
+          "amplifier": 0,
+          "duration": 200,
+          "range": 12,
+          "radius": 12
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 2,
+          "duration": 160,
+          "range": 12,
+          "radius": 12
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:weakness",
+          "amplifier": 1,
+          "duration": 160,
+          "range": 12,
+          "radius": 12
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 4.5,
+          "count": 60,
+          "duration_ticks": 24,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.warden.ambient",
+          "volume": 1.0,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 340
+    }
+  ]
+}

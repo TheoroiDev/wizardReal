@@ -20,7 +20,16 @@ import java.util.Locale;
  * </ol>
  */
 public final class SpellMatcher {
-    public static final float MATCH_THRESHOLD = 0.8f;
+    /**
+     * 0.65 (was 0.8; the phonetic layer — pinyin/metaphone/skeleton — made
+     * same-spell pairs score well above it): the engbench collision audit
+     * measured the WORST cross-spell alias pair at 0.33 (en) / 0.20 (zh),
+     * so 0.65 keeps a 2x margin over any wrong-spell confusion. Trade-off:
+     * short fragments (3+ chars) of an alias now match — desirable for
+     * half-spoken chants; per-spell {@code threshold} overrides remain
+     * available for sensitive spells.
+     */
+    public static final float MATCH_THRESHOLD = 0.65f;
 
     private SpellMatcher() {}
 
@@ -57,7 +66,10 @@ public final class SpellMatcher {
         } else if (containsWord(text, alias)) {
             return 0.9f;
         }
-        return similarity(alias, text);
+        // ASR errors are phonetic: 换蛋/幻弹 share pinyin, falsome/falsum share
+        // the consonant skeleton — character Levenshtein alone scores both at
+        // 0.0-0.71. Take the best of orthographic and phonetic similarity.
+        return Math.max(similarity(alias, text), Phonetics.score(alias, text));
     }
 
     static String normalize(String s) {
