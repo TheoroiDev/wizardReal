@@ -36,12 +36,17 @@ public final class SpellMatcher {
     public record Match(Spell spell, float score) {}
 
     public static Match match(String heard) {
+        return match(heard, SpellRegistry.all());
+    }
+
+    /** Candidate-trimmed match: only the given spells compete (language trim). */
+    public static Match match(String heard, Iterable<Spell> candidates) {
         String text = normalize(heard);
         if (text.isEmpty() || "[unk]".equals(text)) return null;
 
         Spell bestSpell = null;
         float bestScore = 0f;
-        for (Spell spell : SpellRegistry.all()) {
+        for (Spell spell : candidates) {
             Pronunciation p = spell.pronunciation();
             for (String alias : p.aliases()) {
                 float score = scoreAlias(normalize(alias), text);

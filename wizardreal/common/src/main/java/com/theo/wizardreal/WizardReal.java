@@ -63,7 +63,7 @@ public final class WizardReal {
         LifecycleEvent.SERVER_STARTING.register(SpellDataLoader::setServer);
         LifecycleEvent.SERVER_STARTED.register(server -> {
             SpellDataLoader.setServer(server);
-            ServerVoiceCast.pushVocabulary();
+            ServerVoiceCast.pushVocabulary(server);
         });
         LifecycleEvent.SERVER_STOPPED.register(server -> {
             SpellDataLoader.setServer(null);

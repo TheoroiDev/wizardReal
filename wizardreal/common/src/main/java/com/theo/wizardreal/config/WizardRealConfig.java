@@ -3,7 +3,11 @@ package com.theo.wizardreal.config;
 import com.theo.voicecast.config.Toml;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * wizardreal's own config file: {@code config/wizardreal/wizardreal.toml}
@@ -32,6 +36,9 @@ import java.util.Locale;
  * overlearning = false                    # t>100 keeps growing power (PvP servers opt in)
  * skipChantThreshold = 0.5                # skip-cast (破弃) requires t >= 50%
  * knownThreshold = 10                     # known = t strictly above this
+ *
+ * [voice]
+ * languages = ""                          # enabled language buckets, csv (en,zh,ja,ko); "" = all
  * </pre>
  */
 public final class WizardRealConfig {
@@ -60,6 +67,22 @@ public final class WizardRealConfig {
         public static final LearningSettings DEFAULT = new LearningSettings(false, 0.5f, 10f);
     }
 
+    /** {@code [voice]} section (误触发治理): the enabled language buckets for
+     * the voice matcher chain and recognizer vocabulary (empty = all). */
+    public record VoiceSettings(List<String> languages) {
+        public static final VoiceSettings DEFAULT = new VoiceSettings(List.of());
+
+        /** Enabled language codes (lowercase); empty set = no restriction. */
+        public Set<String> enabledLanguages() {
+            if (languages == null || languages.isEmpty()) return Set.of();
+            Set<String> out = new LinkedHashSet<>();
+            for (String lang : languages) {
+                if (lang != null && !lang.isBlank()) out.add(lang.trim().toLowerCase(Locale.ROOT));
+            }
+            return out;
+        }
+    }
+
     private static final String HEADER =
             "wizardreal configuration. Delete a key to fall back to its default.";
 
@@ -67,13 +90,16 @@ public final class WizardRealConfig {
     private final PushMode pushMode;
     private final ChantSettings chant;
     private final LearningSettings learning;
+    private final VoiceSettings voice;
     private static volatile WizardRealConfig cache;
 
-    private WizardRealConfig(FileMode fileMode, PushMode pushMode, ChantSettings chant, LearningSettings learning) {
+    private WizardRealConfig(FileMode fileMode, PushMode pushMode, ChantSettings chant,
+                             LearningSettings learning, VoiceSettings voice) {
         this.fileMode = fileMode;
         this.pushMode = pushMode;
         this.chant = chant;
         this.learning = learning;
+        this.voice = voice;
     }
 
     /** Cached load for per-cast/per-utterance readers (file reread only when cleared). */
@@ -102,6 +128,10 @@ public final class WizardRealConfig {
         return learning;
     }
 
+    public VoiceSettings voice() {
+        return voice;
+    }
+
     public static Path file(Path gameDir) {
         return gameDir.resolve("config").resolve("wizardreal").resolve("wizardreal.toml");
     }
@@ -124,7 +154,9 @@ public final class WizardRealConfig {
                 new LearningSettings(
                         toml.getBool("learning", "overlearning", false),
                         (float) toml.getDouble("learning", "skipChantThreshold", 0.5),
-                        (float) toml.getDouble("learning", "knownThreshold", 10.0)));        if (!existed) {
+                        (float) toml.getDouble("learning", "knownThreshold", 10.0)),
+                new VoiceSettings(parseLanguages(
+                        toml.getString("voice", "languages", ""))));        if (!existed) {
             writeDefaults(file);
         }
         return config;
@@ -145,7 +177,18 @@ public final class WizardRealConfig {
                 .setBool("learning", "overlearning", false)
                 .setDouble("learning", "skipChantThreshold", 0.5)
                 .setDouble("learning", "knownThreshold", 10.0)
+                .setString("voice", "languages", "")
                 .save(file);
+    }
+
+    /** Comma-separated language codes → list ("" = all languages). */
+    private static List<String> parseLanguages(String csv) {
+        if (csv == null || csv.isBlank()) return List.of();
+        List<String> out = new ArrayList<>();
+        for (String part : csv.split(",")) {
+            if (!part.isBlank()) out.add(part.trim());
+        }
+        return out;
     }
 
     private static String parseTimeoutMode(String value) {
