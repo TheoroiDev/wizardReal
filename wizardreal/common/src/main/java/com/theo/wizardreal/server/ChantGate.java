@@ -54,9 +54,16 @@ final class ChantGate {
         static final Decision NONE = new Decision(Kind.NONE, null, -1, 0f);
     }
 
-    /** Default CTC-miss rejection level (A/B backtest 2026-09-08: see
-     * docs/ipa/ipa-backtest.md); {@code wizardreal.voice.rejectLevel} overrides. */
-    static final int DEFAULT_REJECT_LEVEL = 2;
+    /**
+     * Default CTC-miss rejection level. 0 (legacy fallthrough) per the
+     * 2026-09-08 TTS backtest (docs/ipa/ipa-backtest.md §reject-trim): the CTC
+     * posterior misses ~49% of true utterances into the lenient fallbacks
+     * (level 1 traded -237 hits for -72 wrongs), and no posterior-only
+     * acceptance rule beat the legacy chain — rejection stays available for
+     * servers that prefer precision (raise via
+     * {@code -Dwizardreal.voice.rejectLevel}) until CTC scoring is calibrated.
+     */
+    static final int DEFAULT_REJECT_LEVEL = 0;
 
     private ChantGate() {}
 
