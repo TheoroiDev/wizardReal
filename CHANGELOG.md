@@ -6,6 +6,8 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ### Features
 
+- In-game G2P (grapheme-to-phoneme) drafts for unknown/custom spell words: hanzi->pinyin (embedded MIT-licensed data table, 26.7k chars) with espeak-style initial/final composition, kana (sokuon/chōonpu/palatalization) and Hangul decomposition; hand-curated spell templates always win, drafts stay strict (any unconvertible segment produces no template) and only reach the recognizer through the ipa-backtest quality gate
+- Voice false-trigger controls: `[voice] languages` config trims the recognizer vocabulary and matcher candidates to the enabled language buckets (legacy bucket-less pronunciations always pass), and a CTC-authoritative rejection level (`wizardreal.voice.rejectLevel`, default 0 = legacy) can suppress the snap-to-nearest fallback tiers for precision-focused servers
 - Catalog v3 (with wizardpedia's two-page compendium): entries now carry `entity` (mob entries get a live entity preview), school tags (right-rail filter), base + per-stage effect summaries (`wizardreal.effect.<type>` lang keys, all 22 built-in effect types, en+zh — future spells are covered automatically), nested per-language chant variants, and the chant-stage ladder (`chant_stages`: gate lines/mastery + mana/cooldown overrides), plus mastery %/mana/cost/difficulty scalars (wizardreal#27)
 
 ### Changes
