@@ -61,6 +61,11 @@ class G2pTest {
         assertEquals("ni xaʊ", PinyinIpa.toIpa("你好"));      // ni hao (one token per syllable)
         assertEquals("ny", PinyinIpa.toIpa("女"));            // nv -> ü = y
         assertEquals("ʈʂɨ", PinyinIpa.toIpa("之"));           // zhi -> apical i
+        // j/q/x + ü orthography (data table stores standard spellings)
+        assertEquals("tɕyn", PinyinIpa.toIpa("军"));          // jun -> jün
+        assertEquals("ɕɥɛ", PinyinIpa.toIpa("雪"));           // xue -> xüe
+        assertEquals("tɕʰyn", PinyinIpa.toIpa("群"));         // qun -> qün
+        assertEquals("ɕɥɛn", PinyinIpa.toIpa("选"));          // xuan -> xüan
     }
 
     @Test
@@ -79,9 +84,11 @@ class G2pTest {
     @Test
     void jaSokuonChoonpuPalatalization() {
         assertEquals("ma tɕi", KanaIpa.toIpa("まち"));
-        assertEquals("ma t tɕi", KanaIpa.toIpa("マッチ"));    // gemination
+        assertEquals("ma tɕ tɕi", KanaIpa.toIpa("マッチ"));   // gemination (full onset)
         assertEquals("biː ɾɯ", KanaIpa.toIpa("ビール"));      // chōonpu lengthens
         assertEquals("kja", KanaIpa.toIpa("きゃ"));           // palatalization
+        assertEquals("ɕa", KanaIpa.toIpa("しゃ"));            // sibilant row: no j-glide
+        assertEquals("dʑo", KanaIpa.toIpa("ジョ"));
     }
 
     @Test

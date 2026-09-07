@@ -98,13 +98,23 @@ public final class KanaIpa {
                         continue;
                     }
                     // Small ya/yu/yo after a consonant-final kana palatalize it
-                    // (きゃ -> kja); standalone they are plain ja/ju/jo.
+                    // (きゃ -> kja); after sibilant rows the i-glide merges into
+                    // the sibilant (しゃ -> ɕa, ジョ -> dʑo); standalone = plain.
                     if (smallGlide && !out.isEmpty()) {
                         String prev = out.remove(out.size() - 1);
-                        String glide = ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo";
-                        String head = prev.length() > 1 && CONSONANTS.indexOf(prev.charAt(0)) >= 0
-                                ? prev.substring(0, 1) : "";
-                        out.add(head + glide);
+                        String vowel = ch.equals("ゃ") ? "a" : ch.equals("ゅ") ? "ɯ" : "o";
+                        String tail = prev.length() >= 2 ? prev.substring(prev.length() - 2) : "";
+                        boolean sibilantI = prev.endsWith("i")
+                                && (tail.equals("ɕi") || tail.equals("dʑi") || tail.equals("tɕi"));
+                        String head;
+                        if (sibilantI) {
+                            head = prev.substring(0, prev.length() - 1); // keep bare sibilant
+                        } else {
+                            head = prev.length() > 1 && CONSONANTS.indexOf(prev.charAt(0)) >= 0
+                                    ? prev.substring(0, 1) : "";
+                            vowel = ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo";
+                        }
+                        out.add(head + vowel);
                         geminate = false;
                         continue;
                     }
@@ -112,8 +122,10 @@ public final class KanaIpa {
                         return ""; // unknown kana -> no draft
                     }
                     if (geminate) {
-                        String head = ipa.substring(0, Math.min(1, ipa.length()));
-                        out.add(head);
+                        // Duplicate the full onset consonant cluster: っち -> tɕ tɕi.
+                        String cluster = ipa.replaceAll("[aɛiouɯɪeɤ].*$", "");
+                        if (cluster.isEmpty()) cluster = ipa.substring(0, 1);
+                        out.add(cluster);
                         geminate = false;
                     }
                     out.add(ipa);

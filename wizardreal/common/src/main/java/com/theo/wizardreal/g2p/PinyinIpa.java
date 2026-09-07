@@ -62,8 +62,8 @@ public final class PinyinIpa {
             Map.entry("wei", "ui"), Map.entry("wan", "uan"), Map.entry("wen", "un"), Map.entry("wang", "uang"),
             Map.entry("weng", "ueng")));
 
-    /** Word-level entry: non-alphabetic characters are dropped, Latin passes
-     *  through pinyin-legal letters only ("nv" = nü per the data table). */
+    /** Word-level entry: every character must be in the data table (strict —
+     *  punctuation, Latin letters or any unknown han produce no draft). */
     public static String toIpa(String word) {
         if (word == null || word.isBlank()) return "";
         Map<String, String> table = table();
@@ -93,13 +93,14 @@ public final class PinyinIpa {
             }
             rime = s.substring(initial.length());
             onset = INITIAL_IPA.getOrDefault(initial, "");
-            // Onset-conditioned rimes: retroflex i; palatal ü/i.
-            if (rime.equals("i") && !onset.isEmpty()) {
-                rime = ("zh".equals(initial) || "ch".equals(initial) || "sh".equals(initial)
-                        || "r".equals(initial)) ? "i" : "i";
-            }
-            if (rime.equals("u") && ("j".equals(initial) || "q".equals(initial) || "x".equals(initial))) {
-                rime = "v";
+            // Onset-conditioned spellings: j/q/x are always palatal + ü-family
+            // (the data table uses standard orthography: ju=jü, jun=jün,
+            // jue=jüe, quan=qüan...).
+            boolean palatal = initial.equals("j") || initial.equals("q") || initial.equals("x");
+            if (palatal && rime.equals("u")) rime = "v";
+            if (palatal && (rime.equals("un") || rime.equals("uan") || rime.equals("ue")
+                    || rime.equals("ui"))) {
+                rime = "v" + rime.substring(1);
             }
         }
         String rimeIpa = rimeIpa(rime, onset);
