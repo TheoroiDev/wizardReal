@@ -87,6 +87,7 @@ public final class KanaIpa {
                     String ipa = BASE.get(ch);
                     boolean smallVowel = ch.equals("ぁ") || ch.equals("ぃ") || ch.equals("ぅ")
                             || ch.equals("ぇ") || ch.equals("ぉ");
+                    boolean smallGlide = ch.equals("ゃ") || ch.equals("ゅ") || ch.equals("ょ");
                     // Small vowel after a kana modifies its vowel (ドゥ -> dɯ);
                     // standalone it is just the vowel.
                     if (smallVowel && !out.isEmpty()) {
@@ -96,21 +97,19 @@ public final class KanaIpa {
                         geminate = false;
                         continue;
                     }
-                    if (ipa == null) {
-                        // small ya/yu/yo after an i-column kana palatalize: きゃ -> kja
-                        if ((ch.equals("ゃ") || ch.equals("ゅ") || ch.equals("ょ")) && !out.isEmpty()) {
-                            String prev = out.remove(out.size() - 1);
-                            String glide = ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo";
-                            String head = prev.length() > 1 && CONSONANTS.indexOf(prev.charAt(0)) >= 0
-                                    ? prev.substring(0, 1) : "";
-                            out.add(head + glide);
-                        } else if (ch.equals("じ") || ch.equals("ぢ")) {
-                            out.add("dʑi");
-                        } else {
-                            return ""; // unknown kana -> no draft
-                        }
+                    // Small ya/yu/yo after a consonant-final kana palatalize it
+                    // (きゃ -> kja); standalone they are plain ja/ju/jo.
+                    if (smallGlide && !out.isEmpty()) {
+                        String prev = out.remove(out.size() - 1);
+                        String glide = ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo";
+                        String head = prev.length() > 1 && CONSONANTS.indexOf(prev.charAt(0)) >= 0
+                                ? prev.substring(0, 1) : "";
+                        out.add(head + glide);
                         geminate = false;
                         continue;
+                    }
+                    if (ipa == null) {
+                        return ""; // unknown kana -> no draft
                     }
                     if (geminate) {
                         String head = ipa.substring(0, Math.min(1, ipa.length()));
