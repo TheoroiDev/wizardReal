@@ -1,0 +1,306 @@
+{
+  "id": "wizardreal:torpor",
+  "schools": [
+    "lightning"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 120,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "torpor",
+        "stasis field"
+      ],
+      "zh": [
+        "静滞",
+        "麻痹领域"
+      ],
+      "ja": [
+        "トルポル",
+        "静止の域"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:slowness",
+      "amplifier": 0,
+      "duration": 80,
+      "range": 8
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          230,
+          230,
+          255
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "orbit",
+      "radius": 2.0,
+      "count": 26,
+      "duration_ticks": 20,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "torpor, hear the thunder"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "torpor"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the storm answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave spark into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the thunder to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "spark wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the thunder remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o storm unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "静滞啊，谛听雷暴"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "静滞"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以雷暴之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织电光入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚惊雷于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "电光随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "惊雷识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之雷暴"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "トルポルよ、嵐を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "トルポル"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "嵐よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に火花を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "雷鳴を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし火花"
+              ]
+            },
+            {
+              "aliases": [
+                "雷鳴は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ嵐"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 2,
+          "duration": 120,
+          "range": 8
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:weakness",
+          "amplifier": 0,
+          "duration": 120,
+          "range": 8
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              230,
+              230,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.5,
+          "count": 40,
+          "duration_ticks": 25,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 130
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 3,
+          "duration": 160,
+          "range": 12
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:weakness",
+          "amplifier": 1,
+          "duration": 160,
+          "range": 12
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:mining_fatigue",
+          "amplifier": 1,
+          "duration": 160,
+          "range": 12
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              230,
+              230,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.5,
+          "count": 55,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.bell.use",
+          "volume": 0.9,
+          "pitch": 0.7
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 320
+    }
+  ]
+}

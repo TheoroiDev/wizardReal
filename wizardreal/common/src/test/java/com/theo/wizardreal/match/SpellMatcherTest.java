@@ -65,18 +65,25 @@ class SpellMatcherTest {
     }
 
     @Test
-    void substringOfASingleWordAliasIsNotAWholeWord() {
+    void shortFragmentMatchesAtPhoneticThreshold() {
         // "ign" is inside "ignis" but not at a word boundary -> no 0.9 shortcut;
-        // the Levenshtein similarity of "ign" vs "ignis" is 1 - 2/5 = 0.6 < 0.8.
-        assertNull(SpellMatcher.match("ign"));
+        // char-Levenshtein gives 0.6, the phonetic layer 0.67 — the 0.65
+        // threshold accepts short fragments of an alias by design (half-spoken
+        // chants); wrong-SPELL safety is guaranteed by the collision audit
+        // (worst cross-spell pair 0.33).
+        SpellMatcher.Match m = SpellMatcher.match("ign");
+        assertNotNull(m);
+        assertEquals("wizardreal:ignis", m.spell().id());
     }
 
     @Test
     void smallTypoStillMatchesViaLevenshtein() {
-        // distance("ignus","ignis") = 1 -> similarity 0.8 == MATCH_THRESHOLD.
+        // distance("ignus","ignis") = 1 -> similarity 0.8 == MATCH_THRESHOLD;
+        // the phonetic layer now scores the pair 1.0 (identical consonant
+        // skeleton ign-s) — either way it matches, score only ever improves.
         SpellMatcher.Match m = SpellMatcher.match("ignus");
         assertNotNull(m);
-        assertEquals(0.8f, m.score(), 1e-6f);
+        assertTrue(m.score() >= 0.8f);
     }
 
     @Test

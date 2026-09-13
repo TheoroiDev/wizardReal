@@ -1,0 +1,282 @@
+{
+  "id": "wizardreal:flatu_signum",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 8,
+  "cooldown_ticks": 100,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "flatu signum",
+        "flatu",
+        "signum"
+      ],
+      "zh": [
+        "风语"
+      ],
+      "ja": [
+        "フラトゥ・シグヌム",
+        "フラトゥシグヌム"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:light",
+      "glow_range": 12,
+      "glow_duration": 100,
+      "night_vision_seconds": 0
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          200,
+          240,
+          255
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "orbit",
+      "radius": 2.0,
+      "count": 26,
+      "duration_ticks": 20,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "by whisper, flatu signum awakens"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "flatu signum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以清风为引，风语苏醒"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "风语"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "疾風に導かれ、フラトゥ・シグヌム顕現せり"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "フラトゥ・シグヌム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:light",
+          "glow_range": 16,
+          "glow_duration": 160,
+          "night_vision_seconds": 120
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.5,
+          "count": 36,
+          "duration_ticks": 24,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 10,
+      "cooldown_ticks": 110
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:light",
+          "glow_range": 24,
+          "glow_duration": 240,
+          "night_vision_seconds": 240
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.5,
+          "count": 50,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 1.0,
+          "pitch": 1.2
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 260
+    }
+  ]
+}

@@ -4,7 +4,7 @@
     "illusion"
   ],
   "mana_cost": 8,
-  "cooldown_ticks": 40,
+  "cooldown_ticks": 45,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -35,7 +35,247 @@
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.illusioner.cast_spell"
+      "sound": "minecraft:entity.illusioner.cast_spell",
+      "volume": 0.8,
+      "pitch": 1.3
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "falsum, shade of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "falsum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the shade answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave veil into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mirror to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "veil wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mirror remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o shade unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "幻弹初现，幻影为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "幻弹"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幻影之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织帷幕入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚镜界于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "帷幕随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "镜界识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幻影"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ファルスムよ、幻とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ファルスム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "幻よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に帷を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし帷"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ幻"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:egg",
+          "speed": 2.0,
+          "count": 3,
+          "spread": 0.1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 2.0,
+          "count": 34,
+          "duration_ticks": 13,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 12,
+      "cooldown_ticks": 110
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:egg",
+          "speed": 2.0,
+          "count": 6,
+          "spread": 0.14
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:darkness",
+          "amplifier": 0,
+          "duration": 60,
+          "range": 8,
+          "angle_cos": 0.4
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 3.5,
+          "count": 52,
+          "duration_ticks": 17,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 1.0,
+          "pitch": 1.1
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 300
     }
   ]
 }

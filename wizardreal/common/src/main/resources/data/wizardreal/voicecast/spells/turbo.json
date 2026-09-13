@@ -1,0 +1,312 @@
+{
+  "id": "wizardreal:turbo",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 110,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.0,
+  "trigger": {
+    "languages": {
+      "en": [
+        "turbo",
+        "tornado cone"
+      ],
+      "zh": [
+        "龙卷",
+        "龙卷风"
+      ],
+      "ja": [
+        "トゥルボ",
+        "竜巻"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:knockback",
+      "range": 6,
+      "angle_cos": 0.3,
+      "power": 1.2
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:levitation",
+      "amplifier": 0,
+      "duration": 40,
+      "range": 5,
+      "angle_cos": 0.4
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          200,
+          240,
+          255
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "helix",
+      "radius": 2.0,
+      "count": 36,
+      "duration_ticks": 25,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o whisper, lend turbo thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "turbo"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "罡风啊，借龙卷以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "龙卷"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "疾風よ、トゥルボに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "トゥルボ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 8,
+          "angle_cos": 0.3,
+          "power": 1.5
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:levitation",
+          "amplifier": 0,
+          "duration": 60,
+          "range": 6,
+          "angle_cos": 0.4
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 2.8,
+          "count": 50,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:knockback",
+          "range": 10,
+          "angle_cos": 0.3,
+          "power": 1.9
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:levitation",
+          "amplifier": 1,
+          "duration": 80,
+          "range": 8,
+          "angle_cos": 0.4
+        },
+        {
+          "type": "wizardreal:pull",
+          "range": 8,
+          "strength": 0.7,
+          "include_items": false
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 3.8,
+          "count": 66,
+          "duration_ticks": 34,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 1.3,
+          "pitch": 0.9
+        }
+      ],
+      "mana_cost": 31,
+      "cooldown_ticks": 330
+    }
+  ]
+}

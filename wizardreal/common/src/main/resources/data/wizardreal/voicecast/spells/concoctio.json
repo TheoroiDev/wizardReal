@@ -1,0 +1,282 @@
+{
+  "id": "wizardreal:concoctio",
+  "schools": [
+    "fire"
+  ],
+  "mana_cost": 14,
+  "cooldown_ticks": 100,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "concoctio"
+      ],
+      "zh": [
+        "熔炼"
+      ],
+      "ja": [
+        "コンコクティオ"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:smelt",
+      "radius": 1.0
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          255,
+          120,
+          20
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "burst",
+      "radius": 0.8,
+      "count": 12,
+      "duration_ticks": 8,
+      "y_offset": 0.5,
+      "at_point": true
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.fire.extinguish",
+      "volume": 0.8,
+      "pitch": 1.4
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "concoctio rises on ember wings"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "concoctio"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the ember answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave ash into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the pyre to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "ash wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the pyre remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o ember unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "熔炼乘灰烬而至"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "熔炼"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以赤炎之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织灰烬入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚烈焰于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "灰烬随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "烈焰识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之赤炎"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "コンコクティオは紅蓮に乗て立つ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "コンコクティオ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "紅蓮よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に灰を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "焔を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし灰"
+              ]
+            },
+            {
+              "aliases": [
+                "焔は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ紅蓮"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:smelt",
+          "radius": 2.0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 2.0,
+          "count": 30,
+          "duration_ticks": 12,
+          "y_offset": 0.2,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 21,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:smelt",
+          "radius": 4.0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 2.5,
+          "count": 50,
+          "duration_ticks": 25,
+          "y_offset": 0.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 1.0,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 35,
+      "cooldown_ticks": 300
+    }
+  ]
+}

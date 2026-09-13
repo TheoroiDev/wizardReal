@@ -1,0 +1,153 @@
+package com.theo.wizardreal.g2p;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * Mandarin pinyin -> espeak-style IPA (Tier-1 zh, docs/g2p/02 §2).
+ *
+ * <p>Hanzi -> toneless pinyin comes from the embedded data table
+ * ({@code assets/wizardreal/g2p_pinyin.tsv}, generated once from the
+ * MIT-licensed pypinyin data, default reading per char; {@code v} encodes ü).
+ * The syllable -> IPA step composes an initial (onset) with a final (rime)
+ * table — the mapping style follows the hand-curated templates already in the
+ * spell corpus (e.g. 熔甲 rongjia -> ʐʊŋ tɕja, 屏障 pingzhang -> pʰɪŋ ʈʂɑŋ,
+ * 奥术 aoshu -> aʊ ʂu). Tone is dropped (templates are stress/tone-free, like
+ * every curated template in the corpus).
+ */
+public final class PinyinIpa {
+    private PinyinIpa() {}
+
+    private static final String TABLE = "/assets/wizardreal/g2p_pinyin.tsv";
+    private static volatile Map<String, String> hanziToPinyin;
+
+    /** Longest-first initials (zh/ch/sh must win over single letters). */
+    private static final List<String> INITIALS = List.of(
+            "zh", "ch", "sh", "b", "p", "m", "f", "d", "t", "n", "l", "g", "k",
+            "h", "j", "q", "x", "r", "z", "c", "s");
+    private static final Map<String, String> INITIAL_IPA = Map.ofEntries(
+            Map.entry("b", "p"), Map.entry("p", "pʰ"), Map.entry("m", "m"), Map.entry("f", "f"),
+            Map.entry("d", "t"), Map.entry("t", "tʰ"), Map.entry("n", "n"), Map.entry("l", "l"),
+            Map.entry("g", "k"), Map.entry("k", "kʰ"), Map.entry("h", "x"),
+            Map.entry("j", "tɕ"), Map.entry("q", "tɕʰ"), Map.entry("x", "ɕ"),
+            Map.entry("zh", "ʈʂ"), Map.entry("ch", "ʈʂʰ"), Map.entry("sh", "ʂ"), Map.entry("r", "ʐ"),
+            Map.entry("z", "ts"), Map.entry("c", "tsʰ"), Map.entry("s", "s"));
+
+    /** Rimes in curated espeak style. "i" resolves by onset, "u" by onset (ü after j/q/x). */
+    private static final Map<String, String> FINAL_IPA = new HashMap<>(Map.ofEntries(
+            Map.entry("a", "a"), Map.entry("o", "wɔ"), Map.entry("e", "ɤ"), Map.entry("er", "ɚ"),
+            Map.entry("ai", "aɪ"), Map.entry("ei", "eɪ"), Map.entry("ao", "aʊ"), Map.entry("ou", "oʊ"),
+            Map.entry("an", "an"), Map.entry("en", "ən"), Map.entry("ang", "ɑŋ"), Map.entry("eng", "əŋ"),
+            Map.entry("ong", "ʊŋ"),
+            Map.entry("ia", "ja"), Map.entry("ie", "jɛ"), Map.entry("iao", "jaʊ"), Map.entry("iu", "joʊ"),
+            Map.entry("ian", "jɛn"), Map.entry("in", "in"), Map.entry("iang", "jɑŋ"), Map.entry("ing", "ɪŋ"),
+            Map.entry("iong", "jʊŋ"),
+            Map.entry("ua", "wa"), Map.entry("uo", "wɔ"), Map.entry("uai", "waɪ"), Map.entry("ui", "weɪ"),
+            Map.entry("uan", "wan"), Map.entry("un", "wən"), Map.entry("uang", "wɑŋ"), Map.entry("ueng", "wəŋ"),
+            Map.entry("ve", "ɥɛ"), Map.entry("van", "ɥɛn"), Map.entry("vn", "yn")));
+
+    /** y-/w- orthographic syllables mapped to their underlying rime. */
+    private static final Map<String, String> Y_W = new HashMap<>(Map.ofEntries(
+            Map.entry("yi", "i"), Map.entry("ya", "ia"), Map.entry("ye", "ie"), Map.entry("yao", "iao"),
+            Map.entry("you", "iu"), Map.entry("yan", "ian"), Map.entry("yin", "in"), Map.entry("yang", "iang"),
+            Map.entry("ying", "ing"), Map.entry("yong", "iong"), Map.entry("yu", "v"), Map.entry("yue", "ve"),
+            Map.entry("yuan", "van"), Map.entry("yun", "vn"), Map.entry("yo", "io"),
+            Map.entry("wu", "u"), Map.entry("wa", "ua"), Map.entry("wo", "uo"), Map.entry("wai", "uai"),
+            Map.entry("wei", "ui"), Map.entry("wan", "uan"), Map.entry("wen", "un"), Map.entry("wang", "uang"),
+            Map.entry("weng", "ueng")));
+
+    /** Word-level entry: every character must be in the data table (strict —
+     *  punctuation, Latin letters or any unknown han produce no draft). */
+    public static String toIpa(String word) {
+        if (word == null || word.isBlank()) return "";
+        Map<String, String> table = table();
+        List<String> out = new java.util.ArrayList<>();
+        for (int i = 0; i < word.length(); i++) {
+            String py = table.get(word.substring(i, i + 1));
+            if (py == null) return ""; // unknown char -> no draft (strict)
+            String ipa = syllable(py);
+            if (ipa == null) return "";
+            out.add(ipa);
+        }
+        return String.join(" ", out);
+    }
+
+    /** One toneless pinyin syllable -> IPA; {@code null} when unmappable. */
+    static String syllable(String py) {
+        String s = py.toLowerCase(Locale.ROOT);
+        String rime = Y_W.get(s);
+        String onset = "";
+        if (rime == null) {
+            String initial = "";
+            for (String cand : INITIALS) {
+                if (s.startsWith(cand)) {
+                    initial = cand;
+                    break;
+                }
+            }
+            rime = s.substring(initial.length());
+            onset = INITIAL_IPA.getOrDefault(initial, "");
+            // Onset-conditioned spellings: j/q/x are always palatal + ü-family
+            // (the data table uses standard orthography: ju=jü, jun=jün,
+            // jue=jüe, quan=qüan...).
+            boolean palatal = initial.equals("j") || initial.equals("q") || initial.equals("x");
+            if (palatal && rime.equals("u")) rime = "v";
+            if (palatal && (rime.equals("un") || rime.equals("uan") || rime.equals("ue")
+                    || rime.equals("ui"))) {
+                rime = "v" + rime.substring(1);
+            }
+        }
+        String rimeIpa = rimeIpa(rime, onset);
+        if (rimeIpa == null) return null;
+        if (onset.isEmpty() && (rime.startsWith("i") || rime.startsWith("u") || rime.startsWith("v"))) {
+            // vowel-initial i/u/v rimes need a glide (yi/you handled by Y_W; "i" alone -> i)
+            if (rime.equals("i")) rimeIpa = "i";
+        }
+        return onset + rimeIpa;
+    }
+
+    private static String rimeIpa(String rime, String onset) {
+        String mapped = FINAL_IPA.get(rime);
+        if (mapped != null) return mapped;
+        switch (rime) {
+            case "i": // plain i after palatals/no onset; apical after retroflex/sibilant
+                boolean retro = onset.equals("ʈʂ") || onset.equals("ʈʂʰ") || onset.equals("ʂ") || onset.equals("ʐ")
+                        || onset.equals("ts") || onset.equals("tsʰ") || onset.equals("s");
+                return retro ? "ɨ" : "i";
+            case "u": return "u";
+            case "v": return "y";
+            default: return null;
+        }
+    }
+
+    private static Map<String, String> table() {
+        Map<String, String> t = hanziToPinyin;
+        if (t != null) return t;
+        synchronized (PinyinIpa.class) {
+            if (hanziToPinyin != null) return hanziToPinyin;
+            Map<String, String> out = new HashMap<>();
+            try (InputStream in = PinyinIpa.class.getResourceAsStream(TABLE)) {
+                if (in == null) throw new IllegalStateException("pinyin table missing: " + TABLE);
+                try (BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        if (line.isBlank() || line.startsWith("#")) continue;
+                        int tab = line.indexOf('\t');
+                        if (tab <= 0) continue;
+                        out.putIfAbsent(line.substring(0, tab), line.substring(tab + 1));
+                    }
+                }
+            } catch (Exception e) {
+                throw new IllegalStateException("failed to load " + TABLE, e);
+            }
+            hanziToPinyin = Map.copyOf(out);
+            return hanziToPinyin;
+        }
+    }
+}

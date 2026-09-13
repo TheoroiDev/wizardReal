@@ -114,8 +114,13 @@ public class StaffItem extends Item {
 
     /** Effective mana cost after staff modifiers and school penalty. */
     public float getManaCost(Spell spell) {
+        return getManaCost(spell, spell.manaCost());
+    }
+
+    /** Stage-aware variant: same modifiers applied to a chant-stage's base cost. */
+    public float getManaCost(Spell spell, float baseManaCost) {
         if (bypassAll) return 0f;
-        float cost = spell.manaCost();
+        float cost = baseManaCost;
         if (!supportsAny(spell.schools())) {
             cost *= 1.5f;
         }
@@ -124,8 +129,13 @@ public class StaffItem extends Item {
 
     /** Effective cooldown ticks after staff modifier. */
     public int getCooldownTicks(Spell spell) {
+        return getCooldownTicks(spell, spell.cooldownTicks());
+    }
+
+    /** Stage-aware variant: same modifier applied to a chant-stage's base cooldown. */
+    public int getCooldownTicks(Spell spell, int baseCooldownTicks) {
         if (bypassAll) return 0;
-        return Math.round(spell.cooldownTicks() * cooldownMultiplier);
+        return Math.round(baseCooldownTicks * cooldownMultiplier);
     }
 
     @Override

@@ -1,0 +1,292 @@
+{
+  "id": "wizardreal:murus",
+  "schools": [
+    "earth"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 140,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "murus",
+        "stone wall"
+      ],
+      "zh": [
+        "石墙",
+        "大地壁垒"
+      ],
+      "ja": [
+        "ムルス",
+        "石の壁"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:barrier",
+      "block": "minecraft:cobblestone",
+      "shape": "wall",
+      "width": 3,
+      "height": 3,
+      "radius": 2,
+      "duration_ticks": 200
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.stone.place",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o clay, lend murus thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "murus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the stone answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bedrock into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mountain to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bedrock wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mountain remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o stone unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "磐石啊，借石墙以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "石墙"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以磐石之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织大地入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚山岳于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "大地随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "山岳识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之磐石"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "岩よ、ムルスに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ムルス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "岩よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に大地を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "山を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし大地"
+              ]
+            },
+            {
+              "aliases": [
+                "山は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ岩"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "wall",
+          "width": 5,
+          "height": 4,
+          "radius": 2,
+          "duration_ticks": 300
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 3.0,
+          "count": 30,
+          "duration_ticks": 12,
+          "y_offset": 0.5,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "ring",
+          "width": 3,
+          "height": 3,
+          "radius": 3,
+          "duration_ticks": 320
+        },
+        {
+          "type": "wizardreal:barrier",
+          "block": "minecraft:cobblestone",
+          "shape": "wall",
+          "width": 5,
+          "height": 4,
+          "radius": 2,
+          "duration_ticks": 320
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 4.5,
+          "count": 44,
+          "duration_ticks": 16,
+          "y_offset": 0.5,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.stone.place",
+          "volume": 1.1,
+          "pitch": 0.9
+        }
+      ],
+      "mana_cost": 30,
+      "cooldown_ticks": 340
+    }
+  ]
+}

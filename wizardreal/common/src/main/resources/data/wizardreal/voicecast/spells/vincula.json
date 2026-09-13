@@ -1,0 +1,251 @@
+{
+  "id": "wizardreal:vincula",
+  "schools": [
+    "holy"
+  ],
+  "mana_cost": 30,
+  "cooldown_ticks": 800,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 2.5,
+  "trigger": {
+    "languages": {
+      "en": [
+        "vincula",
+        "sky chains"
+      ],
+      "zh": [
+        "天锁缚",
+        "天锁"
+      ],
+      "ja": [
+        "ヴィンクラ",
+        "天の鎖"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:bind",
+      "duration": 120,
+      "range": 20,
+      "group": true
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          255,
+          230,
+          140
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "pillar",
+      "radius": 5.0,
+      "count": 80,
+      "duration_ticks": 40,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.beacon.activate",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "by grace, vincula awakens"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "vincula"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the light answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave hymn into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the halo to my will"
+              ]
+            },
+            {
+              "aliases": [
+                "by the first light, i swear"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "hymn wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the halo remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o light unbound"
+              ]
+            },
+            {
+              "aliases": [
+                "the grace leans close to listen"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以圣咏为引，天锁苏醒"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "天锁缚"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以圣光之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织圣咏入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚辉环于我意"
+              ]
+            },
+            {
+              "aliases": [
+                "初火圣光为誓"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "圣咏随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "辉环识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之圣光"
+              ]
+            },
+            {
+              "aliases": [
+                "恩泽侧耳聆听"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "光に導かれ、ウィンクラ顕現せり"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ヴィンクラ"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "光よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に聖歌を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪を我が意に縛れ"
+              ]
+            },
+            {
+              "aliases": [
+                "原初の光に誓う"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし聖歌"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ光"
+              ]
+            },
+            {
+              "aliases": [
+                "恵みは耳を傾ける"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.46,
+      0.57,
+      0.68,
+      0.78,
+      0.89,
+      1.0
+    ],
+    "skip_allowed": false,
+    "interruptible": false
+  }
+}

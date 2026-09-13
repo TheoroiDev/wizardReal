@@ -1,0 +1,305 @@
+{
+  "id": "wizardreal:judicium",
+  "schools": [
+    "holy"
+  ],
+  "mana_cost": 16,
+  "cooldown_ticks": 160,
+  "requires_learning": true,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.3,
+  "trigger": {
+    "languages": {
+      "en": [
+        "judicium",
+        "judgment"
+      ],
+      "zh": [
+        "审判",
+        "天罚领域"
+      ],
+      "ja": [
+        "ユディキウム",
+        "裁き"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:explosion",
+      "range": 6,
+      "power": 2,
+      "set_fire": false
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:glowing",
+      "amplifier": 0,
+      "duration": 100,
+      "range": 8,
+      "radius": 8
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:block.beacon.power_select",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "judicium, hear the halo"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "judicium"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the light answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave hymn into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the halo to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "hymn wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the halo remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o light unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "审判啊，谛听圣光"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "审判"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以圣光之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织圣咏入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚辉环于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "圣咏随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "辉环识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之圣光"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ユディキウムよ、光を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ユディキウム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "光よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に聖歌を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし聖歌"
+              ]
+            },
+            {
+              "aliases": [
+                "光輪は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ光"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 8,
+          "power": 3,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:weakness",
+          "amplifier": 1,
+          "duration": 120,
+          "range": 8,
+          "radius": 8
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 20,
+          "y_offset": 1.0,
+          "at_point": true
+        }
+      ],
+      "mana_cost": 24,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 60,
+      "effects": [
+        {
+          "type": "wizardreal:explosion",
+          "range": 10,
+          "power": 4,
+          "set_fire": false
+        },
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:spectral_arrow",
+          "speed": 1.5,
+          "count": 8,
+          "spread": 0.3
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:weakness",
+          "amplifier": 2,
+          "duration": 160,
+          "range": 10,
+          "radius": 10
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              230,
+              140
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cross",
+          "radius": 4.0,
+          "count": 60,
+          "duration_ticks": 24,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.beacon.power_select",
+          "volume": 1.2,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 42,
+      "cooldown_ticks": 360
+    }
+  ]
+}

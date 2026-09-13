@@ -108,7 +108,7 @@ public final class SpellDataLoader {
             }
         }
         ChantManager.get().clearAll(server);
-        ServerVoiceCast.pushVocabulary();
+        ServerVoiceCast.pushVocabulary(server);
         // Catalog publication point: the registry was rebuilt (ids may have
         // changed), so every online player's snapshot is stale.
         SpellCatalogService.publishAll();

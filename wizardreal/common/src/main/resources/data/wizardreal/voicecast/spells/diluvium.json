@@ -1,0 +1,283 @@
+{
+  "id": "wizardreal:diluvium",
+  "schools": [
+    "water"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 240,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "diluvium",
+        "rain field"
+      ],
+      "zh": [
+        "降雨",
+        "豪雨领域"
+      ],
+      "ja": [
+        "ディルビウム",
+        "降雨領域"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:weather",
+      "mode": "rain",
+      "duration_seconds": 90
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.player.splash",
+      "volume": 0.8,
+      "pitch": 1.2
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "o foam, lend diluvium thy breath"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "diluvium"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the tide answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave deep into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mist to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "deep wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mist remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o tide unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "潮汐啊，借降雨以息"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "降雨"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以潮汐之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织深渊入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚烟波于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "深渊随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "烟波识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之潮汐"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "潮よ、ディルウィウムに息を貸せ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ディルビウム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "潮よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に深淵を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "霧を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし深淵"
+              ]
+            },
+            {
+              "aliases": [
+                "霧は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ潮"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:weather",
+          "mode": "rain",
+          "duration_seconds": 180
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:fire_resistance",
+          "amplifier": 0,
+          "duration": 200,
+          "range": 4,
+          "radius": 3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              80,
+              180,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 2.0,
+          "count": 40,
+          "duration_ticks": 30,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 150
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:weather",
+          "mode": "rain",
+          "duration_seconds": 300
+        },
+        {
+          "type": "wizardreal:harvest",
+          "radius": 3,
+          "mode": "grow",
+          "replant": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              80,
+              180,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 3.5,
+          "count": 60,
+          "duration_ticks": 40,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.player.splash",
+          "volume": 1.0,
+          "pitch": 1.0
+        }
+      ],
+      "mana_cost": 26,
+      "cooldown_ticks": 300
+    }
+  ]
+}

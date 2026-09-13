@@ -35,7 +35,360 @@
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.blaze.shoot"
+      "sound": "minecraft:entity.blaze.shoot",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "ignis, ember of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ignis"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the ember answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave ash into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the pyre to my will"
+              ]
+            },
+            {
+              "aliases": [
+                "by the first ember, i swear"
+              ]
+            },
+            {
+              "aliases": [
+                "none shall quiet the ash"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "ash wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the pyre remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o ember unbound"
+              ]
+            },
+            {
+              "aliases": [
+                "the cinder leans close to listen"
+              ]
+            },
+            {
+              "aliases": [
+                "so it is written in ash"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "火球初现，赤炎为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "火球"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以赤炎之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织灰烬入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚烈焰于我意"
+              ]
+            },
+            {
+              "aliases": [
+                "初火赤炎为誓"
+              ]
+            },
+            {
+              "aliases": [
+                "灰烬不止息"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "灰烬随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "烈焰识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之赤炎"
+              ]
+            },
+            {
+              "aliases": [
+                "熔火侧耳聆听"
+              ]
+            },
+            {
+              "aliases": [
+                "灰烬所书必成"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "イグニスよ、紅蓮とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "イグニス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "紅蓮よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に灰を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "焔を我が意に縛れ"
+              ]
+            },
+            {
+              "aliases": [
+                "原初の紅蓮に誓う"
+              ]
+            },
+            {
+              "aliases": [
+                "灰を止められぬ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし灰"
+              ]
+            },
+            {
+              "aliases": [
+                "焔は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ紅蓮"
+              ]
+            },
+            {
+              "aliases": [
+                "熔火は耳を傾ける"
+              ]
+            },
+            {
+              "aliases": [
+                "然り、灰に記されし"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.44,
+      0.54,
+      0.63,
+      0.72,
+      0.81,
+      0.91,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:fireball",
+          "speed": 1.2
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "ring",
+          "radius": 1.0,
+          "count": 24,
+          "duration_ticks": 10,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.ghast.shoot",
+          "volume": 1.0,
+          "pitch": 1.1
+        }
+      ],
+      "mana_cost": 12,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 40,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:fireball",
+          "speed": 1.0
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 6,
+          "power": 3,
+          "set_fire": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.0,
+          "count": 40,
+          "duration_ticks": 15,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 1.2,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 20,
+      "cooldown_ticks": 300
+    },
+    {
+      "after_lines": 7,
+      "mastery": 70,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:fireball",
+          "speed": 0.9
+        },
+        {
+          "type": "wizardreal:explosion",
+          "range": 10,
+          "power": 5,
+          "set_fire": true
+        },
+        {
+          "type": "wizardreal:surface",
+          "block": "minecraft:fire",
+          "shape": "circle",
+          "radius": 3,
+          "duration_ticks": 100
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              255,
+              120,
+              20
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 3.0,
+          "count": 60,
+          "duration_ticks": 30,
+          "y_offset": 0.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 1.4,
+          "pitch": 0.6
+        }
+      ],
+      "mana_cost": 32,
+      "cooldown_ticks": 600
     }
   ]
 }

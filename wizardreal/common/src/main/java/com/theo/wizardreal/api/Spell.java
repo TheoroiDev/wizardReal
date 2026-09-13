@@ -72,4 +72,15 @@ public interface Spell {
     default ChantPolicy chantPolicy() {
         return ChantPolicy.DEFAULT;
     }
+
+    /**
+     * Chant-stage ladder (magic_eco 03), ordered by ascending {@code after_lines}.
+     * Casts resolved at stage N use stage N's effects (and optional mana/cooldown
+     * overrides) instead of the base ones; stage 0 = the base spell. Stage
+     * resolution is dual-gated: completed chant lines AND mastery percent
+     * ({@code chant_stages[].mastery}). Empty (default) = single-tier spell.
+     */
+    default java.util.List<SpellStage> chantStages() {
+        return java.util.List.of();
+    }
 }

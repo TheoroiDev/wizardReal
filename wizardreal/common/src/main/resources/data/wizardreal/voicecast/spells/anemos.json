@@ -1,0 +1,283 @@
+{
+  "id": "wizardreal:anemos",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 100,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.2,
+  "trigger": {
+    "languages": {
+      "en": [
+        "anemos"
+      ],
+      "zh": [
+        "真空刃"
+      ],
+      "ja": [
+        "アネモス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:beam",
+      "range": 20,
+      "width": 1,
+      "damage": 9,
+      "set_fire": false,
+      "fire_seconds": 3
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.player.attack.sweep",
+      "volume": 1,
+      "pitch": 0.8
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "anemos, hear the gale"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "anemos"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "真空刃啊，谛听长空"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "真空刃"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "アネモスよ、疾風を聴け"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "アネモス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 26,
+          "width": 1.5,
+          "damage": 12,
+          "set_fire": false,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 2.5,
+          "count": 40,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 130
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:beam",
+          "range": 30,
+          "width": 2,
+          "damage": 15,
+          "set_fire": false,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:beam",
+          "range": 30,
+          "width": 1,
+          "damage": 10,
+          "set_fire": false,
+          "fire_seconds": 3
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 4.0,
+          "count": 60,
+          "duration_ticks": 18,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 1.2,
+          "pitch": 0.7
+        }
+      ],
+      "mana_cost": 31,
+      "cooldown_ticks": 320
+    }
+  ]
+}

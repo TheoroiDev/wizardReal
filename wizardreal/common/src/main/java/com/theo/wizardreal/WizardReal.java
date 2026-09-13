@@ -12,6 +12,9 @@ import com.theo.wizardreal.server.ServerVoiceCast;
 import com.theo.wizardreal.server.SpellCatalogService;
 import com.theo.wizardreal.server.SpellDataLoader;
 import com.theo.wizardreal.server.SpellKillDrops;
+import com.theo.wizardreal.server.TempBlockManager;
+import com.theo.wizardreal.server.TempEntityTracker;
+import com.theo.wizardreal.server.VisualPlayback;
 import com.theo.wizardreal.server.WizardRealCommands;
 import com.theo.wizardreal.spell.Spells;
 import dev.architectury.event.events.common.LifecycleEvent;
@@ -50,6 +53,9 @@ public final class WizardReal {
         ManaManager.get().register();
         LootTableModifier.init();
         SpellKillDrops.init();
+        TempBlockManager.register();
+        VisualPlayback.register();
+        TempEntityTracker.register();
         MagicSyncHandler.register();
         WizardRealCommands.register();
         // Datapack spell load runs between SERVER_STARTING and SERVER_STARTED:
@@ -57,8 +63,13 @@ public final class WizardReal {
         LifecycleEvent.SERVER_STARTING.register(SpellDataLoader::setServer);
         LifecycleEvent.SERVER_STARTED.register(server -> {
             SpellDataLoader.setServer(server);
-            ServerVoiceCast.pushVocabulary();
+            ServerVoiceCast.pushVocabulary(server);
         });
-        LifecycleEvent.SERVER_STOPPED.register(server -> SpellDataLoader.setServer(null));
+        LifecycleEvent.SERVER_STOPPED.register(server -> {
+            SpellDataLoader.setServer(null);
+            TempBlockManager.clearAll(server);
+            TempEntityTracker.clearAll(server);
+            VisualPlayback.clearAll();
+        });
     }
 }

@@ -3,8 +3,8 @@
   "schools": [
     "necromancy"
   ],
-  "mana_cost": 11,
-  "cooldown_ticks": 55,
+  "mana_cost": 10,
+  "cooldown_ticks": 60,
   "requires_learning": false,
   "origin": "wizardreal:wizardry",
   "threshold": -1.0,
@@ -30,12 +30,278 @@
   "effects": [
     {
       "type": "wizardreal:projectile",
-      "entity": "minecraft:wither_skull",
-      "speed": 1.2
+      "entity": "minecraft:arrow",
+      "speed": 1.8
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:wither",
+      "amplifier": 0,
+      "duration": 60,
+      "range": 3,
+      "radius": 2,
+      "at_target": true
     },
     {
       "type": "wizardreal:sound",
-      "sound": "minecraft:entity.wither_skeleton.ambient"
+      "sound": "minecraft:block.bone_block.break",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "ossum, grave of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ossum"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the grave answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave wraith into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the bone to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "wraith wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the bone remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o grave unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "骨矛初现，幽冢为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "骨矛"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幽冢之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织亡影入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚白骨于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "亡影随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "白骨识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幽冢"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "オッスムよ、墓とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "オッスム"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "墓よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に亡霊を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "骨を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし亡霊"
+              ]
+            },
+            {
+              "aliases": [
+                "骨は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ墓"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:arrow",
+          "speed": 1.8,
+          "count": 4,
+          "spread": 0.1
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 0,
+          "duration": 80,
+          "range": 4,
+          "radius": 3,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "cone",
+          "radius": 2.0,
+          "count": 36,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 15,
+      "cooldown_ticks": 130
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:projectile",
+          "entity": "minecraft:arrow",
+          "speed": 1.8,
+          "count": 7,
+          "spread": 0.12
+        },
+        {
+          "type": "wizardreal:bind",
+          "duration": 50,
+          "range": 8,
+          "group": false
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:wither",
+          "amplifier": 1,
+          "duration": 100,
+          "range": 5,
+          "radius": 4,
+          "at_target": true
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              170,
+              110,
+              220
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "burst",
+          "radius": 3.0,
+          "count": 50,
+          "duration_ticks": 18,
+          "y_offset": 1.0,
+          "at_point": true
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.bone_block.break",
+          "volume": 1.1,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 25,
+      "cooldown_ticks": 320
     }
   ]
 }

@@ -1,0 +1,311 @@
+{
+  "id": "wizardreal:fallax",
+  "schools": [
+    "illusion"
+  ],
+  "mana_cost": 10,
+  "cooldown_ticks": 140,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "fallax"
+      ],
+      "zh": [
+        "替身"
+      ],
+      "ja": [
+        "ファッラクス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          180,
+          210,
+          255
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "cross",
+      "radius": 1.5,
+      "count": 30,
+      "duration_ticks": 20,
+      "y_offset": 1.0
+    },
+    {
+      "type": "wizardreal:hex",
+      "effect": "minecraft:blindness",
+      "amplifier": 0,
+      "duration": 60,
+      "range": 6,
+      "radius": 6
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.illusioner.mirror_move",
+      "volume": 1.0,
+      "pitch": 0.9
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "fallax rises on shade wings"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "fallax"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the shade answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave veil into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mirror to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "veil wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mirror remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o shade unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "替身乘帷幕而至"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "替身"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以幻影之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织帷幕入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚镜界于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "帷幕随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "镜界识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之幻影"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "ファッラクスは幻に乗て立つ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ファッラクス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "幻よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に帷を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし帷"
+              ]
+            },
+            {
+              "aliases": [
+                "鏡は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ幻"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 2.0,
+          "count": 40,
+          "duration_ticks": 25,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:blindness",
+          "amplifier": 0,
+          "duration": 100,
+          "range": 8,
+          "radius": 8
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 100,
+          "amplifier": 1
+        }
+      ],
+      "mana_cost": 14,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              180,
+              210,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "orbit",
+          "radius": 3.0,
+          "count": 55,
+          "duration_ticks": 28,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:blindness",
+          "amplifier": 0,
+          "duration": 140,
+          "range": 10,
+          "radius": 10
+        },
+        {
+          "type": "wizardreal:hex",
+          "effect": "minecraft:slowness",
+          "amplifier": 1,
+          "duration": 140,
+          "range": 10,
+          "radius": 10
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:invisibility",
+          "duration": 100,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 1.1,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 24,
+      "cooldown_ticks": 320
+    }
+  ]
+}

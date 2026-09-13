@@ -1,0 +1,297 @@
+{
+  "id": "wizardreal:lithos",
+  "schools": [
+    "earth"
+  ],
+  "mana_cost": 12,
+  "cooldown_ticks": 180,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "lithos"
+      ],
+      "zh": [
+        "石肤"
+      ],
+      "ja": [
+        "リトス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:resistance",
+      "duration": 300,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          160,
+          110,
+          70
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "helix",
+      "radius": 1.2,
+      "count": 26,
+      "duration_ticks": 18,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let bedrock crown lithos"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "lithos"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the stone answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave bedrock into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the mountain to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "bedrock wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the mountain remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o stone unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以大地加冕石肤"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "石肤"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以磐石之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织大地入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚山岳于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "大地随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "山岳识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之磐石"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "岩をもってリトスを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "リトス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "岩よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に大地を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "山を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし大地"
+              ]
+            },
+            {
+              "aliases": [
+                "山は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ岩"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:resistance",
+          "duration": 400,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:absorption",
+          "duration": 400,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "helix",
+          "radius": 1.7,
+          "count": 38,
+          "duration_ticks": 22,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 17,
+      "cooldown_ticks": 140
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:resistance",
+          "duration": 600,
+          "amplifier": 2
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:absorption",
+          "duration": 600,
+          "amplifier": 2
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:slowness",
+          "duration": 600,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              160,
+              110,
+              70
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "pillar",
+          "radius": 2.0,
+          "count": 50,
+          "duration_ticks": 26,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:block.stone.place",
+          "volume": 1.0,
+          "pitch": 0.8
+        }
+      ],
+      "mana_cost": 28,
+      "cooldown_ticks": 320
+    }
+  ]
+}

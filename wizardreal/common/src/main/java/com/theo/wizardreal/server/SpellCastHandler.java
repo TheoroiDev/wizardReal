@@ -3,12 +3,14 @@ package com.theo.wizardreal.server;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.CastContext;
 import com.theo.wizardreal.api.Spell;
+import com.theo.wizardreal.api.SpellStage;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.api.event.SpellCastEvent;
 import com.theo.wizardreal.api.event.SpellEvents;
 import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.item.StaffItem;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.network.chat.Component;
@@ -46,7 +48,13 @@ public final class SpellCastHandler {
 
     /** Standard path (voice casting, chant completion): no bypasses. */
     public static void handleCast(Player rawPlayer, String spellId, float power) {
-        castValidated(rawPlayer, spellId, power, EnumSet.noneOf(CastFlag.class));
+        castValidated(rawPlayer, spellId, power, EnumSet.noneOf(CastFlag.class), 0);
+    }
+
+    /** Chant-stage path (magic_eco 03): the cast resolved to stage {@code stageIndex}
+     *  (0 = base tier); stage mana/cooldown overrides and stage effects apply. */
+    public static void handleCast(Player rawPlayer, String spellId, float power, int stageIndex) {
+        castValidated(rawPlayer, spellId, power, EnumSet.noneOf(CastFlag.class), stageIndex);
     }
 
     /**
@@ -60,6 +68,21 @@ public final class SpellCastHandler {
      */
     public static boolean castValidated(Player rawPlayer, String spellId, float power,
                                         Set<CastFlag> flags) {
+        return castValidated(rawPlayer, spellId, power, flags, 0);
+    }
+
+    /**
+     * Full validated cast shared by every entry point. Sends action-bar
+     * feedback on failure and fires the cancelable {@link SpellCastEvent}.
+     * The incoming {@code power} (chant tier or 1.0) is multiplied by the
+     * learning curve via {@link PowerResolver}; a successful standard cast
+     * settles voice learning (D4: only success teaches).
+     *
+     * @param stageIndex resolved chant stage (0 = base; N = chant_stages[N-1])
+     * @return true if the spell was executed
+     */
+    public static boolean castValidated(Player rawPlayer, String spellId, float power,
+                                        Set<CastFlag> flags, int stageIndex) {
         if (!(rawPlayer instanceof ServerPlayer player)) return false;
         if (player.isSpectator()) return false;
 
@@ -86,11 +109,16 @@ public final class SpellCastHandler {
         }
 
         // 2. Staff check + modifiers (scrolls and other staffless paths skip this)
+        // Stage-aware base values (magic_eco 03): chant_stages may override the
+        // tier's mana/cooldown; staff modifiers then apply as usual.
+        List<SpellStage> stages = spell.chantStages();
+        float stageBaseMana = StageResolver.manaCost(stages, stageIndex, spell.manaCost());
+        int stageBaseCooldown = StageResolver.cooldownTicks(stages, stageIndex, spell.cooldownTicks());
         float cost;
         int cooldownTicks;
         if (flags.contains(CastFlag.SKIP_STAFF)) {
-            cost = spell.manaCost();
-            cooldownTicks = spell.cooldownTicks();
+            cost = stageBaseMana;
+            cooldownTicks = stageBaseCooldown;
         } else {
             if (!(mainHand.getItem() instanceof StaffItem staff)) {
                 actionBar(player, Component.translatable("wizardreal.cast.needs_staff"));
@@ -111,8 +139,8 @@ public final class SpellCastHandler {
                 // continue; penalty is baked into mana cost
             }
 
-            cost = staff.getManaCost(spell);
-            cooldownTicks = staff.getCooldownTicks(spell);
+            cost = staff.getManaCost(spell, stageBaseMana);
+            cooldownTicks = staff.getCooldownTicks(spell, stageBaseCooldown);
         }
 
         // 5. Mana check
@@ -134,7 +162,7 @@ public final class SpellCastHandler {
         boolean overlearning = WizardRealConfig.loadCached(
                 player.getServer().getServerDirectory().toPath()).learning().overlearning();
         CastContext ctx = new CastContext(player, eye, look.normalize(),
-                PowerResolver.resolve(power, learningT, overlearning));
+                PowerResolver.resolve(power, learningT, overlearning), new java.util.HashMap<>(), stageIndex);
 
         SpellCastEvent event = new SpellCastEvent(spell, ctx);
         SpellEvents.postCast(event);

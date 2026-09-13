@@ -1,0 +1,302 @@
+{
+  "id": "wizardreal:volatus",
+  "schools": [
+    "air"
+  ],
+  "mana_cost": 10,
+  "cooldown_ticks": 90,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "volatus",
+        "wind step"
+      ],
+      "zh": [
+        "疾风步",
+        "风行"
+      ],
+      "ja": [
+        "ウォラトゥス",
+        "疾風歩"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:blink",
+      "distance": 6
+    },
+    {
+      "type": "wizardreal:status_effect",
+      "effect": "minecraft:slow_falling",
+      "duration": 100,
+      "amplifier": 0
+    },
+    {
+      "type": "wizardreal:sound",
+      "sound": "minecraft:entity.enderman.teleport",
+      "volume": 1.0,
+      "pitch": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "let zephyr crown volatus"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "volatus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "以清风加冕疾风步"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "疾风步"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "疾風をもってウォラトゥスを飾れ"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "ウォラトゥス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 9
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:slow_falling",
+          "duration": 200,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 200,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 1.5,
+          "count": 36,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 14,
+      "cooldown_ticks": 120
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 12
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:slow_falling",
+          "duration": 400,
+          "amplifier": 0
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:jump_boost",
+          "duration": 400,
+          "amplifier": 2
+        },
+        {
+          "type": "wizardreal:status_effect",
+          "effect": "minecraft:speed",
+          "duration": 400,
+          "amplifier": 1
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 2.2,
+          "count": 52,
+          "duration_ticks": 18,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.enderman.teleport",
+          "volume": 1.1,
+          "pitch": 1.1
+        }
+      ],
+      "mana_cost": 24,
+      "cooldown_ticks": 300
+    }
+  ]
+}

@@ -167,30 +167,40 @@ public final class ChantManager {
         active.remove(player.getUUID());
         lock(player, COMPLETION_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, true);
-        // Power tier for the full chant (chant_policy.power_per_line, default 1.0).
-        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines));
+        // Power tier for the full chant (chant_policy.power_per_line, default 1.0),
+        // plus the chant-stage resolution (magic_eco 03): completed lines AND the
+        // caster's mastery decide which stage's effects fire.
+        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines),
+                StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell)));
         WizardReal.LOGGER.info("{} completed chant for {} ({} lines)",
                 player.getName().getString(), spell.id(), completedLines);
     }
 
     /** D9 咒名跳章: the spell-name line was spoken mid-chant; cast at the
-     * completed-lines tier (skip_allowed governs, enforced here). */
+     * completed-lines power tier (skip_allowed governs, enforced here). */
     private void earlyRelease(ServerPlayer player, ChantEngine engine, int completedLines) {
         Spell spell = engine.spell();
         ChantPolicy policy = spell.chantPolicy();
         active.remove(player.getUUID());
         if (policy != null && !policy.skipAllowed()) {
             // 禁咒: the jump is forbidden — treat as a failed chant (no cast).
-            WizardReal.LOGGER.info("{} tried to jump chapters on forbidden chant {}", 
+            WizardReal.LOGGER.info("{} tried to jump chapters on forbidden chant {}",
                     player.getName().getString(), spell.id());
             fail(player, engine);
             return;
         }
         lock(player, COMPLETION_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, true);
-        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines));
-        WizardReal.LOGGER.info("{} released {} early ({} lines complete)", 
+        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines),
+                StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell)));
+        WizardReal.LOGGER.info("{} released {} early ({} lines complete)",
                 player.getName().getString(), spell.id(), completedLines);
+    }
+
+    /** Caster's learning percent for this spell (D4) — the stage ladder's gate. */
+    private static float masteryT(ServerPlayer player, Spell spell) {
+        PlayerMagicState state = PlayerMagicState.get(player.getServer());
+        return state.learningPercent(player.getUUID(), spell.id(), spell.difficulty());
     }
 
     private float powerFor(Spell spell, int completedLines) {
@@ -246,7 +256,10 @@ public final class ChantManager {
         lock(player, COMPLETION_LOCKOUT_MS);
         hint(player, "wizardreal.chant.weak_skip");
         // 破弃 = lowest power tier (chant_policy.power_per_line[0]; default 1.0)
-        SpellCastHandler.handleCast(player, spell.id(), policy == null ? 1.0f : policy.powerFor(1));
+        // and the base stage (1 completed line never clears a stage's after_lines).
+        SpellCastHandler.handleCast(player, spell.id(),
+                policy == null ? 1.0f : policy.powerFor(1),
+                StageResolver.resolve(spell.chantStages(), 1, t));
         WizardReal.LOGGER.info("{} skip-cast {} (t={})", player.getName().getString(), spell.id(), t);
         return true;
     }

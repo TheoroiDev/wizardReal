@@ -26,7 +26,11 @@ class ShippedSpellResourcesTest {
         // vanilla bootstrap before any CODEC static-init runs in a plain JVM.
         net.minecraft.SharedConstants.tryDetectVersion();
         net.minecraft.server.Bootstrap.bootStrap();
-        BuiltinEffects.register();
+        // sibling lint tests bootstrap in the same JVM — registration is idempotent
+        if (com.theo.wizardreal.effect.EffectRegistry.get(
+                new net.minecraft.resources.ResourceLocation("wizardreal", "projectile")) == null) {
+            BuiltinEffects.register();
+        }
     }
 
     @Test
@@ -44,5 +48,28 @@ class ShippedSpellResourcesTest {
             }
         }
         assertTrue(count >= 15, "expected the batch-0 matrix (>=15 spells), got " + count);
+    }
+
+    @Test
+    void allShippedSpellsPassLoadValidation() throws IOException {
+        // The same lint the server runs on /reload, executed over the shipped
+        // datapack so generator regressions fail the build instead of surfacing
+        // as runtime warnings. IPA coverage gaps are expected inside the
+        // ipafill batch window (the load report says the same).
+        var spells = new java.util.ArrayList<com.theo.wizardreal.api.Spell>();
+        try (Stream<Path> files = Files.list(SPELLS_DIR)) {
+            for (Path file : files.filter(p -> p.toString().endsWith(".json")).toList()) {
+                var spell = SpellDefinition.CODEC.parse(JsonOps.INSTANCE,
+                                JsonParser.parseString(Files.readString(file)))
+                        .result().orElseThrow();
+                spells.add(spell.toSpell());
+            }
+        }
+        var warnings = com.theo.wizardreal.server.SpellLoadValidator.validate(spells);
+        var hard = warnings.stream()
+                .filter(w -> !w.startsWith("IPA coverage gap"))
+                .toList();
+        assertTrue(hard.isEmpty(), "shipped spells failed load validation:\n  "
+                + String.join("\n  ", hard));
     }
 }

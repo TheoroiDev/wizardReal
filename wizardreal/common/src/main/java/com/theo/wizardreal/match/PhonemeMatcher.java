@@ -26,13 +26,18 @@ public final class PhonemeMatcher {
     public record Match(Spell spell, float score) {}
 
     public static Match match(List<String> heardIpa) {
+        return match(heardIpa, SpellRegistry.all());
+    }
+
+    /** Candidate-trimmed match: only the given spells compete (language trim). */
+    public static Match match(List<String> heardIpa, Iterable<Spell> candidates) {
         if (heardIpa == null || heardIpa.isEmpty()) return null;
         List<String> heard = normalizeTokens(heardIpa);
         if (heard.isEmpty()) return null;
 
         Spell bestSpell = null;
         float bestScore = 0f;
-        for (Spell spell : SpellRegistry.all()) {
+        for (Spell spell : candidates) {
             for (String template : spell.pronunciation().ipa()) {
                 List<String> target = tokenizeIpa(template);
                 if (target.isEmpty()) continue;

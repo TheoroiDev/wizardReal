@@ -1,0 +1,281 @@
+{
+  "id": "wizardreal:incursus",
+  "schools": [
+    "air",
+    "fire"
+  ],
+  "mana_cost": 8,
+  "cooldown_ticks": 60,
+  "requires_learning": false,
+  "origin": "wizardreal:wizardry",
+  "threshold": -1.0,
+  "difficulty": 1.1,
+  "trigger": {
+    "languages": {
+      "en": [
+        "incursus"
+      ],
+      "zh": [
+        "火行"
+      ],
+      "ja": [
+        "インクルスス"
+      ],
+      "ko": []
+    },
+    "ipa": []
+  },
+  "effects": [
+    {
+      "type": "wizardreal:blink",
+      "distance": 4
+    },
+    {
+      "type": "wizardreal:visual",
+      "particle": {
+        "dust": [
+          255,
+          120,
+          20
+        ],
+        "dust_scale": 1.6
+      },
+      "shape": "trail",
+      "radius": 1.0,
+      "count": 24,
+      "duration_ticks": 12,
+      "y_offset": 1.0
+    }
+  ],
+  "chants": {
+    "languages": {
+      "en": {
+        "trigger": {
+          "aliases": [
+            "incursus, gale of the old tongue"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "incursus"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "let the gale answer"
+              ]
+            },
+            {
+              "aliases": [
+                "weave zephyr into my words"
+              ]
+            },
+            {
+              "aliases": [
+                "bind the sky to my will"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "zephyr wakes beneath my voice"
+              ]
+            },
+            {
+              "aliases": [
+                "the sky remembers my name"
+              ]
+            },
+            {
+              "aliases": [
+                "gather, o gale unbound"
+              ]
+            }
+          ]
+        ]
+      },
+      "zh": {
+        "trigger": {
+          "aliases": [
+            "火行初现，罡风为证"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "火行"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "以罡风之名应召"
+              ]
+            },
+            {
+              "aliases": [
+                "织清风入我言"
+              ]
+            },
+            {
+              "aliases": [
+                "缚长空于我意"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "清风随吾声而醒"
+              ]
+            },
+            {
+              "aliases": [
+                "长空识得吾名"
+              ]
+            },
+            {
+              "aliases": [
+                "来兮，无羁之罡风"
+              ]
+            }
+          ]
+        ]
+      },
+      "ja": {
+        "trigger": {
+          "aliases": [
+            "インクルススよ、疾風とともに"
+          ]
+        },
+        "cast": {
+          "aliases": [
+            "インクルスス"
+          ]
+        },
+        "body": [
+          [
+            {
+              "aliases": [
+                "疾風よ応えよ"
+              ]
+            },
+            {
+              "aliases": [
+                "我が詞に微風を織れ"
+              ]
+            },
+            {
+              "aliases": [
+                "空を我が意に縛れ"
+              ]
+            }
+          ],
+          [
+            {
+              "aliases": [
+                "声に呼び覚まれし微風"
+              ]
+            },
+            {
+              "aliases": [
+                "空は名を憶える"
+              ]
+            },
+            {
+              "aliases": [
+                "集え、縛られぬ疾風"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "chant_policy": {
+    "power_per_line": [
+      0.35,
+      0.48,
+      0.61,
+      0.74,
+      0.87,
+      1.0
+    ],
+    "skip_allowed": true,
+    "interruptible": true
+  },
+  "chant_stages": [
+    {
+      "after_lines": 3,
+      "mastery": 0,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 7
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 1.5,
+          "count": 36,
+          "duration_ticks": 14,
+          "y_offset": 1.0
+        }
+      ],
+      "mana_cost": 10,
+      "cooldown_ticks": 80
+    },
+    {
+      "after_lines": 5,
+      "mastery": 50,
+      "effects": [
+        {
+          "type": "wizardreal:blink",
+          "distance": 10
+        },
+        {
+          "type": "wizardreal:surface",
+          "block": "minecraft:fire",
+          "shape": "line",
+          "radius": 4,
+          "duration_ticks": 60
+        },
+        {
+          "type": "wizardreal:visual",
+          "particle": {
+            "dust": [
+              200,
+              240,
+              255
+            ],
+            "dust_scale": 1.6
+          },
+          "shape": "trail",
+          "radius": 2.0,
+          "count": 50,
+          "duration_ticks": 18,
+          "y_offset": 1.0
+        },
+        {
+          "type": "wizardreal:sound",
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.8,
+          "pitch": 1.4
+        }
+      ],
+      "mana_cost": 18,
+      "cooldown_ticks": 200
+    }
+  ]
+}

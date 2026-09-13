@@ -20,6 +20,15 @@ Usage:
       [--langs en,zh,ja,ko] [--backends edge,sapi] [--limit N] \
       [--conditions clean,pink@5,white@0] [--engines id1,id2] \
       [--threshold-ipa 0.85] [--out-dir out]
+      [--audio-dir audio] [--pick random|all] [--seed N]
+
+Audio lives in a persistent store (--audio-dir, default
+tools/benchmark/audio/ with clean/<backend>/ and noisy/<tag>/<backend>/
+subdirs) OUTSIDE the per-run report dir: runs only synthesize MISSING
+files (append) and reuse everything on disk. --pick random (default)
+tests each alias x condition against one randomly chosen backend take
+(--seed for reproducibility); --pick all enumerates all takes. Manual
+takes dropped into the store join the random pool automatically.
 
 Deps: ffmpeg, JDK (javac/java), numpy (noise mix); edge-tts (cloud backend),
 PowerShell System.Speech (SAPI, built into Windows), piper (optional local).
@@ -353,6 +362,75 @@ def build_report(rows: list[dict], conditions: list[str],
 
 # ---------------------------------------------------------------- main
 
+def find_icu4j():
+    """icu4j jar from the gradle cache (MC runtime lib; Any-Latin transliteration
+    for the phonetic matcher). Excludes -sources/-javadoc artifacts."""
+    import glob as _glob
+    cands = [j for j in _glob.glob(str(Path.home() /
+             ".gradle/caches/modules-2/files-2.1/com.ibm.icu/icu4j/*/*/icu4j-*.jar"))
+             if "sources" not in j and "javadoc" not in j]
+    return max(cands) if cands else ""
+
+
+
+# ja kanji→kana readings: espeak-ng "-v ja" has NO kanji dictionary — kanji
+# aliases render empty/broken IPA templates (score 0.0). Phrase-level readings
+# for the matrix's ja aliases; longest-match substitution before espeak.
+JA_READINGS = {
+    "紅蓮の雷を目覚めさせよ": "ぐれんのらいをめざめさせよ",
+    "慈悲なき炎よ流れよ": "じひなきほのおよながれよ",
+    "灰は目覚め空は燃える": "はいはめざめそらはもえる",
+    "破滅の名のもとに封ぜよ": "はめつのなのもとにふうぜよ",
+    "闇をもって天を覆え": "やみをもっててんをおおえ",
+    "大地よ割れ開け": "だいちよわれあけ",
+    "高き壁よひざせ": "たかきかべよひざせ",
+    "天よかしこめ": "てんよかしこめ",
+    "厄の鐘が鳴る": "やくのかねがなる",
+    "剣の領域": "けんのりょういき",
+    "火の領域": "ひのりょういき",
+    "降雨領域": "こううりょういき",
+    "天罰領域": "てんばつりょういき",
+    "豪雨領域": "ごううりょういき",
+    "麻痺領域": "まひりょういき",
+    "炎のブレス": "ほのおのブレス",
+    "潮のブレス": "しおのブレス",
+    "根のブレス": "ねのブレス",
+    "混沌のブレス": "こんとんのブレス",
+    "聖光のブレス": "せいこうのブレス",
+    "落石のブレス": "らくせきのブレス",
+    "霧のブレス": "きりのブレス",
+    "吸収のブレス": "きゅうしゅうのブレス",
+    "千の剣": "せんのけん",
+    "天の鎖": "てんのくさり",
+    "束縛蔓": "そくばくかずら",
+    "鎧溶かし": "よろいとかし",
+    "骸骨召喚": "がいこつしょうかん",
+    "静止の域": "せいしのいき",
+    "萎れの域": "しおれのいき",
+    "剣雨領域": "けんうりょういき",
+    "渦潮": "うずしお",
+    "石の壁": "いしのかべ",
+    "虚空の裂け目": "こくうのさけめ",
+    "竜巻": "たつまき",
+    "突風": "とっぷう",
+    "疾風歩": "しっぷうほ",
+    "地割れ": "じわれ",
+    "変身": "へんしん",
+    "恐怖": "きょうふ",
+    "催眠": "さいみん",
+    "裁き": "さばき",
+    "連鎖雷": "れんさらい",
+}
+
+def apply_ja_readings(text: str) -> str:
+    if not any(chr(0x4E00) <= ch <= chr(0x9FFF) for ch in text):
+        return text
+    for phrase in sorted(JA_READINGS, key=len, reverse=True):
+        if phrase in text:
+            text = text.replace(phrase, JA_READINGS[phrase])
+    return text
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -373,6 +451,19 @@ def main() -> int:
     ap.add_argument("--threshold-ipa", type=float, default=0.85)
     ap.add_argument("--out-dir", type=Path, default=Path(__file__).parent / "out")
     ap.add_argument("--fatjar", default="")
+    ap.add_argument("--audio-dir", type=Path,
+                    default=Path(__file__).parent / "audio",
+                    help="persistent reusable wav store (clean/ and noisy/ subdirs); "
+                         "runs APPEND missing files and reuse existing ones — drop "
+                         "extra takes in here and they join the candidate pool")
+    ap.add_argument("--pick", choices=("random", "all"), default="random",
+                    help="random = each alias x condition tests ONE randomly "
+                         "chosen backend take (seeded); all = exhaustive "
+                         "backend x condition matrix (legacy)")
+    ap.add_argument("--seed", type=int, default=0, help="rng seed for --pick random")
+    ap.add_argument("--denoise", action="store_true",
+                    help="route every wav through the GTCRN denoiser before "
+                         "recognition (mirrors production noiseSuppression=true)")
     args = ap.parse_args()
 
     if not args.catalog or not args.catalog.exists():
@@ -380,6 +471,9 @@ def main() -> int:
     ffmpeg = find_ffmpeg()
     fatjar = find_fatjar(args.fatjar or None)
     slf4j = find_slf4j()
+    # icu4j (Any-Latin transliteration for the phonetic matcher) comes from the
+    # Minecraft runtime, not the voicecast fat jar — locate it in the gradle cache
+    icu = find_icu4j()
     langs = [l.strip() for l in args.langs.split(",") if l.strip()]
     backends = [b.strip() for b in args.backends.split(",") if b.strip()]
     conds = parse_conditions(args.conditions)
@@ -394,8 +488,11 @@ def main() -> int:
 
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir = args.out_dir / "engbench" / ts
-    wavs = run_dir / "wavs"
-    wavs.mkdir(parents=True, exist_ok=True)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    # Persistent reusable audio store — lives OUTSIDE the per-run report dir so
+    # synthesized takes accumulate across runs (追加): only missing files are
+    # synthesized, everything already on disk is reused as-is.
+    audio_dir = args.audio_dir
     libs_dir = Path(__file__).parent / "libs"
     espeak = find_espeak()
     ESPEAK_LANG.setdefault("ko", ["-v", "ko"])  # espeak-ng has a Korean voice
@@ -418,31 +515,96 @@ def main() -> int:
             continue
         per_lang[it["lang"]] = n + 1
         limited.append(it)
-    print(f"aliases: {len(limited)} (per lang {per_lang})")
 
+    # Chant lines (long incantations, e.g. the forbidden explosion): each
+    # line's alias variants are separate items — production streams them
+    # sentence by sentence and matches per line (M1 interrupt points).
+    chant_items: list[dict] = []
+    for file in sorted(Path(args.spells_dir).glob("*.json")):
+        spell = json.loads(file.read_text(encoding="utf-8"))
+        spell_id = spell.get("id", file.stem)
+        for lang, groups in spell.get("chants", {}).get("languages", {}).items():
+            if lang not in langs:
+                continue
+            # trigger/cast: {"aliases": [...]}
+            for role in ("trigger", "cast"):
+                for alias in groups.get(role, {}).get("aliases", []):
+                    if alias:
+                        chant_items.append({"spell": spell_id, "lang": lang,
+                                            "alias": alias, "kind": f"chant_{role}"})
+            # body: [[{"aliases": [...]}, ...], ...] — variant list per line
+            for li, line in enumerate(groups.get("body", []), start=1):
+                for var in line:
+                    for alias in var.get("aliases", []):
+                        if alias:
+                            chant_items.append({"spell": spell_id, "lang": lang,
+                                                "alias": alias, "kind": f"chant_body{li}"})
+    # drop chant items whose (spell, lang, alias) already exists as a trigger
+    # alias — same spoken text, same wav, same test
+    seen_alias = {(it["spell"], it["lang"], it["alias"]) for it in limited}
+    chant_items = [it for it in chant_items
+                   if (it["spell"], it["lang"], it["alias"]) not in seen_alias]
+    limited = limited + chant_items
+    print(f"aliases: {len(base_items)} trigger + {len(chant_items)} chant lines")
+
+    import hashlib
+    import random
+    rng = random.Random(args.seed)
     items: list[dict] = []
+    made = 0
     for it in limited:
         # IPA template: only the ipa engine consumes it (espeak G2P draft)
-        it["ipa"] = g2p.draft(it["alias"], it["lang"]) or ""
+        g2p_text = apply_ja_readings(it["alias"]) if it["lang"] == "ja" else it["alias"]
+        it["ipa"] = g2p.draft(g2p_text, it["lang"]) or ""
+        stems: dict[str, str] = {}
         for backend in backends:
             stem = slug(f"{it['spell']}::{it['lang']}::{it['alias']}::{backend}")
-            wav = wavs / f"{stem}.wav"
-            if not wav.exists():
-                if not synthesize(it["alias"], it["lang"], backend, wav, ffmpeg, libs_dir):
+            if not it["alias"].isascii():
+                # slug() strips CJK, so every non-latin alias of one
+                # (spell, lang) collapsed to the same stem and shared ONE wav;
+                # a stable hash disambiguates them (ASCII wavs keep caching)
+                stem += "-" + hashlib.md5(it["alias"].encode("utf-8")).hexdigest()[:8]
+            clean = audio_dir / "clean" / backend / f"{stem}.wav"
+            clean.parent.mkdir(parents=True, exist_ok=True)
+            if not clean.exists():
+                if not synthesize(it["alias"], it["lang"], backend, clean, ffmpeg, libs_dir):
                     print(f"  tts failed: {it['alias']} ({it['lang']}/{backend})")
                     continue
+                made += 1
+            stems[backend] = stem
+
             for kind, snr in conds:
+                if kind == "clean":
+                    continue
                 tag = condition_tag(kind, snr)
-                entry = dict(it, backend=backend, condition=tag,
-                             id=f"{it['spell']}::{it['lang']}::{it['alias']}::{backend}::{tag}",
-                             wav=str(wav))
-                if kind != "clean":
-                    noisy = wavs / "noisy" / f"{stem}__{tag}.wav"
-                    if not noisy.exists():
-                        if not add_noise(wav, noisy, kind, float(snr)):
-                            continue
-                    entry["wav"] = str(noisy)
-                items.append(entry)
+                noisy = audio_dir / "noisy" / tag / backend / f"{stem}.wav"
+                if not noisy.exists():
+                    if not add_noise(clean, noisy, kind, float(snr)):
+                        continue
+                    made += 1
+
+        if not stems:
+            continue
+
+        # rows: one entry per (alias, condition); the wav is resolved from the
+        # store — --pick random selects a random available backend take
+        # (seeded), --pick all enumerates every backend (legacy exhaustive).
+        for kind, snr in conds:
+            tag = condition_tag(kind, snr)
+            available = [b for b, stem in stems.items()
+                         if (audio_dir / ("clean" if kind == "clean"
+                                          else f"noisy/{tag}") / b / f"{stems[b]}.wav").exists()]
+            if not available:
+                continue
+            chosen = [rng.choice(available)] if args.pick == "random" else available
+            for backend in chosen:
+                stem = stems[backend]
+                wav = (audio_dir / ("clean" if kind == "clean"
+                                    else f"noisy/{tag}") / backend / f"{stem}.wav")
+                items.append(dict(it, backend=backend, condition=tag,
+                                  id=f"{it['spell']}::{it['lang']}::{it['alias']}::{backend}::{tag}",
+                                  wav=str(wav)))
+    print(f"audio store: {audio_dir} ({made} newly rendered)")
     print(f"bench items: {len(items)}")
     g2p.save()
 
@@ -454,19 +616,24 @@ def main() -> int:
     cls = Path(__file__).parent / "EngineBench.class"
     if not cls.exists():
         javac = shutil.which("javac") or str(Path(shutil.which("java") or "").parent / "javac.exe")
-        comp = subprocess.run([javac, "-cp", str(fatjar),
+        comp = subprocess.run([javac, "-cp", f"{fatjar};{icu}".rstrip(";"),
                                str(Path(__file__).parent / "EngineBench.java")],
                               capture_output=True, text=True)
         if not cls.exists():
             print(f"EngineBench compile failed: {comp.stderr[-1500:]}")
             return 1
     bench_in = run_dir / "bench_input.json"
+    # gameDir: production-style config/voicecast root (models.json + model
+    # store) so EngineBench can run the GTCRN denoiser in-loop (--denoise)
+    game_dir = Path(__file__).resolve().parents[2] / "wizardreal/fabric/run"
     bench_in.write_text(json.dumps({"ipaThreshold": args.threshold_ipa,
+                                    "denoise": bool(args.denoise),
+                                    "gameDir": str(game_dir),
                                     "engines": engines, "items": items},
                                    ensure_ascii=False), encoding="utf-8")
-    r = subprocess.run(["java", "-cp", f"{fatjar};{slf4j};{Path(__file__).parent}",
+    r = subprocess.run(["java", "-cp", f"{fatjar};{slf4j};{icu};{Path(__file__).parent}",
                         "EngineBench", str(bench_in)],
-                       capture_output=True, text=True, encoding="utf-8", timeout=3600)
+                       capture_output=True, text=True, encoding="utf-8", timeout=10800)  # denoise-in-loop + ja pin roughly triple the runtime
     (run_dir / "engbench.stderr.log").write_text(r.stderr or "", encoding="utf-8")
     if r.returncode != 0:
         print(f"EngineBench failed (exit {r.returncode}); stderr tail:\n{r.stderr[-800:]}")
