@@ -35,12 +35,17 @@ import java.util.Set;
  */
 public final class ServerVoiceCast {
     /**
-     * Default posterior threshold for CTC forward scoring: the softmax includes
-     * every pushed vocabulary template plus a "nothing said" null competitor,
-     * so >= 0.6 means the acoustic evidence clearly favors this spell over all
-     * others and silence. Per-spell override via {@link Spell#threshold()}.
+     * Default posterior threshold for CTC forward scoring (token-length
+     * calibrated, R3 移植 2026-09-15): templates score lp/L (per-token), the
+     * null competitor stays a raw frame-sum, so the posterior scale is much
+     * lower than the pre-calibration 0.6 semantics — 0.10 on the lab bench
+     * (997 positives + 117 negatives, production-scale vocab): 2.6% negative
+     * false-accept (was 82.1%), positive recall +1.5pp. The old 0.6 would
+     * gate the CTC tier almost shut under the new scale. Per-spell override
+     * via {@link Spell#threshold()}; pre-calibration spell overrides must be
+     * re-tuned.
      */
-    public static final float FORWARD_MATCH_THRESHOLD = 0.6f;
+    public static final float FORWARD_MATCH_THRESHOLD = 0.10f;
 
     private ServerVoiceCast() {}
 

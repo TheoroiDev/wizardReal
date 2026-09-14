@@ -115,8 +115,8 @@ class ChantGateTest {
     void belowThresholdScoresRouteNone() {
         rejectLevel(0);
         SpellRegistry.replace(instant());
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.3f));
-        // Scores are below threshold, but the text fallback still matches.
+        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.05f));
+        // Scores are below the 0.10 calibrated threshold, but the text fallback still matches.
         assertEquals(ChantGate.Kind.INSTANT, d.kind());
         // Nothing matches at all.
         assertTrue(ChantGate.route("zzz qqq", null, Map.of()).kind() == ChantGate.Kind.NONE);
@@ -130,7 +130,7 @@ class ChantGateTest {
         SpellRegistry.replace(instant());
         // CTC scores present but below threshold: the snap-to-nearest text
         // fallback is suppressed — no cast from ambiguous evidence.
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.3f));
+        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.05f));
         assertEquals(ChantGate.Kind.NONE, d.kind());
         // Without scores the fallbacks still run.
         assertEquals(ChantGate.Kind.INSTANT, ChantGate.route("ignis", null, Map.of()).kind());
@@ -142,11 +142,11 @@ class ChantGateTest {
         // Level 1 keeps the lenient L1 gate: ritual entry still works...
         rejectLevel(1);
         assertEquals(ChantGate.Kind.ENTER,
-                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.2f)).kind());
+                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.05f)).kind());
         // ...but level 2 suppresses it when CTC evidence is present.
         rejectLevel(2);
         assertEquals(ChantGate.Kind.NONE,
-                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.2f)).kind());
+                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.05f)).kind());
         // A real L1 utterance that passes CTC still ENTERs (首行即门).
         ChantGate.Decision d = ChantGate.route("whatever", List.of(),
                 Map.of("wizardreal:mare.chant.en.0:0", 0.85f));
