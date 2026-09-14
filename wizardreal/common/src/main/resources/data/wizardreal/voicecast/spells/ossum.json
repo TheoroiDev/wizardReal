@@ -25,7 +25,12 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ku maʊ",
+      "paɪ ku tan",
+      "o s sɯ mɯ",
+      "ho nɛ ja ɾi"
+    ]
   },
   "effects": [
     {
@@ -103,11 +108,17 @@
         "trigger": {
           "aliases": [
             "骨矛初现，幽冢为证"
+          ],
+          "ipa": [
+            "ku maʊ ʈʂʰu ɕjɛn joʊ ʈʂʊŋ weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
             "骨矛"
+          ],
+          "ipa": [
+            "ku maʊ"
           ]
         },
         "body": [
@@ -115,16 +126,25 @@
             {
               "aliases": [
                 "以幽冢之名应召"
+              ],
+              "ipa": [
+                "i joʊ ʈʂʊŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织亡影入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ wɑŋ ɪŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚白骨于我意"
+              ],
+              "ipa": [
+                "fu paɪ ku y wɔ i"
               ]
             }
           ],
@@ -132,16 +152,25 @@
             {
               "aliases": [
                 "亡影随吾声而醒"
+              ],
+              "ipa": [
+                "wɑŋ ɪŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "白骨识得吾名"
+              ],
+              "ipa": [
+                "paɪ ku ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之幽冢"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ joʊ ʈʂʊŋ"
               ]
             }
           ]
@@ -156,6 +185,9 @@
         "cast": {
           "aliases": [
             "オッスム"
+          ],
+          "ipa": [
+            "o s sɯ mɯ"
           ]
         },
         "body": [

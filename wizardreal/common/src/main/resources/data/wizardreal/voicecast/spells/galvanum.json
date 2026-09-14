@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "in leɪ",
+      "ga ɾɯ a nɯ mɯ"
+    ]
   },
   "effects": [
     {
@@ -102,11 +105,17 @@
         "trigger": {
           "aliases": [
             "以电光加冕引雷"
+          ],
+          "ipa": [
+            "i tjɛn kwɑŋ tɕja mjɛn in leɪ"
           ]
         },
         "cast": {
           "aliases": [
             "引雷"
+          ],
+          "ipa": [
+            "in leɪ"
           ]
         },
         "body": [
@@ -114,16 +123,25 @@
             {
               "aliases": [
                 "以雷暴之名应召"
+              ],
+              "ipa": [
+                "i leɪ paʊ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织电光入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ tjɛn kwɑŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚惊雷于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ leɪ y wɔ i"
               ]
             }
           ],
@@ -131,16 +149,25 @@
             {
               "aliases": [
                 "电光随吾声而醒"
+              ],
+              "ipa": [
+                "tjɛn kwɑŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "惊雷识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ leɪ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之雷暴"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ leɪ paʊ"
               ]
             }
           ]
@@ -155,6 +182,9 @@
         "cast": {
           "aliases": [
             "ガルウァヌム"
+          ],
+          "ipa": [
+            "ga ɾɯ a nɯ mɯ"
           ]
         },
         "body": [

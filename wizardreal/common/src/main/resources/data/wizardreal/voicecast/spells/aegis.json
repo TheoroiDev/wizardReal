@@ -22,7 +22,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ˈiːdʒɪs",
+      "ˈiːdʒɪs",
+      "ˈiːdʒɪs"
+    ]
   },
   "effects": [
     {
@@ -49,6 +53,9 @@
         "cast": {
           "aliases": [
             "aegis"
+          ],
+          "ipa": [
+            "ˈiːdʒɪs"
           ]
         },
         "body": [
@@ -92,11 +99,17 @@
         "trigger": {
           "aliases": [
             "以圣咏加冕圣盾"
+          ],
+          "ipa": [
+            "i ʂəŋ jʊŋ tɕja mjɛn ʂəŋ twən"
           ]
         },
         "cast": {
           "aliases": [
             "圣盾"
+          ],
+          "ipa": [
+            "ˈiːdʒɪs"
           ]
         },
         "body": [
@@ -104,16 +117,25 @@
             {
               "aliases": [
                 "以圣光之名应召"
+              ],
+              "ipa": [
+                "i ʂəŋ kwɑŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织圣咏入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ʂəŋ jʊŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚辉环于我意"
+              ],
+              "ipa": [
+                "fu xweɪ xwan y wɔ i"
               ]
             }
           ],
@@ -121,16 +143,25 @@
             {
               "aliases": [
                 "圣咏随吾声而醒"
+              ],
+              "ipa": [
+                "ʂəŋ jʊŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "辉环识得吾名"
+              ],
+              "ipa": [
+                "xweɪ xwan ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之圣光"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʂəŋ kwɑŋ"
               ]
             }
           ]
@@ -145,6 +176,9 @@
         "cast": {
           "aliases": [
             "アイギス"
+          ],
+          "ipa": [
+            "ˈiːdʒɪs"
           ]
         },
         "body": [

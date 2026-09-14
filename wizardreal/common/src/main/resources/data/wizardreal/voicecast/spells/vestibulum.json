@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "xwɔ tɕʰjɑŋ",
+      "ɛ sɯ ti bɯ ɾɯ mɯ"
+    ]
   },
   "effects": [
     {
@@ -106,11 +109,17 @@
         "trigger": {
           "aliases": [
             "以灰烬加冕火墙"
+          ],
+          "ipa": [
+            "i xweɪ tɕin tɕja mjɛn xwɔ tɕʰjɑŋ"
           ]
         },
         "cast": {
           "aliases": [
             "火墙"
+          ],
+          "ipa": [
+            "xwɔ tɕʰjɑŋ"
           ]
         },
         "body": [
@@ -118,16 +127,25 @@
             {
               "aliases": [
                 "以赤炎之名应召"
+              ],
+              "ipa": [
+                "i ʈʂʰɨ jɛn ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织灰烬入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ xweɪ tɕin ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚烈焰于我意"
+              ],
+              "ipa": [
+                "fu ljɛ jɛn y wɔ i"
               ]
             }
           ],
@@ -135,16 +153,25 @@
             {
               "aliases": [
                 "灰烬随吾声而醒"
+              ],
+              "ipa": [
+                "xweɪ tɕin sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "烈焰识得吾名"
+              ],
+              "ipa": [
+                "ljɛ jɛn ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之赤炎"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʈʂʰɨ jɛn"
               ]
             }
           ]
@@ -159,6 +186,9 @@
         "cast": {
           "aliases": [
             "ウェスティブルム"
+          ],
+          "ipa": [
+            "ɛ sɯ ti bɯ ɾɯ mɯ"
           ]
         },
         "body": [

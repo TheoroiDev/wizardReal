@@ -25,7 +25,12 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʂweɪ tan",
+      "ʈʂʰaʊ ʈʂu",
+      "ɯ n da",
+      "mi zɯ da ma"
+    ]
   },
   "effects": [
     {
@@ -103,11 +108,17 @@
         "trigger": {
           "aliases": [
             "水弹初现，潮汐为证"
+          ],
+          "ipa": [
+            "ʂweɪ tan ʈʂʰu ɕjɛn ʈʂʰaʊ ɕi weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
             "水弹"
+          ],
+          "ipa": [
+            "ʂweɪ tan"
           ]
         },
         "body": [
@@ -115,16 +126,25 @@
             {
               "aliases": [
                 "以潮汐之名应召"
+              ],
+              "ipa": [
+                "i ʈʂʰaʊ ɕi ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织深渊入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ʂən ɥɛn ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚烟波于我意"
+              ],
+              "ipa": [
+                "fu jɛn pwɔ y wɔ i"
               ]
             }
           ],
@@ -132,16 +152,25 @@
             {
               "aliases": [
                 "深渊随吾声而醒"
+              ],
+              "ipa": [
+                "ʂən ɥɛn sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "烟波识得吾名"
+              ],
+              "ipa": [
+                "jɛn pwɔ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之潮汐"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʈʂʰaʊ ɕi"
               ]
             }
           ]
@@ -156,6 +185,9 @@
         "cast": {
           "aliases": [
             "ウンダ"
+          ],
+          "ipa": [
+            "ɯ n da"
           ]
         },
         "body": [

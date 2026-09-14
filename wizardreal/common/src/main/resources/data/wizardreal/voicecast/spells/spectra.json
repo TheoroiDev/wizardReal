@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "xwan tɕʰjɑŋ",
+      "sɯ pɛ kɯ to ɾa"
+    ]
   },
   "effects": [
     {
@@ -95,11 +98,17 @@
         "trigger": {
           "aliases": [
             "以帷幕加冕幻墙"
+          ],
+          "ipa": [
+            "i weɪ mu tɕja mjɛn xwan tɕʰjɑŋ"
           ]
         },
         "cast": {
           "aliases": [
             "幻墙"
+          ],
+          "ipa": [
+            "xwan tɕʰjɑŋ"
           ]
         },
         "body": [
@@ -107,16 +116,25 @@
             {
               "aliases": [
                 "以幻影之名应召"
+              ],
+              "ipa": [
+                "i xwan ɪŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织帷幕入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ weɪ mu ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚镜界于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕjɛ y wɔ i"
               ]
             }
           ],
@@ -124,16 +142,25 @@
             {
               "aliases": [
                 "帷幕随吾声而醒"
+              ],
+              "ipa": [
+                "weɪ mu sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "镜界识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕjɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之幻影"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ xwan ɪŋ"
               ]
             }
           ]
@@ -148,6 +175,9 @@
         "cast": {
           "aliases": [
             "スペクトラ"
+          ],
+          "ipa": [
+            "sɯ pɛ kɯ to ɾa"
           ]
         },
         "body": [

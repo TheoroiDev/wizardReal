@@ -39,6 +39,10 @@ import java.util.Set;
  *
  * [voice]
  * languages = ""                          # enabled language buckets, csv (en,zh,ja,ko); "" = all
+ * g2pDrafts = false                       # fill vocabulary entries without curated ipa with
+ *                                         # G2P drafts at push time (unverified templates;
+ *                                         # 2026-09 backtest: no CTC gain until scoring is
+ *                                         # calibrated - keep off by default)
  * </pre>
  */
 public final class WizardRealConfig {
@@ -68,9 +72,10 @@ public final class WizardRealConfig {
     }
 
     /** {@code [voice]} section (误触发治理): the enabled language buckets for
-     * the voice matcher chain and recognizer vocabulary (empty = all). */
-    public record VoiceSettings(List<String> languages) {
-        public static final VoiceSettings DEFAULT = new VoiceSettings(List.of());
+     * the voice matcher chain and recognizer vocabulary (empty = all), and the
+     * G2P draft switch for vocabulary entries without curated templates. */
+    public record VoiceSettings(List<String> languages, boolean g2pDrafts) {
+        public static final VoiceSettings DEFAULT = new VoiceSettings(List.of(), false);
 
         /** Enabled language codes (lowercase); empty set = no restriction. */
         public Set<String> enabledLanguages() {
@@ -156,7 +161,8 @@ public final class WizardRealConfig {
                         (float) toml.getDouble("learning", "skipChantThreshold", 0.5),
                         (float) toml.getDouble("learning", "knownThreshold", 10.0)),
                 new VoiceSettings(parseLanguages(
-                        toml.getString("voice", "languages", ""))));        if (!existed) {
+                        toml.getString("voice", "languages", "")),
+                        toml.getBool("voice", "g2pDrafts", false)));        if (!existed) {
             writeDefaults(file);
         }
         return config;
@@ -178,6 +184,7 @@ public final class WizardRealConfig {
                 .setDouble("learning", "skipChantThreshold", 0.5)
                 .setDouble("learning", "knownThreshold", 10.0)
                 .setString("voice", "languages", "")
+                .setBool("voice", "g2pDrafts", false)
                 .save(file);
     }
 

@@ -25,7 +25,12 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "xwan tan",
+      "ɕy ɪŋ tan",
+      "ɸa ɾɯ sɯ mɯ",
+      "ma bo ɾo ɕi da ma"
+    ]
   },
   "effects": [
     {
@@ -94,11 +99,17 @@
         "trigger": {
           "aliases": [
             "幻弹初现，幻影为证"
+          ],
+          "ipa": [
+            "xwan tan ʈʂʰu ɕjɛn xwan ɪŋ weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
             "幻弹"
+          ],
+          "ipa": [
+            "xwan tan"
           ]
         },
         "body": [
@@ -106,16 +117,25 @@
             {
               "aliases": [
                 "以幻影之名应召"
+              ],
+              "ipa": [
+                "i xwan ɪŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织帷幕入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ weɪ mu ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚镜界于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕjɛ y wɔ i"
               ]
             }
           ],
@@ -123,16 +143,25 @@
             {
               "aliases": [
                 "帷幕随吾声而醒"
+              ],
+              "ipa": [
+                "weɪ mu sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "镜界识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕjɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之幻影"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ xwan ɪŋ"
               ]
             }
           ]
@@ -147,6 +176,9 @@
         "cast": {
           "aliases": [
             "ファルスム"
+          ],
+          "ipa": [
+            "ɸa ɾɯ sɯ mɯ"
           ]
         },
         "body": [

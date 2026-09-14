@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʂɨ fu",
+      "ɾi to sɯ"
+    ]
   },
   "effects": [
     {
@@ -102,11 +105,17 @@
         "trigger": {
           "aliases": [
             "以大地加冕石肤"
+          ],
+          "ipa": [
+            "i ta ti tɕja mjɛn ʂɨ fu"
           ]
         },
         "cast": {
           "aliases": [
             "石肤"
+          ],
+          "ipa": [
+            "ʂɨ fu"
           ]
         },
         "body": [
@@ -114,16 +123,25 @@
             {
               "aliases": [
                 "以磐石之名应召"
+              ],
+              "ipa": [
+                "i pʰan ʂɨ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织大地入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ta ti ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚山岳于我意"
+              ],
+              "ipa": [
+                "fu ʂan ɥɛ y wɔ i"
               ]
             }
           ],
@@ -131,16 +149,25 @@
             {
               "aliases": [
                 "大地随吾声而醒"
+              ],
+              "ipa": [
+                "ta ti sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "山岳识得吾名"
+              ],
+              "ipa": [
+                "ʂan ɥɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之磐石"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ pʰan ʂɨ"
               ]
             }
           ]
@@ -155,6 +182,9 @@
         "cast": {
           "aliases": [
             "リトス"
+          ],
+          "ipa": [
+            "ɾi to sɯ"
           ]
         },
         "body": [

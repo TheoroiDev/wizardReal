@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʈʂʰwan sʊŋ",
+      "po ɾɯ tɯ sɯ"
+    ]
   },
   "effects": [
     {
@@ -90,11 +93,17 @@
         "trigger": {
           "aliases": [
             "传送乘以太而至"
+          ],
+          "ipa": [
+            "ʈʂʰwan sʊŋ ʈʂʰəŋ i tʰaɪ ɚ ʈʂɨ"
           ]
         },
         "cast": {
           "aliases": [
             "传送"
+          ],
+          "ipa": [
+            "ʈʂʰwan sʊŋ"
           ]
         },
         "body": [
@@ -102,16 +111,25 @@
             {
               "aliases": [
                 "以秘印之名应召"
+              ],
+              "ipa": [
+                "i mi in ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织以太入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ i tʰaɪ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚枢纽于我意"
+              ],
+              "ipa": [
+                "fu ʂu njoʊ y wɔ i"
               ]
             }
           ],
@@ -119,16 +137,25 @@
             {
               "aliases": [
                 "以太随吾声而醒"
+              ],
+              "ipa": [
+                "i tʰaɪ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "枢纽识得吾名"
+              ],
+              "ipa": [
+                "ʂu njoʊ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之秘印"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ mi in"
               ]
             }
           ]
@@ -143,6 +170,9 @@
         "cast": {
           "aliases": [
             "ポルトゥス"
+          ],
+          "ipa": [
+            "po ɾɯ tɯ sɯ"
           ]
         },
         "body": [

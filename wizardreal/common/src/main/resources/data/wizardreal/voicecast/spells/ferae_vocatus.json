@@ -25,7 +25,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʂoʊ xwan",
+      "ɸɛ ɾa i o ka tɯ sɯ"
+    ]
   },
   "effects": [
     {
@@ -95,11 +98,17 @@
         "trigger": {
           "aliases": [
             "兽唤初现，新芽为证"
+          ],
+          "ipa": [
+            "ʂoʊ xwan ʈʂʰu ɕjɛn ɕin ja weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
             "兽唤"
+          ],
+          "ipa": [
+            "ʂoʊ xwan"
           ]
         },
         "body": [
@@ -107,16 +116,25 @@
             {
               "aliases": [
                 "以根须之名应召"
+              ],
+              "ipa": [
+                "ʂəŋ ʈʂɑŋ kaɪ xwa"
               ]
             },
             {
               "aliases": [
                 "织新芽入我言"
+              ],
+              "ipa": [
+                "tsɨ ʐan"
               ]
             },
             {
               "aliases": [
                 "缚荆棘于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕi y wɔ i"
               ]
             }
           ],
@@ -124,16 +142,25 @@
             {
               "aliases": [
                 "新芽随吾声而醒"
+              ],
+              "ipa": [
+                "ɕin ja sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "荆棘识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕi ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之根须"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ kən ɕy"
               ]
             }
           ]
@@ -148,6 +175,9 @@
         "cast": {
           "aliases": [
             "フェライ・ウォカトゥス"
+          ],
+          "ipa": [
+            "ɸɛ ɾa i o ka tɯ sɯ"
           ]
         },
         "body": [

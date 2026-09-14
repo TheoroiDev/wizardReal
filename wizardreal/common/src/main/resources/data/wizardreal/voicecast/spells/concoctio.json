@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʐʊŋ ljɛn",
+      "ko n ko kɯ ti o"
+    ]
   },
   "effects": [
     {
@@ -107,11 +110,17 @@
         "trigger": {
           "aliases": [
             "熔炼乘灰烬而至"
+          ],
+          "ipa": [
+            "ʐʊŋ ljɛn ʈʂʰəŋ xweɪ tɕin ɚ ʈʂɨ"
           ]
         },
         "cast": {
           "aliases": [
             "熔炼"
+          ],
+          "ipa": [
+            "ʐʊŋ ljɛn"
           ]
         },
         "body": [
@@ -119,16 +128,25 @@
             {
               "aliases": [
                 "以赤炎之名应召"
+              ],
+              "ipa": [
+                "i ʈʂʰɨ jɛn ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织灰烬入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ xweɪ tɕin ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚烈焰于我意"
+              ],
+              "ipa": [
+                "fu ljɛ jɛn y wɔ i"
               ]
             }
           ],
@@ -136,16 +154,25 @@
             {
               "aliases": [
                 "灰烬随吾声而醒"
+              ],
+              "ipa": [
+                "xweɪ tɕin sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "烈焰识得吾名"
+              ],
+              "ipa": [
+                "ljɛ jɛn ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之赤炎"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʈʂʰɨ jɛn"
               ]
             }
           ]
@@ -160,6 +187,9 @@
         "cast": {
           "aliases": [
             "コンコクティオ"
+          ],
+          "ipa": [
+            "ko n ko kɯ ti o"
           ]
         },
         "body": [

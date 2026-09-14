@@ -22,7 +22,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "xwan leɪ",
+      "tɛ n pɛ sɯ ta sɯ"
+    ]
   },
   "effects": [
     {
@@ -91,11 +94,17 @@
         "trigger": {
           "aliases": [
             "唤雷乘电光而至"
+          ],
+          "ipa": [
+            "xwan leɪ ʈʂʰəŋ tjɛn kwɑŋ ɚ ʈʂɨ"
           ]
         },
         "cast": {
           "aliases": [
             "唤雷"
+          ],
+          "ipa": [
+            "xwan leɪ"
           ]
         },
         "body": [
@@ -103,16 +112,25 @@
             {
               "aliases": [
                 "以雷暴之名应召"
+              ],
+              "ipa": [
+                "i leɪ paʊ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织电光入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ tjɛn kwɑŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚惊雷于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ leɪ y wɔ i"
               ]
             }
           ],
@@ -120,16 +138,25 @@
             {
               "aliases": [
                 "电光随吾声而醒"
+              ],
+              "ipa": [
+                "tjɛn kwɑŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "惊雷识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ leɪ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之雷暴"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ leɪ paʊ"
               ]
             }
           ]
@@ -144,6 +171,9 @@
         "cast": {
           "aliases": [
             "テンペスタス"
+          ],
+          "ipa": [
+            "tɛ n pɛ sɯ ta sɯ"
           ]
         },
         "body": [

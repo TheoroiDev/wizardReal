@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "jɛn ɕi",
+      "xwɔ jɛn pʰən ʂɤ",
+      "ɸɯ ɾa ma"
+    ]
   },
   "effects": [
     {
@@ -97,11 +101,17 @@
         "trigger": {
           "aliases": [
             "以赤炎为引，焰息苏醒"
+          ],
+          "ipa": [
+            "i ʈʂʰɨ jɛn weɪ in jɛn ɕi su ɕɪŋ"
           ]
         },
         "cast": {
           "aliases": [
             "焰息"
+          ],
+          "ipa": [
+            "jɛn ɕi"
           ]
         },
         "body": [
@@ -109,16 +119,25 @@
             {
               "aliases": [
                 "以赤炎之名应召"
+              ],
+              "ipa": [
+                "i ʈʂʰɨ jɛn ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织灰烬入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ xweɪ tɕin ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚烈焰于我意"
+              ],
+              "ipa": [
+                "fu ljɛ jɛn y wɔ i"
               ]
             }
           ],
@@ -126,16 +145,25 @@
             {
               "aliases": [
                 "灰烬随吾声而醒"
+              ],
+              "ipa": [
+                "xweɪ tɕin sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "烈焰识得吾名"
+              ],
+              "ipa": [
+                "ljɛ jɛn ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之赤炎"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʈʂʰɨ jɛn"
               ]
             }
           ]
@@ -150,6 +178,9 @@
         "cast": {
           "aliases": [
             "フラマ"
+          ],
+          "ipa": [
+            "ɸɯ ɾa ma"
           ]
         },
         "body": [

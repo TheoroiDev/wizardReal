@@ -10,6 +10,7 @@ import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.config.WizardRealConfig;
+import com.theo.wizardreal.g2p.G2p;
 import com.theo.wizardreal.item.StaffItem;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.EntityEvent;
@@ -86,24 +87,62 @@ public final class ServerVoiceCast {
     /** Language-trimmed push ([voice] languages): only the enabled buckets of
      * every pronunciation reach the recognizer grammar — fewer competing
      * templates means fewer cross-language false triggers and sharper CTC
-     * posteriors. Legacy (bucket-less) pronunciations always pass. */
+     * posteriors. Legacy (bucket-less) pronunciations always pass. With
+     * {@code [voice] g2pDrafts}, entries without curated templates get G2P
+     * drafts at push time (runtime-only: the JSON stays untouched; the drafts
+     * are unverified — see the 2026-09 backtest notes in docs/ipa/). */
     public static void pushVocabulary(MinecraftServer server) {
-        Set<String> enabled = WizardRealConfig.loadCached(
-                server.getServerDirectory().toPath()).voice().enabledLanguages();
+        WizardRealConfig.VoiceSettings voice = WizardRealConfig.loadCached(
+                server.getServerDirectory().toPath()).voice();
+        Set<String> enabled = voice.enabledLanguages();
+        boolean drafts = voice.g2pDrafts();
         Map<String, Pronunciation> merged = new LinkedHashMap<>();
         for (Spell spell : SpellRegistry.all()) {
             Pronunciation t = languageTrim(spell.pronunciation(), enabled);
-            if (t != null) merged.put(t.id(), t);
+            if (t != null) {
+                merged.put(t.id(), drafts ? withDrafts(t, enabled) : t);
+            }
             for (Chant chant : spell.chants()) {
                 for (ChantLine line : chant.lines()) {
                     Pronunciation p = languageTrim(line.pronunciation(), enabled);
-                    if (p != null) merged.putIfAbsent(p.id(), p);
+                    if (p != null) {
+                        merged.putIfAbsent(p.id(), drafts ? withDrafts(p, enabled) : p);
+                    }
                 }
             }
         }
         VoiceCastServer.INSTANCE.setVocabulary(new ArrayList<>(merged.values()));
-        WizardReal.LOGGER.info("Pushed {} recognizer pronunciations (spells + chant lines, languages={})",
-                merged.size(), enabled.isEmpty() ? "all" : enabled);
+        WizardReal.LOGGER.info("Pushed {} recognizer pronunciations (spells + chant lines, "
+                        + "languages={}, g2pDrafts={})",
+                merged.size(), enabled.isEmpty() ? "all" : enabled, drafts);
+    }
+
+    /** G2P draft fill for template-less entries ([voice] g2pDrafts): generates
+     * an IPA draft from the first alias of an enabled bucket. Strict — unknown
+     * scripts produce no draft and the entry stays template-less. */
+    static Pronunciation withDrafts(Pronunciation p, Set<String> enabled) {
+        if (!p.ipa().isEmpty()) return p;
+        List<String> aliases;
+        String lang;
+        if (p.languages().isEmpty()) { // legacy bucket: routed everywhere
+            aliases = p.aliases();
+            lang = "";
+        } else {
+            // Language trim applies to drafts too: with buckets but no enabled
+            // match, the entry stays template-less.
+            lang = p.languages().keySet().stream()
+                    .filter(l -> enabled.isEmpty() || enabled.contains(l.toLowerCase(Locale.ROOT)))
+                    .findFirst().orElse(null);
+            if (lang == null) return p;
+            aliases = p.languages().get(lang);
+        }
+        for (String alias : aliases) {
+            String draft = G2p.toIpa(alias, lang);
+            if (!draft.isBlank()) {
+                return new Pronunciation(p.id(), List.of(draft), p.aliases(), p.languages());
+            }
+        }
+        return p;
     }
 
     /** Keep only the enabled language buckets; {@code null} drops the entry.

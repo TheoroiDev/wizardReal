@@ -22,7 +22,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ɪkˈsploʊʒən",
+      "ɪkˈsploʊʒən",
+      "ɪkˈsploʊʒən"
+    ]
   },
   "chants": {
     "languages": {
@@ -35,6 +39,9 @@
         "cast": {
           "aliases": [
             "explosion"
+          ],
+          "ipa": [
+            "ɪkˈsploʊʒən"
           ]
         },
         "body": [
@@ -88,11 +95,17 @@
         "trigger": {
           "aliases": [
             "以漆黑遮蔽苍穹"
+          ],
+          "ipa": [
+            "i tɕʰi xɛɪ ʈʂə pʰɪ tɕʰjʊŋ"
           ]
         },
         "cast": {
           "aliases": [
             "爆裂"
+          ],
+          "ipa": [
+            "ɪkˈsploʊʒən"
           ]
         },
         "body": [
@@ -100,21 +113,33 @@
             {
               "aliases": [
                 "唤醒赤红雷霆"
+              ],
+              "ipa": [
+                "xwan ɕɪŋ fɛɪ xʊŋ ʈʂɨ lɛɪ"
               ]
             },
             {
               "aliases": [
                 "大地为之崩裂"
+              ],
+              "ipa": [
+                "pɑʊ ljɛ"
               ]
             },
             {
               "aliases": [
                 "苍穹为之低头"
+              ],
+              "ipa": [
+                "tsʰɑŋ tɕʰjʊŋ weɪ ʈʂɨ ti tʰoʊ"
               ]
             },
             {
               "aliases": [
                 "以毁灭之名封印"
+              ],
+              "ipa": [
+                "i xweɪ mjɛ ʈʂɨ mɪŋ fəŋ in"
               ]
             }
           ],
@@ -122,21 +147,33 @@
             {
               "aliases": [
                 "灰烬苏醒天穹燃"
+              ],
+              "ipa": [
+                "xweɪ tɕin su ɕɪŋ tʰjɛn tɕʰjʊŋ ʐan"
               ]
             },
             {
               "aliases": [
                 "厄运之钟敲响"
+              ],
+              "ipa": [
+                "ɤ yn ʈʂɨ ʈʂʊŋ tɕʰjaʊ ɕjɑŋ"
               ]
             },
             {
               "aliases": [
                 "无慈之炎奔流"
+              ],
+              "ipa": [
+                "u tsʰɨ ʈʂɨ jɛn pən ljoʊ"
               ]
             },
             {
               "aliases": [
                 "高墙跪伏尘埃"
+              ],
+              "ipa": [
+                "kaʊ tɕʰjɑŋ kweɪ fu ʈʂʰən aɪ"
               ]
             }
           ]
@@ -151,6 +188,9 @@
         "cast": {
           "aliases": [
             "エクスプロージョン"
+          ],
+          "ipa": [
+            "ɪkˈsploʊʒən"
           ]
         },
         "body": [

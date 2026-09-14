@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʈʂʰan kən",
+      "tʰəŋ man ʈʂʰan ʐaʊ",
+      "ɾa di kɯ sɯ"
+    ]
   },
   "effects": [
     {
@@ -115,11 +119,17 @@
         "trigger": {
           "aliases": [
             "以根须为引，缠根苏醒"
+          ],
+          "ipa": [
+            "i kən ɕy weɪ in ʈʂʰan kən su ɕɪŋ"
           ]
         },
         "cast": {
           "aliases": [
             "缠根"
+          ],
+          "ipa": [
+            "ʈʂʰan kən"
           ]
         },
         "body": [
@@ -127,16 +137,25 @@
             {
               "aliases": [
                 "以根须之名应召"
+              ],
+              "ipa": [
+                "ʂəŋ ʈʂɑŋ kaɪ xwa"
               ]
             },
             {
               "aliases": [
                 "织新芽入我言"
+              ],
+              "ipa": [
+                "tsɨ ʐan"
               ]
             },
             {
               "aliases": [
                 "缚荆棘于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕi y wɔ i"
               ]
             }
           ],
@@ -144,16 +163,25 @@
             {
               "aliases": [
                 "新芽随吾声而醒"
+              ],
+              "ipa": [
+                "ɕin ja sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "荆棘识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕi ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之根须"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ kən ɕy"
               ]
             }
           ]
@@ -168,6 +196,9 @@
         "cast": {
           "aliases": [
             "ラディクス"
+          ],
+          "ipa": [
+            "ɾa di kɯ sɯ"
           ]
         },
         "body": [

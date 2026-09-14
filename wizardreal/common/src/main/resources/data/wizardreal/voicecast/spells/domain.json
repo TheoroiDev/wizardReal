@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "tɕjɛn y lɪŋ y",
+      "tɕjɛn y",
+      "do mɛ i n"
+    ]
   },
   "effects": [
     {
@@ -112,11 +116,17 @@
         "trigger": {
           "aliases": [
             "剑域啊，谛听枢纽"
+          ],
+          "ipa": [
+            "tɕjɛn y a ti tʰɪŋ ʂu njoʊ"
           ]
         },
         "cast": {
           "aliases": [
             "剑雨领域"
+          ],
+          "ipa": [
+            "tɕjɛn y lɪŋ y"
           ]
         },
         "body": [
@@ -124,21 +134,33 @@
             {
               "aliases": [
                 "以秘印之名应召"
+              ],
+              "ipa": [
+                "i mi in ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织以太入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ i tʰaɪ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚枢纽于我意"
+              ],
+              "ipa": [
+                "fu ʂu njoʊ y wɔ i"
               ]
             },
             {
               "aliases": [
                 "初火秘印为誓"
+              ],
+              "ipa": [
+                "ʈʂʰu xwɔ mi in weɪ ʂɨ"
               ]
             }
           ],
@@ -146,21 +168,33 @@
             {
               "aliases": [
                 "以太随吾声而醒"
+              ],
+              "ipa": [
+                "i tʰaɪ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "枢纽识得吾名"
+              ],
+              "ipa": [
+                "ʂu njoʊ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之秘印"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ mi in"
               ]
             },
             {
               "aliases": [
                 "符文侧耳聆听"
+              ],
+              "ipa": [
+                "fu wən tsʰɤ ɚ lɪŋ tʰɪŋ"
               ]
             }
           ]
@@ -175,6 +209,9 @@
         "cast": {
           "aliases": [
             "ドメイン"
+          ],
+          "ipa": [
+            "do mɛ i n"
           ]
         },
         "body": [

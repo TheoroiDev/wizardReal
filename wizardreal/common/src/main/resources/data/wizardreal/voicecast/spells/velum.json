@@ -25,7 +25,12 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "in mu",
+      "ni ɪŋ",
+      "ɛː ɾɯ mɯ",
+      "ka kɯ ɾɛ mi no"
+    ]
   },
   "effects": [
     {
@@ -95,11 +100,17 @@
         "trigger": {
           "aliases": [
             "幻影啊，借隐幕以息"
+          ],
+          "ipa": [
+            "xwan ɪŋ a tɕjɛ in mu i ɕi"
           ]
         },
         "cast": {
           "aliases": [
             "隐幕"
+          ],
+          "ipa": [
+            "in mu"
           ]
         },
         "body": [
@@ -107,16 +118,25 @@
             {
               "aliases": [
                 "以幻影之名应召"
+              ],
+              "ipa": [
+                "i xwan ɪŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织帷幕入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ weɪ mu ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚镜界于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕjɛ y wɔ i"
               ]
             }
           ],
@@ -124,16 +144,25 @@
             {
               "aliases": [
                 "帷幕随吾声而醒"
+              ],
+              "ipa": [
+                "weɪ mu sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "镜界识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕjɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之幻影"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ xwan ɪŋ"
               ]
             }
           ]
@@ -148,6 +177,9 @@
         "cast": {
           "aliases": [
             "ウェールム"
+          ],
+          "ipa": [
+            "ɛː ɾɯ mɯ"
           ]
         },
         "body": [

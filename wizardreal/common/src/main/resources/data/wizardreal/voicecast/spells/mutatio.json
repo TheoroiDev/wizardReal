@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "pjɛn ɕɪŋ",
+      "pjɛn tɕi ʂu",
+      "mɯ ta ti o"
+    ]
   },
   "effects": [
     {
@@ -105,11 +109,17 @@
         "trigger": {
           "aliases": [
             "秘印啊，借变形以息"
+          ],
+          "ipa": [
+            "mi in a tɕjɛ pjɛn ɕɪŋ i ɕi"
           ]
         },
         "cast": {
           "aliases": [
             "变形"
+          ],
+          "ipa": [
+            "pjɛn ɕɪŋ"
           ]
         },
         "body": [
@@ -117,16 +127,25 @@
             {
               "aliases": [
                 "以秘印之名应召"
+              ],
+              "ipa": [
+                "i mi in ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织以太入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ i tʰaɪ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚枢纽于我意"
+              ],
+              "ipa": [
+                "fu ʂu njoʊ y wɔ i"
               ]
             }
           ],
@@ -134,16 +153,25 @@
             {
               "aliases": [
                 "以太随吾声而醒"
+              ],
+              "ipa": [
+                "i tʰaɪ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "枢纽识得吾名"
+              ],
+              "ipa": [
+                "ʂu njoʊ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之秘印"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ mi in"
               ]
             }
           ]
@@ -158,6 +186,9 @@
         "cast": {
           "aliases": [
             "ムタティオ"
+          ],
+          "ipa": [
+            "mɯ ta ti o"
           ]
         },
         "body": [

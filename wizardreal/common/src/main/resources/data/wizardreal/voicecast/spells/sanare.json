@@ -25,7 +25,12 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "tɕɪŋ xwa",
+      "ʂəŋ y",
+      "sa naː ɾɛ",
+      "sɛ i dʑo"
+    ]
   },
   "effects": [
     {
@@ -99,11 +104,17 @@
         "trigger": {
           "aliases": [
             "圣光啊，借净化以息"
+          ],
+          "ipa": [
+            "ʂəŋ kwɑŋ a tɕjɛ tɕɪŋ xwa i ɕi"
           ]
         },
         "cast": {
           "aliases": [
             "净化"
+          ],
+          "ipa": [
+            "tɕɪŋ xwa"
           ]
         },
         "body": [
@@ -111,16 +122,25 @@
             {
               "aliases": [
                 "以圣光之名应召"
+              ],
+              "ipa": [
+                "i ʂəŋ kwɑŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织圣咏入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ʂəŋ jʊŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚辉环于我意"
+              ],
+              "ipa": [
+                "fu xweɪ xwan y wɔ i"
               ]
             }
           ],
@@ -128,16 +148,25 @@
             {
               "aliases": [
                 "圣咏随吾声而醒"
+              ],
+              "ipa": [
+                "ʂəŋ jʊŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "辉环识得吾名"
+              ],
+              "ipa": [
+                "xweɪ xwan ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之圣光"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʂəŋ kwɑŋ"
               ]
             }
           ]
@@ -152,6 +181,9 @@
         "cast": {
           "aliases": [
             "サナーレ"
+          ],
+          "ipa": [
+            "sa naː ɾɛ"
           ]
         },
         "body": [

@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ʂən pʰan",
+      "tʰjɛn fa lɪŋ y",
+      "ju di ki ɯ mɯ"
+    ]
   },
   "effects": [
     {
@@ -103,11 +107,17 @@
         "trigger": {
           "aliases": [
             "审判啊，谛听圣光"
+          ],
+          "ipa": [
+            "ʂən pʰan a ti tʰɪŋ ʂəŋ kwɑŋ"
           ]
         },
         "cast": {
           "aliases": [
             "审判"
+          ],
+          "ipa": [
+            "ʂən pʰan"
           ]
         },
         "body": [
@@ -115,16 +125,25 @@
             {
               "aliases": [
                 "以圣光之名应召"
+              ],
+              "ipa": [
+                "i ʂəŋ kwɑŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织圣咏入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ʂəŋ jʊŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚辉环于我意"
+              ],
+              "ipa": [
+                "fu xweɪ xwan y wɔ i"
               ]
             }
           ],
@@ -132,16 +151,25 @@
             {
               "aliases": [
                 "圣咏随吾声而醒"
+              ],
+              "ipa": [
+                "ʂəŋ jʊŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "辉环识得吾名"
+              ],
+              "ipa": [
+                "xweɪ xwan ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之圣光"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʂəŋ kwɑŋ"
               ]
             }
           ]
@@ -156,6 +184,9 @@
         "cast": {
           "aliases": [
             "ユディキウム"
+          ],
+          "ipa": [
+            "ju di ki ɯ mɯ"
           ]
         },
         "body": [

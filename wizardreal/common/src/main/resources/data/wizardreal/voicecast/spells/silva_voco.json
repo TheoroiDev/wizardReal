@@ -25,7 +25,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "xwan lin",
+      "ɕi ɾɯ a o ko"
+    ]
   },
   "effects": [
     {
@@ -106,11 +109,17 @@
         "trigger": {
           "aliases": [
             "以新芽加冕唤林"
+          ],
+          "ipa": [
+            "i ɕin ja tɕja mjɛn xwan lin"
           ]
         },
         "cast": {
           "aliases": [
             "唤林"
+          ],
+          "ipa": [
+            "xwan lin"
           ]
         },
         "body": [
@@ -118,16 +127,25 @@
             {
               "aliases": [
                 "以根须之名应召"
+              ],
+              "ipa": [
+                "ʂəŋ ʈʂɑŋ kaɪ xwa"
               ]
             },
             {
               "aliases": [
                 "织新芽入我言"
+              ],
+              "ipa": [
+                "tsɨ ʐan"
               ]
             },
             {
               "aliases": [
                 "缚荆棘于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕi y wɔ i"
               ]
             }
           ],
@@ -135,16 +153,25 @@
             {
               "aliases": [
                 "新芽随吾声而醒"
+              ],
+              "ipa": [
+                "ɕin ja sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "荆棘识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕi ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之根须"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ kən ɕy"
               ]
             }
           ]
@@ -159,6 +186,9 @@
         "cast": {
           "aliases": [
             "シルウァ・ウォコ"
+          ],
+          "ipa": [
+            "ɕi ɾɯ a o ko"
           ]
         },
         "body": [

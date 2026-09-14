@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "ˈfʊlmɛn",
+      "ˈfʊlmɛn",
+      "ˈfʊlmɛn"
+    ]
   },
   "effects": [
     {
@@ -50,6 +54,9 @@
         "cast": {
           "aliases": [
             "fulmen"
+          ],
+          "ipa": [
+            "ˈfʊlmɛn"
           ]
         },
         "body": [
@@ -93,11 +100,17 @@
         "trigger": {
           "aliases": [
             "落雷初现，雷暴为证"
+          ],
+          "ipa": [
+            "lwɔ leɪ ʈʂʰu ɕjɛn leɪ paʊ weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
             "落雷"
+          ],
+          "ipa": [
+            "ˈfʊlmɛn"
           ]
         },
         "body": [
@@ -105,16 +118,25 @@
             {
               "aliases": [
                 "以雷暴之名应召"
+              ],
+              "ipa": [
+                "i leɪ paʊ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织电光入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ tjɛn kwɑŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚惊雷于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ leɪ y wɔ i"
               ]
             }
           ],
@@ -122,16 +144,25 @@
             {
               "aliases": [
                 "电光随吾声而醒"
+              ],
+              "ipa": [
+                "tjɛn kwɑŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "惊雷识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ leɪ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之雷暴"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ leɪ paʊ"
               ]
             }
           ]
@@ -146,6 +177,9 @@
         "cast": {
           "aliases": [
             "フルメン"
+          ],
+          "ipa": [
+            "ˈfʊlmɛn"
           ]
         },
         "body": [

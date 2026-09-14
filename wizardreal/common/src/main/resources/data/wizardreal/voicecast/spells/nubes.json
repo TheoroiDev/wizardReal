@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "mi u ʈʂweɪ",
+      "u in",
+      "nɯ bɛ sɯ"
+    ]
   },
   "effects": [
     {
@@ -106,11 +110,17 @@
         "trigger": {
           "aliases": [
             "以幻影为引，迷雾苏醒"
+          ],
+          "ipa": [
+            "i xwan ɪŋ weɪ in mi u su ɕɪŋ"
           ]
         },
         "cast": {
           "aliases": [
             "迷雾锥"
+          ],
+          "ipa": [
+            "mi u ʈʂweɪ"
           ]
         },
         "body": [
@@ -118,16 +128,25 @@
             {
               "aliases": [
                 "以幻影之名应召"
+              ],
+              "ipa": [
+                "i xwan ɪŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织帷幕入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ weɪ mu ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚镜界于我意"
+              ],
+              "ipa": [
+                "fu tɕɪŋ tɕjɛ y wɔ i"
               ]
             }
           ],
@@ -135,16 +154,25 @@
             {
               "aliases": [
                 "帷幕随吾声而醒"
+              ],
+              "ipa": [
+                "weɪ mu sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "镜界识得吾名"
+              ],
+              "ipa": [
+                "tɕɪŋ tɕjɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之幻影"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ xwan ɪŋ"
               ]
             }
           ]
@@ -159,6 +187,9 @@
         "cast": {
           "aliases": [
             "ヌベス"
+          ],
+          "ipa": [
+            "nɯ bɛ sɯ"
           ]
         },
         "body": [

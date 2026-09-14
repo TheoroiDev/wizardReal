@@ -25,7 +25,11 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "lwɔ ʂɨ",
+      "lwɔ ʂɨ ʈʂweɪ",
+      "ɾa pi dɛ sɯ"
+    ]
   },
   "effects": [
     {
@@ -96,11 +100,17 @@
         "trigger": {
           "aliases": [
             "以磐石为引，落石苏醒"
+          ],
+          "ipa": [
+            "i pʰan ʂɨ weɪ in lwɔ ʂɨ su ɕɪŋ"
           ]
         },
         "cast": {
           "aliases": [
             "落石"
+          ],
+          "ipa": [
+            "lwɔ ʂɨ"
           ]
         },
         "body": [
@@ -108,16 +118,25 @@
             {
               "aliases": [
                 "以磐石之名应召"
+              ],
+              "ipa": [
+                "i pʰan ʂɨ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织大地入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ta ti ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚山岳于我意"
+              ],
+              "ipa": [
+                "fu ʂan ɥɛ y wɔ i"
               ]
             }
           ],
@@ -125,16 +144,25 @@
             {
               "aliases": [
                 "大地随吾声而醒"
+              ],
+              "ipa": [
+                "ta ti sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "山岳识得吾名"
+              ],
+              "ipa": [
+                "ʂan ɥɛ ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之磐石"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ pʰan ʂɨ"
               ]
             }
           ]
@@ -149,6 +177,9 @@
         "cast": {
           "aliases": [
             "ラピデス"
+          ],
+          "ipa": [
+            "ɾa pi dɛ sɯ"
           ]
         },
         "body": [

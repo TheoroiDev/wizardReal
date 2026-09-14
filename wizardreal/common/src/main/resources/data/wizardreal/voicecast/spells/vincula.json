@@ -25,7 +25,10 @@
       ],
       "ko": []
     },
-    "ipa": []
+    "ipa": [
+      "tʰjɛn swɔ fu",
+      "tʰjɛn swɔ"
+    ]
   },
   "effects": [
     {
@@ -121,11 +124,17 @@
         "trigger": {
           "aliases": [
             "以圣咏为引，天锁苏醒"
+          ],
+          "ipa": [
+            "i ʂəŋ jʊŋ weɪ in tʰjɛn swɔ su ɕɪŋ"
           ]
         },
         "cast": {
           "aliases": [
             "天锁缚"
+          ],
+          "ipa": [
+            "tʰjɛn swɔ fu"
           ]
         },
         "body": [
@@ -133,21 +142,33 @@
             {
               "aliases": [
                 "以圣光之名应召"
+              ],
+              "ipa": [
+                "i ʂəŋ kwɑŋ ʈʂɨ mɪŋ ɪŋ ʈʂaʊ"
               ]
             },
             {
               "aliases": [
                 "织圣咏入我言"
+              ],
+              "ipa": [
+                "ʈʂɨ ʂəŋ jʊŋ ʐu wɔ jɛn"
               ]
             },
             {
               "aliases": [
                 "缚辉环于我意"
+              ],
+              "ipa": [
+                "fu xweɪ xwan y wɔ i"
               ]
             },
             {
               "aliases": [
                 "初火圣光为誓"
+              ],
+              "ipa": [
+                "ʈʂʰu xwɔ ʂəŋ kwɑŋ weɪ ʂɨ"
               ]
             }
           ],
@@ -155,21 +176,33 @@
             {
               "aliases": [
                 "圣咏随吾声而醒"
+              ],
+              "ipa": [
+                "ʂəŋ jʊŋ sweɪ u ʂəŋ ɚ ɕɪŋ"
               ]
             },
             {
               "aliases": [
                 "辉环识得吾名"
+              ],
+              "ipa": [
+                "xweɪ xwan ʂɨ tɤ u mɪŋ"
               ]
             },
             {
               "aliases": [
                 "来兮，无羁之圣光"
+              ],
+              "ipa": [
+                "laɪ ɕi u tɕi ʈʂɨ ʂəŋ kwɑŋ"
               ]
             },
             {
               "aliases": [
                 "恩泽侧耳聆听"
+              ],
+              "ipa": [
+                "ən tsɤ tsʰɤ ɚ lɪŋ tʰɪŋ"
               ]
             }
           ]
