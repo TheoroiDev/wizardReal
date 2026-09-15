@@ -73,22 +73,6 @@ public final class ServerVoiceCast {
         });
     }
 
-    /** Build vocabulary (trigger words + all chant lines) and push to the server. */
-    public static void pushVocabulary() {
-        Map<String, Pronunciation> merged = new LinkedHashMap<>();
-        for (Spell spell : SpellRegistry.all()) {
-            merged.put(spell.pronunciation().id(), spell.pronunciation());
-            for (Chant chant : spell.chants()) {
-                for (ChantLine line : chant.lines()) {
-                    Pronunciation p = line.pronunciation();
-                    merged.putIfAbsent(p.id(), p);
-                }
-            }
-        }
-        VoiceCastServer.INSTANCE.setVocabulary(new ArrayList<>(merged.values()));
-        WizardReal.LOGGER.info("Pushed {} recognizer pronunciations (spells + chant lines)", merged.size());
-    }
-
     /** Language-trimmed push ([voice] languages): only the enabled buckets of
      * every pronunciation reach the recognizer grammar — fewer competing
      * templates means fewer cross-language false triggers and sharper CTC
@@ -122,32 +106,36 @@ public final class ServerVoiceCast {
                 merged.size(), enabled.isEmpty() ? "all" : enabled, drafts);
     }
 
-    /** G2P draft fill for template-less entries ([voice] g2pDrafts): generates
-     * an IPA draft from the first alias of an enabled bucket. Strict — unknown
-     * scripts produce no draft and the entry stays template-less. */
+    /** G2P draft fill for template-less entries ([voice] g2pDrafts): every
+     * alias of every enabled bucket is converted (globally deduped, mirroring
+     * gen_ipa). Strict — unknown scripts produce no draft and an entry with
+     * zero successful aliases stays template-less. */
     static Pronunciation withDrafts(Pronunciation p, Set<String> enabled) {
         if (!p.ipa().isEmpty()) return p;
-        List<String> aliases;
-        String lang;
+        List<String> drafts = new ArrayList<>();
         if (p.languages().isEmpty()) { // legacy bucket: routed everywhere
-            aliases = p.aliases();
-            lang = "";
+            for (String alias : p.aliases()) {
+                String draft = G2p.toIpa(alias, "");
+                if (!draft.isBlank() && !drafts.contains(draft)) drafts.add(draft);
+            }
         } else {
             // Language trim applies to drafts too: with buckets but no enabled
-            // match, the entry stays template-less.
-            lang = p.languages().keySet().stream()
-                    .filter(l -> enabled.isEmpty() || enabled.contains(l.toLowerCase(Locale.ROOT)))
-                    .findFirst().orElse(null);
-            if (lang == null) return p;
-            aliases = p.languages().get(lang);
-        }
-        for (String alias : aliases) {
-            String draft = G2p.toIpa(alias, lang);
-            if (!draft.isBlank()) {
-                return new Pronunciation(p.id(), List.of(draft), p.aliases(), p.languages());
+            // match, the entry stays template-less. ALL enabled buckets
+            // aggregate (first-bucket-only dropped zh drafts when en failed to
+            // convert - R1 audit B#6).
+            for (Map.Entry<String, List<String>> bucket : p.languages().entrySet()) {
+                if (!enabled.isEmpty()
+                        && !enabled.contains(bucket.getKey().toLowerCase(Locale.ROOT))) {
+                    continue;
+                }
+                for (String alias : bucket.getValue()) {
+                    String draft = G2p.toIpa(alias, bucket.getKey());
+                    if (!draft.isBlank() && !drafts.contains(draft)) drafts.add(draft);
+                }
             }
         }
-        return p;
+        if (drafts.isEmpty()) return p;
+        return new Pronunciation(p.id(), drafts, p.aliases(), p.languages());
     }
 
     /** Keep only the enabled language buckets; {@code null} drops the entry.

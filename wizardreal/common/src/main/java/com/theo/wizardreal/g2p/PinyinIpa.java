@@ -41,16 +41,22 @@ public final class PinyinIpa {
 
     /** Rimes in curated espeak style. "i" resolves by onset, "u" by onset (ü after j/q/x). */
     private static final Map<String, String> FINAL_IPA = new HashMap<>(Map.ofEntries(
-            Map.entry("a", "a"), Map.entry("o", "wɔ"), Map.entry("e", "ɤ"), Map.entry("er", "ɚ"),
+            // "o" is onset-conditional (哦 standalone = o; bo/po/mo/fo o=uo -> wɔ): see rimeIpa
+            Map.entry("a", "a"), Map.entry("e", "ɤ"), Map.entry("er", "ɚ"),
             Map.entry("ai", "aɪ"), Map.entry("ei", "eɪ"), Map.entry("ao", "aʊ"), Map.entry("ou", "oʊ"),
             Map.entry("an", "an"), Map.entry("en", "ən"), Map.entry("ang", "ɑŋ"), Map.entry("eng", "əŋ"),
             Map.entry("ong", "ʊŋ"),
             Map.entry("ia", "ja"), Map.entry("ie", "jɛ"), Map.entry("iao", "jaʊ"), Map.entry("iu", "joʊ"),
+            Map.entry("io", "jo"),
+            Map.entry("ye", "yɛ"), Map.entry("yan", "yan"), Map.entry("yn", "yn"),
             Map.entry("ian", "jɛn"), Map.entry("in", "in"), Map.entry("iang", "jɑŋ"), Map.entry("ing", "ɪŋ"),
             Map.entry("iong", "jʊŋ"),
+            // l/n + ü-family: j-glide (l/n are non-palatal; ɥ would read palatalized)
             Map.entry("ua", "wa"), Map.entry("uo", "wɔ"), Map.entry("uai", "waɪ"), Map.entry("ui", "weɪ"),
             Map.entry("uan", "wan"), Map.entry("un", "wən"), Map.entry("uang", "wɑŋ"), Map.entry("ueng", "wəŋ"),
             Map.entry("ve", "ɥɛ"), Map.entry("van", "ɥɛn"), Map.entry("vn", "yn")));
+    // ü-rimes after NON-palatal onsets use the j-glide (略 lve -> lyɛ, 虐 nve
+    // -> nyɛ); ɥ is a palatal glide and only fits tɕ/ɕ/ɕʰ onsets (R1 audit #6).
 
     /** y-/w- orthographic syllables mapped to their underlying rime. */
     private static final Map<String, String> Y_W = new HashMap<>(Map.ofEntries(
@@ -98,17 +104,23 @@ public final class PinyinIpa {
             // jue=jüe, quan=qüan...).
             boolean palatal = initial.equals("j") || initial.equals("q") || initial.equals("x");
             if (palatal && rime.equals("u")) rime = "v";
-            if (palatal && (rime.equals("un") || rime.equals("uan") || rime.equals("ue")
-                    || rime.equals("ui"))) {
+            if (palatal && (rime.equals("un") || rime.equals("uan") || rime.equals("ue"))) {
                 rime = "v" + rime.substring(1);
             }
+            if (!palatal && !onset.isEmpty()
+                    && (rime.equals("ve") || rime.equals("van") || rime.equals("vn"))) {
+                // l/n + ü-family: ü as the MAIN vowel (lyɛ/nyɛ), no palatal
+                // ɥ glide - that reads palatalized (R1 audit #6).
+                rime = "y" + rime.substring(1);
+            }
+        }
+        if (rime.isEmpty()) {
+            // Syllabic nasal/fricative alone (嗯 n, 呣 m, 噷 hm): the pinyin IS
+            // the consonant - emit it as the whole syllable token (R1 audit #4).
+            return onset.isEmpty() ? (s.equals("n") || s.equals("m") || s.equals("h") ? s : null) : onset;
         }
         String rimeIpa = rimeIpa(rime, onset);
         if (rimeIpa == null) return null;
-        if (onset.isEmpty() && (rime.startsWith("i") || rime.startsWith("u") || rime.startsWith("v"))) {
-            // vowel-initial i/u/v rimes need a glide (yi/you handled by Y_W; "i" alone -> i)
-            if (rime.equals("i")) rimeIpa = "i";
-        }
         return onset + rimeIpa;
     }
 
@@ -122,6 +134,7 @@ public final class PinyinIpa {
                 return retro ? "ɨ" : "i";
             case "u": return "u";
             case "v": return "y";
+            case "o": return onset.isEmpty() ? "o" : "wɔ"; // 哦 standalone = o; bo/po/mo/fo o=uo 合写 (R1 #5)
             default: return null;
         }
     }

@@ -3,6 +3,7 @@ package com.theo.wizardreal.server;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import com.theo.wizardreal.WizardReal;
+import com.theo.wizardreal.g2p.G2p;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.spell.SpellDefinition;
 import com.theo.wizardreal.spell.Spells;
@@ -108,6 +109,7 @@ public final class SpellDataLoader {
             }
         }
         ChantManager.get().clearAll(server);
+        G2p.invalidate(); // Tier-0 mirrors the rebuilt registry (audit: /reload kept a stale snapshot)
         ServerVoiceCast.pushVocabulary(server);
         // Catalog publication point: the registry was rebuilt (ids may have
         // changed), so every online player's snapshot is stale.

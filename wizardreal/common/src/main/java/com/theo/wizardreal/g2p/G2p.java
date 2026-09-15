@@ -66,13 +66,15 @@ public final class G2p {
     }
 
     private static String segmentIpa(String segment, String lang, Map<String, String> tier0) {
-        Script script = scriptOf(segment.charAt(0));
+        Script script = scriptOf(segment.codePointAt(0));
         String low = segment.toLowerCase(Locale.ROOT);
         // Tier-0: curated dictionary wins for every script.
         String curated = tier0.get(low);
         if (curated != null && !curated.isBlank()) return curated.strip();
         return switch (script) {
-            case HAN -> "ja".equals(lang) ? "" : PinyinIpa.toIpa(low); // C4: no ja kanji at P0
+            // Han converts under zh (default); any explicitly non-zh language
+            // gets no draft (R1 audit #10: lang=en must not produce pinyin).
+            case HAN -> (lang.isEmpty() || "zh".equals(lang)) ? PinyinIpa.toIpa(low) : "";
             case KANA -> KanaIpa.toIpa(segment);
             case HANGUL -> HangulIpa.toIpa(segment);
             // Latin: Tier-2 (Sphinx-4 WFST) is a later phase (docs 02 §4 P1).
@@ -80,7 +82,10 @@ public final class G2p {
         };
     }
 
-    /** Split text into maximal same-script runs (Han / Kana / Hangul / Latin). */
+    /** Split text into maximal same-script runs (Han / Kana / Hangul / Latin).
+     *  Spaces and any other space characters (incl. NBSP) separate runs; a
+     *  non-convertible character (digit/punct/emoji) forms its own OTHER run
+     *  which the strict conversion then rejects — it never absorbs neighbours. */
     static List<String> segment(String text) {
         List<String> out = new ArrayList<>();
         StringBuilder current = new StringBuilder();
@@ -88,14 +93,25 @@ public final class G2p {
         for (int i = 0; i < text.length();) {
             int cp = text.codePointAt(i);
             Script s = scriptOf(cp);
-            if (s == Script.OTHER && Character.isWhitespace(cp)) {
+            boolean sep = s == Script.OTHER
+                    && (Character.isWhitespace(cp) || Character.isSpaceChar(cp));
+            if (sep) {
                 if (current.length() > 0) {
                     out.add(current.toString());
                     current.setLength(0);
                 }
                 currentScript = Script.OTHER;
-            } else if (s == currentScript || (currentScript == Script.OTHER && s != Script.OTHER)) {
+            } else if (s == currentScript
+                    || (current.length() == 0 && currentScript == Script.OTHER)) {
+                // append same-script continuation; an OTHER char only starts a
+                // run when the buffer is empty AND never absorbs a following
+                // different script (R1 audit #24)
                 if (current.length() == 0) currentScript = s;
+                else if (s != currentScript) {
+                    out.add(current.toString());
+                    current.setLength(0);
+                    currentScript = s;
+                }
                 current.appendCodePoint(cp);
             } else {
                 if (current.length() > 0) out.add(current.toString());
@@ -111,7 +127,10 @@ public final class G2p {
 
     private static Script scriptOf(int cp) {
         if ((cp >= 0x3400 && cp <= 0x4DBF) || (cp >= 0x4E00 && cp <= 0x9FFF)
-                || (cp >= 0xF900 && cp <= 0xFAFF)) return Script.HAN;
+                || (cp >= 0xF900 && cp <= 0xFAFF)
+                || (cp >= 0x20000 && cp <= 0x2EBEF) || (cp >= 0x30000 && cp <= 0x3134A)) {
+            return Script.HAN; // ext A/B+ declared strict: the pinyin table has no such rows
+        }
         if ((cp >= 0x3041 && cp <= 0x309F) || (cp >= 0x30A1 && cp <= 0x30FF)
                 || cp == 0x30FC) return Script.KANA;
         if (cp >= 0xAC00 && cp <= 0xD7A3) return Script.HANGUL;

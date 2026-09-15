@@ -20,7 +20,7 @@ public final class HangulIpa {
     // GA GAE GYA GYAE GEO GE GYEO YE GO GWA GWAE GOE GYO GU GWEO GWE WI GYU EU GYI GI
     private static final String[] JUNGSEONG = {
             "a", "ɛ", "ja", "jɛ", "ʌ", "e", "jʌ", "je", "o", "wa", "wɛ", "we", "jo", "u",
-            "wʌ", "we", "wi", "ju", "ɯ", "i", "i"};
+            "wʌ", "we", "wi", "ju", "ɯ", "ɰi", "i"}; // ㅢ = ɰi (simplified away only in modern morphs; espeak keeps the glide)
     // (none) GAG GAGG GAGS GAN GANJ GANH GAD GAL GALG GALM GALB GALS GALT GALP GALH
     // GAM GAB GABS GAS GASS GANG GAJ GAC GAK GAT GAP GAH
     private static final String[] CODA = {
@@ -44,10 +44,8 @@ public final class HangulIpa {
                 sb.append(onset).append(JUNGSEONG[medialIdx]);
                 if (codaIdx > 0) sb.append(CODA[codaIdx - 1]);
                 out.add(sb.toString());
-            } else if (ch == ' ') {
-                // word break is handled by the caller's segmentation
             } else {
-                return ""; // non-syllabic jamo etc. -> no draft
+                return ""; // non-syllabic jamo etc. -> no draft (spaces are handled by the caller's segmentation)
             }
         }
         return String.join(" ", out);

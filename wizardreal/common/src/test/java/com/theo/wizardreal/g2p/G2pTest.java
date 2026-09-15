@@ -104,6 +104,86 @@ class G2pTest {
         assertEquals("tɕa", HangulIpa.toIpa("자"));           // j-a
     }
 
+    // ---------------------------------------- R1 audit fixes (regression pins)
+
+    @Test
+    void zhInterjectionYo() {
+        assertEquals("jo", PinyinIpa.toIpa("哟"));       // io rime exists (was strict-fail)
+        assertEquals("jo", PinyinIpa.toIpa("唷"));
+    }
+
+    @Test
+    void zhSyllabicNasal() {
+        assertEquals("n", PinyinIpa.toIpa("嗯"));         // zero-rime syllable (was strict-fail)
+        assertEquals("m", PinyinIpa.toIpa("呣"));
+    }
+
+    @Test
+    void zhStandaloneO() {
+        assertEquals("o", PinyinIpa.toIpa("哦"));         // not wɔ (that is the bo/po/mo/fo o=uo form)
+    }
+
+    @Test
+    void zhUmlautNonPalatalOnset() {
+        assertEquals("lyɛ", PinyinIpa.toIpa("略"));       // l+ü: main-vowel y, no palatal ɥ
+        assertEquals("nyɛ", PinyinIpa.toIpa("虐"));   // n+ü: main-vowel y
+    }
+
+    @Test
+    void zhErhuaAnchor() {
+        assertEquals("ɚ", PinyinIpa.toIpa("二"));         // regression anchor (already green)
+        assertEquals("xwa ɚ", PinyinIpa.toIpa("花儿"));
+    }
+
+    @Test
+    void jaSokuonBeforeVowelDropsGemination() {
+        assertEquals("a", KanaIpa.toIpa("っあ"));          // nothing to double (was "a a")
+    }
+
+    @Test
+    void jaChoonpuWordStartIsStrict() {
+        assertEquals("", KanaIpa.toIpa("ービール"));       // was silent drop
+        assertEquals("", KanaIpa.toIpa("ンー"));           // ː only after vowels
+    }
+
+    @Test
+    void jaVuFamily() {
+        assertEquals("bɯ", KanaIpa.toIpa("ゔ"));
+        assertEquals("ba ɾɯ", KanaIpa.toIpa("ヴァル")); // ヴァ = single ba syllable
+    }
+
+    @Test
+    void jaRareKanaStayStrict() {
+        assertEquals("", KanaIpa.toIpa("ヷ"));             // above shift window, documented
+    }
+
+    @Test
+    void koUiKeepsGlide() {
+        assertEquals("ɰi sa", HangulIpa.toIpa("의사"));
+    }
+
+    @Test
+    void digitsAndEmojiAreStrict() {
+        assertEquals("", G2p.toIpa("3 fireballs", "en"));  // documented strict input surface
+        assertEquals("", G2p.toIpa("🔥", ""));
+    }
+
+    @Test
+    void nbspSplitsRuns() {
+        // NBSP must separate runs (was: absorbed into an OTHER run -> strict "")
+        assertEquals("xwɔ xaʊ", G2p.toIpa("火 好", ""));
+    }
+
+    @Test
+    void astralPlaneHanIsStrict() {
+        assertEquals("", G2p.toIpa("𠀀", ""));             // ext-B: declared, fail-closed
+    }
+
+    @Test
+    void hanUnderEnIsRejected() {
+        assertEquals("", G2p.toIpa("火", "en"));           // was: pinyin leaked under lang=en
+    }
+
     // ------------------------------------------------- mixed scripts + facade
 
     @Test

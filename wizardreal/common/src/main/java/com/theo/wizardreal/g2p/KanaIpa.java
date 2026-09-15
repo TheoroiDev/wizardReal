@@ -10,9 +10,16 @@ import java.util.Map;
  *
  * <p>Hiragana table + katakana by codepoint shift; the vowel/consonant choices
  * follow the hand-curated ja templates already in the corpus (う=ɯ, え=ɛ,
- * を=wo, け=kɛ, つ=tsɯ, ら-column r=ɾ... e.g. アルカヌム -> a ɾɯ ka n ɯ m ɯ).
- * Sokuon っ/ッ geminates the next onset; chōonpu ー lengthens the previous
- * vowel; ん = n. Kanji are NOT handled here (docs C4 — needs a morphological
+ * を=wo, け=kɛ, つ=tsɯ, ら-column r=ɾ... e.g. アルカヌム -> a ɾɯ ka nɯ mɯ).
+ * Sokuon っ/ッ geminates the next onset (empty-cluster safe: っ+vowel-initial
+ * kana just drops the gemination mark); chōonpu ー lengthens the previous
+ * vowel and is STRICT at word start or after a non-vowel token; ん = n.
+ *
+ * <p>Excluded (strict ""): kanji (docs C4 — needs a morphological analyzer),
+ * half-width katakana (U+FF66-FF9F), ゝゞ゛゜ヽヾ, and ヷヸヹヺ (U+30F7-FA, above
+ * the shift window) — all fail closed, no garbage output. ゔ/ヴ map to bɯ.
+ *
+ * <p>Kanji are NOT handled here (docs C4 — needs a morphological
  * analyzer; P0 scope is kana only).
  */
 public final class KanaIpa {
@@ -20,7 +27,7 @@ public final class KanaIpa {
 
     private static final int HIRA_START = 0x3041;
     private static final int KATA_START = 0x30A1;
-    private static final int KATA_END = 0x30F6;
+    private static final int KATA_END = 0x30F6; // ヷヸヹヺ (0x30F7-FA) excluded: see class doc
     private static final int SHIFT = KATA_START - HIRA_START;
 
     private static final Map<String, String> BASE = new HashMap<>(Map.ofEntries(
@@ -57,10 +64,14 @@ public final class KanaIpa {
             // small kana ( standalone vowel / palatal glide )
             Map.entry("ぁ", "a"), Map.entry("ぃ", "i"), Map.entry("ぅ", "ɯ"), Map.entry("ぇ", "ɛ"),
             Map.entry("ぉ", "o"),
-            Map.entry("ゃ", "ja"), Map.entry("ゅ", "ju"), Map.entry("ょ", "jo")));
+            Map.entry("ゃ", "ja"), Map.entry("ゅ", "ju"), Map.entry("ょ", "jo"),
+            // ゔ (and ヴ via the katakana shift): modern v-line, mapped to b-series
+            Map.entry("ゔ", "bɯ")));
 
     /** Latin-consonant prefixes used for gemination/palatalization logic. */
-    private static final String CONSONANTS = "kgsztdnhbpmyɾwjçɸ";
+    private static final String CONSONANTS = "kgsztdnhbpmyɾwjçɸb";
+    /** Vowel endings that a chōonpu may lengthen. */
+    private static final String VOWELS = "aɛiouɯɪeɤ";
 
     public static String toIpa(String word) {
         if (word == null || word.isBlank()) return "";
@@ -79,21 +90,29 @@ public final class KanaIpa {
             switch (ch) {
                 case "ん" -> out.add("n");
                 case "っ" -> geminate = true;
-                case "ー" -> { // chōonpu: lengthen previous vowel
-                    if (!out.isEmpty()) out.set(out.size() - 1, out.get(out.size() - 1) + "ː");
+                case "ー" -> {
+                    // chōonpu: lengthen the previous vowel; strict at word
+                    // start or after a non-vowel token (ンー is not nː)
+                    if (out.isEmpty() || !endsWithVowel(out.get(out.size() - 1))) return "";
+                    out.set(out.size() - 1, out.get(out.size() - 1) + "ː");
                 }
-                case "・", "、" -> out.add(" "); // separators -> token break (kept as space)
                 default -> {
                     String ipa = BASE.get(ch);
                     boolean smallVowel = ch.equals("ぁ") || ch.equals("ぃ") || ch.equals("ぅ")
                             || ch.equals("ぇ") || ch.equals("ぉ");
                     boolean smallGlide = ch.equals("ゃ") || ch.equals("ゅ") || ch.equals("ょ");
                     // Small vowel after a kana modifies its vowel (ドゥ -> dɯ);
-                    // standalone it is just the vowel.
+                    // after a lone vowel it is kept standalone (あゃ -> a ja,
+                    // R1 audit: the old code silently swallowed the "a").
                     if (smallVowel && !out.isEmpty()) {
                         String prev = out.remove(out.size() - 1);
-                        String head = prev.replaceAll("[aɛiouɯɪeɤ]+$", "");
-                        out.add(head + ipa);
+                        String head = prev.replaceAll("[" + VOWELS + "]+$", "");
+                        if (head.isEmpty()) {
+                            out.add(prev);
+                            out.add(ipa);
+                        } else {
+                            out.add(head + ipa);
+                        }
                         geminate = false;
                         continue;
                     }
@@ -122,9 +141,10 @@ public final class KanaIpa {
                     }
                     if (geminate) {
                         // Duplicate the full onset consonant cluster: っち -> tɕ tɕi.
-                        String cluster = ipa.replaceAll("[aɛiouɯɪeɤ].*$", "");
-                        if (cluster.isEmpty()) cluster = ipa.substring(0, 1);
-                        out.add(cluster);
+                        // After a vowel-initial kana (っあ) there is nothing to
+                        // double - the gemination mark is simply dropped.
+                        String cluster = ipa.replaceAll("[" + VOWELS + "].*$", "");
+                        if (!cluster.isEmpty()) out.add(cluster);
                         geminate = false;
                     }
                     out.add(ipa);
@@ -132,5 +152,9 @@ public final class KanaIpa {
             }
         }
         return String.join(" ", out);
+    }
+
+    private static boolean endsWithVowel(String token) {
+        return !token.isEmpty() && VOWELS.indexOf(token.charAt(token.length() - 1)) >= 0;
     }
 }
