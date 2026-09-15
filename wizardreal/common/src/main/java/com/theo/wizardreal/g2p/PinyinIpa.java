@@ -115,9 +115,9 @@ public final class PinyinIpa {
             }
         }
         if (rime.isEmpty()) {
-            // Syllabic nasal/fricative alone (嗯 n, 呣 m, 噷 hm): the pinyin IS
-            // the consonant - emit it as the whole syllable token (R1 audit #4).
-            return onset.isEmpty() ? (s.equals("n") || s.equals("m") || s.equals("h") ? s : null) : onset;
+            // Syllabic nasal alone (嗯 n, 呣 m): the pinyin IS the consonant -
+            // emit it as the whole syllable token (R1 audit #4).
+            return onset.isEmpty() ? null : onset;
         }
         String rimeIpa = rimeIpa(rime, onset);
         if (rimeIpa == null) return null;

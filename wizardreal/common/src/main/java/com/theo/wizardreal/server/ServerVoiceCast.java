@@ -128,8 +128,9 @@ public final class ServerVoiceCast {
                         && !enabled.contains(bucket.getKey().toLowerCase(Locale.ROOT))) {
                     continue;
                 }
+                String lang = bucket.getKey().toLowerCase(Locale.ROOT);
                 for (String alias : bucket.getValue()) {
-                    String draft = G2p.toIpa(alias, bucket.getKey());
+                    String draft = G2p.toIpa(alias, lang);
                     if (!draft.isBlank() && !drafts.contains(draft)) drafts.add(draft);
                 }
             }

@@ -102,8 +102,7 @@ public final class KanaIpa {
                             || ch.equals("ぇ") || ch.equals("ぉ");
                     boolean smallGlide = ch.equals("ゃ") || ch.equals("ゅ") || ch.equals("ょ");
                     // Small vowel after a kana modifies its vowel (ドゥ -> dɯ);
-                    // after a lone vowel it is kept standalone (あゃ -> a ja,
-                    // R1 audit: the old code silently swallowed the "a").
+                    // after a lone vowel both stay standalone (あぁ -> a a).
                     if (smallVowel && !out.isEmpty()) {
                         String prev = out.remove(out.size() - 1);
                         String head = prev.replaceAll("[" + VOWELS + "]+$", "");
@@ -118,7 +117,8 @@ public final class KanaIpa {
                     }
                     // Small ya/yu/yo after a consonant-final kana palatalize it
                     // (きゃ -> kja); after sibilant rows the i-glide merges into
-                    // the sibilant (しゃ -> ɕa, ジョ -> dʑo); standalone = plain.
+                    // the sibilant (しゃ -> ɕa, ジョ -> dʑo); after a lone vowel
+                    // both stay standalone (あゃ -> a ja); standalone = plain.
                     if (smallGlide && !out.isEmpty()) {
                         String prev = out.remove(out.size() - 1);
                         String vowel = ch.equals("ゃ") ? "a" : ch.equals("ゅ") ? "ɯ" : "o";
@@ -127,8 +127,13 @@ public final class KanaIpa {
                         String head;
                         if (sibilantI) {
                             head = prev.substring(0, prev.length() - 1); // keep bare sibilant
+                        } else if (prev.length() == 1) {
+                            out.add(prev); // lone vowel: keep it, glide standalone (あゃ -> a ja)
+                            out.add(ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo");
+                            geminate = false;
+                            continue;
                         } else {
-                            head = prev.length() > 1 && CONSONANTS.indexOf(prev.charAt(0)) >= 0
+                            head = CONSONANTS.indexOf(prev.charAt(0)) >= 0
                                     ? prev.substring(0, 1) : "";
                             vowel = ch.equals("ゃ") ? "ja" : ch.equals("ゅ") ? "ju" : "jo";
                         }

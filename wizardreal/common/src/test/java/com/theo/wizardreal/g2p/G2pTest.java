@@ -147,6 +147,11 @@ class G2pTest {
     }
 
     @Test
+    void jaStandaloneGlideKeepsLoneVowel() {
+        assertEquals("a ja", KanaIpa.toIpa("あゃ"));  // R1 narrow-review fix (was "ja")
+    }
+
+    @Test
     void jaVuFamily() {
         assertEquals("bɯ", KanaIpa.toIpa("ゔ"));
         assertEquals("ba ɾɯ", KanaIpa.toIpa("ヴァル")); // ヴァ = single ba syllable
