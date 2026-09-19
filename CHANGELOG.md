@@ -15,6 +15,10 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 - breaking: `wizardreal:spell_catalog` S2C bumps to formatVersion 3; `spell_catalog.json` export bumps to format 3 with `effects` and `chant_stages`
 
+### Bugfixes
+
+- Quitting mid-chant no longer re-declares the OPEN cast mode from the quit handler: VoiceCast's own quit cleanup already clears the player's session and cast-mode declaration, and racing it could re-insert a stale declaration keyed by the departed player's UUID
+
 ### Modding/API
 
 - Voice matchers ship the lab-calibrated S6 working point (wizardreal#29): the IPA phoneme matcher replaces the flat Levenshtein with a data-driven weighted edit distance — an 872-pair confusion cost table ships as a jar asset (`assets/wizardreal/phoneme_costs.tsv`; in-table costs are `clamp(raw x 2.0, 0.1, 1)` at match time, out-of-table substitutions stay a flat 1.0, insertions/deletions cost 0.6 in both directions, and the former free target-phoneme skip is gone — a swallowed phoneme now costs 0.6). Accented-speech recall improves markedly on the lab bench (positives 74.3% vs 60.7%, negative false-fires 8/300); a missing cost asset is a hard error — there is no equal-weight fallback

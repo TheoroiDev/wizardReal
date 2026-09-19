@@ -15,6 +15,10 @@
 
 - breaking: `wizardreal:spell_catalog` S2C 升 formatVersion 3；`spell_catalog.json` 导出升 format 3，新增 `effects` 与 `chant_stages`
 
+### Bugfixes
+
+- 咏唱中退出不再由退出处理器重新声明 OPEN 施法模式：VoiceCast 自身的退出清理本就会清掉该玩家的会话与模式声明，两者竞争可能在 VoiceCast 侧留下以已退出玩家 UUID 为键的残留声明
+
 ### Modding/API
 
 - 语音匹配器落定 lab 校准的 S6 工作点（wizardreal#29）：IPA 音素匹配器以数据驱动的加权编辑距离取代平权 Levenshtein——872 对混淆代价表以 jar 资产随包分发（`assets/wizardreal/phoneme_costs.tsv`；表内代价匹配时 `clamp(raw x 2.0, 0.1, 1)`，表外替换保持平权 1.0，插入/删除双向 0.6，原"目标音素免费跳过"取消——被吞音素现计 0.6）。lab 台架上方言口音召回显著提升（正样本 74.3% vs 60.7%，负误触 8/300）；代价资产缺失为硬错误，无平权回退

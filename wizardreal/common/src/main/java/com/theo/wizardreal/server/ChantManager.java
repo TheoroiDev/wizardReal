@@ -316,8 +316,12 @@ public final class ChantManager {
     }
 
     public void onQuit(ServerPlayer player) {
+        // No declareMode(OPEN) here: VoiceCast's own quit handler clears the
+        // player's session AND cast-mode declaration. Re-declaring from this
+        // side races that cleanup and can re-insert a dead-UUID entry into
+        // voicecast's castModes map (refine M13 F3) — a quit needs no new
+        // declaration at all.
         if (active.remove(player.getUUID()) != null) {
-            declareMode(player, CastMode.OPEN, null);
             ChantNetwork.sendEnd(player, false);
         }
         failStreaks.remove(player.getUUID());
