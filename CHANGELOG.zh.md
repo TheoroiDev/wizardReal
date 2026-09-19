@@ -14,6 +14,14 @@
 ### Changes
 
 - breaking: `wizardreal:spell_catalog` S2C 升 formatVersion 3；`spell_catalog.json` 导出升 format 3，新增 `effects` 与 `chant_stages`
+
+### Modding/API
+
+- 语音匹配器落定 lab 校准的 S6 工作点（wizardreal#29）：IPA 音素匹配器以数据驱动的加权编辑距离取代平权 Levenshtein——872 对混淆代价表以 jar 资产随包分发（`assets/wizardreal/phoneme_costs.tsv`；表内代价匹配时 `clamp(raw x 2.0, 0.1, 1)`，表外替换保持平权 1.0，插入/删除双向 0.6，原"目标音素免费跳过"取消——被吞音素现计 0.6）。lab 台架上方言口音召回显著提升（正样本 74.3% vs 60.7%，负误触 8/300）；代价资产缺失为硬错误，无平权回退
+- CTC templateScores 现拒绝模糊胜出：前两名后验候选差距小于 0.02 时，识别器（VoiceCast 侧 margin 规则）将该语句的整组分数清零，边缘语句按未命中下落而非误发可能错误的法术；`FORWARD_MATCH_THRESHOLD`（0.10）与 per-spell threshold 覆盖原样叠加生效
+- 文本别名匹配的精确同分平局改按最长别名优先（最具体匹配），再按最小 spell id——短别名被包含在其他法术更长别名内时不再靠候选顺序抢胜
+- 新增 `PerModeThresholdProvider` 机制接口（match 包），按模式暴露三层匹配器阈值，`fullVocabulary()` 默认实现返回现行常量；按模式重标定的接线随四模式施法期路由（#30）落地
+
 ### Features
 
 - 阶梯咏唱（magic_eco 03）：法术可定义 `chant_stages` 升级阶——咏唱念得更深即切换到该阶自己的效果列表（可覆盖耗魔/冷却），解锁门槛=已完成行数×施法者熟练度百分比**双门槛**；熟练度不足时向下结算到已解锁的最高阶——用低阶练习成长解锁高阶

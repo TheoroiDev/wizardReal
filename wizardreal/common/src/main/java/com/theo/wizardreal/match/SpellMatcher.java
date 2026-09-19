@@ -18,6 +18,17 @@ import java.util.Locale;
  *   <li>single-word alias appears as a whole word .......... 0.9</li>
  *   <li>Levenshtein similarity on the full strings ......... 0..1</li>
  * </ol>
+ *
+ * <p>TM-FIX port (issue #29 P6, IN-PRODUCTION as of 0.3.3 — the lab copy at
+ * {@code ipa/match/TextMatcher.java} carried this rule AHEAD of production;
+ * now synced, see build/accent_calibration/c1ca_report.md): score ties are
+ * broken by LONGEST alias first — on sentence-length transcripts a short
+ * alias (e.g. 圣光) can be contained inside another spell's longer alias
+ * (e.g. 圣光矢), and the old "first in the candidate order wins" rule
+ * misassigned the row; the longest alias is the most specific match. A full
+ * tie (same score, same alias length) falls back to spell id lexicographic
+ * order, smaller id first — matching the old first-in-vocab behavior on
+ * id-sorted vocab files.
  */
 public final class SpellMatcher {
     /**
@@ -46,13 +57,27 @@ public final class SpellMatcher {
 
         Spell bestSpell = null;
         float bestScore = 0f;
+        int bestAliasLen = -1;
         for (Spell spell : candidates) {
             Pronunciation p = spell.pronunciation();
             for (String alias : p.aliases()) {
-                float score = scoreAlias(normalize(alias), text);
+                String normAlias = normalize(alias);
+                float score = scoreAlias(normAlias, text);
                 if (score > bestScore) {
                     bestScore = score;
                     bestSpell = spell;
+                    bestAliasLen = normAlias.length();
+                } else if (score == bestScore && score > 0f && bestSpell != null) {
+                    // Score tie: longest alias wins (most specific match);
+                    // full tie -> spell id lexicographic order, smaller id
+                    // first (TM-FIX, issue #29 P6).
+                    int len = normAlias.length();
+                    if (len > bestAliasLen
+                            || (len == bestAliasLen && spell.id().compareTo(bestSpell.id()) < 0)) {
+                        bestScore = score;
+                        bestSpell = spell;
+                        bestAliasLen = len;
+                    }
                 }
             }
         }
@@ -116,4 +141,3 @@ public final class SpellMatcher {
         return 1.0f - (float) Levenshtein.distance(a, b) / maxLen;
     }
 }
-

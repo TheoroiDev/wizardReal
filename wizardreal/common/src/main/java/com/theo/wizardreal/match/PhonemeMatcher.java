@@ -3,9 +3,13 @@ package com.theo.wizardreal.match;
 import com.theo.voicecast.api.IpaText;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
-import com.theo.wizardreal.util.Levenshtein;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Matches recognized IPA phoneme sequences against the {@code ipa()} templates
@@ -13,13 +17,79 @@ import java.util.List;
  *
  * <p>Both sides are normalized: diacritics/stress marks are stripped, and the
  * IPA string is split into per-phoneme tokens (multi-char affricates such as
- * tʃ/dʒ are kept together). Scoring is Levenshtein similarity on the token
- * sequences plus a bonus when a template appears as a contiguous subsequence
- * of the heard utterance. The per-spell effective threshold is
+ * tʃ/dʒ are kept together). The per-spell effective threshold is
  * {@link Spell#threshold()} when overridden, else {@link #MATCH_THRESHOLD}.
+ *
+ * <p>S6-MATCHER/S6-FINAL port (wizardreal#29, IN-PRODUCTION as of 0.3.3 —
+ * this file was previously flat Levenshtein while the lab copy at
+ * {@code ipa/match/PhonemeMatcher.java} was AHEAD; the two are now semantically
+ * aligned bit-for-bit): the flat Levenshtein was replaced by a weighted edit
+ * distance. Substitution costs come from the data-driven confusion table
+ * {@code assets/wizardreal/phoneme_costs.tsv} (M2E E-3 empirical matrix, 872
+ * pairs, cost = normalized -ln p(heard|target); D2), scaled by
+ * {@link #COST_SCALE} = 2.0 at match time and clamped back into the D2 range
+ * [0.1, 1] (the asset keeps its raw values — the scale is matching semantics,
+ * not stored data; clamping keeps the D2 value-range contract, so a
+ * heavily-unlikely pair never costs MORE than the equal-weight 1.0).
+ * Insertions/deletions cost a flat {@link #INDEL_COST} = 0.6 x the
+ * substitution baseline in both directions (D3, v0 constant; unscaled). A
+ * swallowed target phoneme is therefore no longer free: the former
+ * free-target-skip DP ({@code skipTargetSimilarity}) is subsumed by the 0.6
+ * deletion cost under the same max(len) normalization
+ * ({@code 1 - cost / max(len)}). Out-of-table substitutions keep the
+ * unscaled flat {@link #DEFAULT_SUB_COST} = 1.0. The exact-template
+ * contiguous-chunk bonus (0.92) is unchanged.
+ *
+ * <p>×2.0 is the dominating end point of the s6_matcher_report §4 sensitivity
+ * grid (cross-over ~1.4x; 1.0x = net regression with negatives 270/300, 2.0x
+ * = positives 74.3% vs flat 60.7%, negatives 8/300 vs 4/300). The grid ran
+ * scaled table files generated with this exact scale+clamp semantics
+ * (verified 872/872 pairs bitwise-identical to
+ * {@code clamp(raw * 2.0f, 0.1, 1)}), so the in-code constant reproduces the
+ * grid numbers exactly.
+ *
+ * <p>Missing cost asset throws (v0 hard cut — no equal-weight fallback; the
+ * file is a tracked jar asset so it always exists, D2).
  */
 public final class PhonemeMatcher {
     public static final float MATCH_THRESHOLD = 0.6f;
+
+    /**
+     * Insertion/deletion cost (D3): 0.6 x the substitution baseline. An
+     * indel has no (heard,target) pair to look up, so the baseline is always
+     * the out-of-table {@link #DEFAULT_SUB_COST} — i.e. a flat 0.6. Both
+     * directions share it: a swallowed target phoneme (deletion) and an extra
+     * heard token (insertion) are both cheaper than any substitution. 0.6 is
+     * the v0 compromise; data-driven indel costs are deferred. NOT scaled.
+     */
+    public static final float INDEL_COST = 0.6f;
+
+    /** Out-of-table substitution cost (D2: 平权 1.0). Not scaled. */
+    public static final float DEFAULT_SUB_COST = 1.0f;
+
+    /**
+     * Global in-table cost scale (S6-FINAL D1, locked — v0 hard cut, no
+     * knob): every cost looked up from the confusion table is multiplied by
+     * this at match time and clamped back into the D2 range [0.1, 1]; the
+     * asset file keeps its raw values. Out-of-table substitutions and the
+     * indel are intentionally not scaled.
+     */
+    public static final float COST_SCALE = 2.0f;
+
+    /** D2 value-range floor for scaled in-table costs (inactive at 2.0x). */
+    public static final float SCALED_COST_MIN = 0.1f;
+
+    /**
+     * D2 value-range ceiling for scaled in-table costs — numerically the
+     * equal-weight {@link #DEFAULT_SUB_COST}, so a scaled pair never costs
+     * more than an out-of-table substitution.
+     */
+    public static final float SCALED_COST_MAX = 1.0f;
+
+    /** Jar asset holding the confusion cost table (D2). */
+    static final String COST_TABLE_RESOURCE = "/assets/wizardreal/phoneme_costs.tsv";
+
+    private static volatile Map<String, Float> costs;
 
     private PhonemeMatcher() {}
 
@@ -60,39 +130,103 @@ public final class PhonemeMatcher {
             // exact template spoken as a contiguous chunk -> very strong match
             sim = Math.max(sim, 0.92f);
         }
-        // Deletion-tolerant alignment: the engine systematically drops weak
-        // syllable-final consonants (e.g. the dark L in "fulmen" -> [f uː m ʌ n],
-        // see workspace-root docs/IPA识别问题.md). Allow target tokens to be skipped for free
-        // while every heard token must still be aligned.
-        sim = Math.max(sim, skipTargetSimilarity(heard, target));
         return sim;
     }
 
     /**
-     * Similarity where skipping target tokens is free (their edit cost is not
-     * counted), but every heard token costs 1 unless it matches. Normalized
-     * against the heard length. Equals 1.0 when heard is a (fuzzy) subsequence
-     * of target with zero substitutions.
+     * Weighted edit-distance similarity (S6 WO D2/D3/D4 + S6-FINAL D1).
+     * Substitution of heard token h against target token t costs
+     * {@code clamp(COST_SCALE * cost(h,t), [0.1, 1])} from the confusion
+     * table (flat 1.0 when out of table, 0 on identity); insertions and
+     * deletions cost {@link #INDEL_COST}. Normalized as
+     * {@code 1 - cost / max(len)} — the same max(len) basis the flat
+     * Levenshtein used. Tokens must already be normalized (both sides go
+     * through {@link IpaText}, which is also how the table was built).
      */
-    static float skipTargetSimilarity(List<?> heard, List<?> target) {
+    static float similarity(List<?> heard, List<?> target) {
         int m = heard.size();
         int n = target.size();
-        if (m == 0) return 1f;
-        if (n == 0) return 0f;
-        // d[i][j] = min cost aligning heard[0..i) against a subsequence of target[0..j)
-        int[] prev = new int[n + 1];
-        int[] cur = new int[n + 1];
+        int maxLen = Math.max(m, n);
+        if (maxLen == 0) return 1f;
+        // two-row DP over the weighted costs
+        float[] prev = new float[n + 1];
+        float[] cur = new float[n + 1];
+        for (int j = 1; j <= n; j++) prev[j] = prev[j - 1] + INDEL_COST; // heard empty: swallow target
         for (int i = 1; i <= m; i++) {
-            cur[0] = i; // every heard token must be consumed; target side empty
+            cur[0] = prev[0] + INDEL_COST; // extra heard token vs empty target prefix
+            Object h = heard.get(i - 1);
             for (int j = 1; j <= n; j++) {
-                int sub = prev[j - 1] + (heard.get(i - 1).equals(target.get(j - 1)) ? 0 : 1);
-                int skip = cur[j - 1]; // free skip of target[j-1]
-                cur[j] = Math.min(sub, skip);
+                float sub = prev[j - 1] + (h.equals(target.get(j - 1))
+                        ? 0f : subCost(h, target.get(j - 1)));
+                float ins = cur[j - 1] + INDEL_COST; // heard has extra token
+                float del = prev[j] + INDEL_COST;    // target phoneme swallowed
+                cur[j] = Math.min(sub, Math.min(ins, del));
             }
-            int[] tmp = prev; prev = cur; cur = tmp;
+            float[] tmp = prev; prev = cur; cur = tmp;
         }
-        int cost = prev[n];
-        return 1f - (float) cost / m;
+        return 1f - prev[n] / maxLen;
+    }
+
+    /**
+     * Table cost for substituting heard token h against template token t:
+     * {@code clamp(raw * COST_SCALE, [0.1, 1])} (S6-FINAL D1). Out-of-table
+     * pairs keep the unscaled flat {@link #DEFAULT_SUB_COST}.
+     */
+    static float subCost(Object heard, Object target) {
+        Float c = costTable().get(heard + "\t" + target);
+        if (c == null) return DEFAULT_SUB_COST;
+        return Math.max(SCALED_COST_MIN, Math.min(SCALED_COST_MAX, c * COST_SCALE));
+    }
+
+    /**
+     * Lazily loaded confusion cost table, keyed "heard\ttarget". Loaded once
+     * per JVM; the file is a tracked jar asset so a missing file is a hard
+     * error (v0 hard cut — no equal-weight fallback, D2).
+     */
+    private static Map<String, Float> costTable() {
+        Map<String, Float> t = costs;
+        if (t == null) {
+            synchronized (PhonemeMatcher.class) {
+                if (costs == null) costs = loadCosts();
+                t = costs;
+            }
+        }
+        return t;
+    }
+
+    private static Map<String, Float> loadCosts() {
+        try (InputStream in = PhonemeMatcher.class.getResourceAsStream(COST_TABLE_RESOURCE)) {
+            if (in == null) {
+                throw new IllegalStateException("phoneme cost table not found on classpath: "
+                        + COST_TABLE_RESOURCE + "; S6 hard cut: no equal-weight fallback");
+            }
+            Map<String, Float> parsed = parseCosts(
+                    new String(in.readAllBytes(), StandardCharsets.UTF_8).lines().toList());
+            if (parsed.isEmpty()) {
+                throw new IllegalStateException("phoneme cost table is empty: " + COST_TABLE_RESOURCE);
+            }
+            return parsed;
+        } catch (IOException e) {
+            throw new IllegalStateException("failed to load phoneme cost table " + COST_TABLE_RESOURCE, e);
+        }
+    }
+
+    /** Table parser (package-private for the regression tests): skips blank
+     *  and {@code #} lines; each data line is {@code heard \t target \t cost}. */
+    static Map<String, Float> parseCosts(List<String> lines) throws IOException {
+        Map<String, Float> out = new HashMap<>();
+        for (String line : lines) {
+            if (line.isBlank() || line.startsWith("#")) continue;
+            String[] c = line.split("\t");
+            if (c.length < 3) throw new IOException("bad cost line (need 3 columns): " + line);
+            out.put(c[0] + "\t" + c[1], Float.parseFloat(c[2].trim()));
+        }
+        return out;
+    }
+
+    /** Test hook: direct access to the loaded table (keys "heard\ttarget"). */
+    static Map<String, Float> tableForTest() {
+        return costTable();
     }
 
     /** Normalize tokens already split by the engine (one phoneme per element). */
@@ -116,11 +250,4 @@ public final class PhonemeMatcher {
         }
         return false;
     }
-
-    static float similarity(List<?> a, List<?> b) {
-        int maxLen = Math.max(a.size(), b.size());
-        if (maxLen == 0) return 1f;
-        return 1.0f - (float) Levenshtein.distance(a, b) / maxLen;
-    }
 }
-
