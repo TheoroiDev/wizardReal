@@ -96,6 +96,25 @@ class G2pTest {
         assertEquals("", KanaIpa.toIpa("漢字"));
     }
 
+    @Test
+    void jaKanjiReadingsViaCuratedTable() {
+        // Phrase-level table (docs C4): known phrases -> kana -> IPA.
+        assertEquals("sa i mi n", G2p.toIpa("催眠", "ja"));
+        assertEquals("dʑi wa ɾɛ", G2p.toIpa("地割れ", "ja"));
+        // Mixed kanji+kana: substitution must run BEFORE segmentation.
+        assertEquals("kɛ n no ɾjo ɯ i ki", G2p.toIpa("剣の領域", "ja"));
+        assertEquals("sɛ n no kɛ n", G2p.toIpa("千の剣", "ja"));
+    }
+
+    @Test
+    void jaKanjiUnknownStaysStrict() {
+        // Bare kanji not in the table -> no draft (fail closed, never zh pinyin).
+        assertEquals("", G2p.toIpa("火", "ja"));
+        assertEquals("", G2p.toIpa("紅蓮よ応えよ", "ja"));
+        // Kana path unaffected.
+        assertEquals("a i gi sɯ", G2p.toIpa("アイギス", "ja"));
+    }
+
     // ------------------------------------------------------------ ko (hangul)
 
     @Test

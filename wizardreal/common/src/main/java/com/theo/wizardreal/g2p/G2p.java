@@ -23,9 +23,10 @@ import java.util.Map;
  *       computation, quality 1.0.</li>
  *   <li><b>Tier-1 per-language primitives</b> — zh: hanzi -> toneless pinyin
  *       (embedded data table, generated from the MIT-licensed pypinyin data)
- *       -> initial/final IPA composition; ja: kana -> IPA (kanji readings are
- *       NOT supported at P0 — needs a morphological analyzer, see docs C4);
- *       ko: Hangul decomposition -> jamo IPA (pure Unicode algorithm).</li>
+ *       -> initial/final IPA composition; ja: kana -> IPA, plus a CURATED
+ *       phrase-level kanji->kana reading table ({@link KanjiIpa}, docs C4 —
+ *       full morphological analysis stays out of scope); ko: Hangul
+ *       decomposition -> jamo IPA (pure Unicode algorithm).</li>
  *   <li><b>Tier-2 English fallback</b> — NOT implemented at P0 (docs plan:
  *       Sphinx-4 WFST); English words outside Tier-0 return no result.</li>
  * </ol>
@@ -46,16 +47,32 @@ public final class G2p {
      * Convert {@code text} to a space-separated espeak-style IPA string.
      *
      * @param lang preferred language bucket ("en"/"zh"/"ja"/"ko"); "" = auto
-     *             per script. Han under "ja" returns "" at P0 (no kanji
-     *             readings — docs C4).
+     *             per script. Han under "ja" converts only when covered by
+     *             the KanjiIpa curated reading table (unknown kanji -> no
+     *             draft, strict).
      * @return the IPA draft, or "" when any segment is unconvertible (strict:
      *         partial drafts must not reach template matching).
      */
     public static String toIpa(String text, String lang) {
         if (text == null || text.isBlank()) return "";
+        Map<String, String> tier0 = tier0Dictionary();
+        // Tier-0 wins on the WHOLE text first: the ja kanji pass below would
+        // otherwise rewrite a curated kanji alias into kana and silently
+        // demote it to a Tier-1 machine draft (the backtest loop writes
+        // passing drafts back into spell JSONs — curated entries must keep
+        // winning once they exist).
+        String whole = tier0.get(text.strip().toLowerCase(Locale.ROOT));
+        if (whole != null && !whole.isBlank()) return whole.strip();
+        // ja kanji readings (docs C4, KanjiIpa): phrase-level substitution on
+        // the WHOLE text BEFORE segmentation — segmentation would otherwise
+        // split mixed kanji+kana aliases (炎のブレス) into a HAN segment that
+        // strict mode must reject. Unknown kanji survive the pass and still
+        // fail closed below.
+        if ("ja".equals(lang)) {
+            text = KanjiIpa.toKana(text.strip());
+        }
         List<String> segments = segment(text.strip());
         if (segments.isEmpty()) return "";
-        Map<String, String> tier0 = tier0Dictionary();
         List<String> out = new ArrayList<>();
         for (String segment : segments) {
             String ipa = segmentIpa(segment, lang, tier0);
