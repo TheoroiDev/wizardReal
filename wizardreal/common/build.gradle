@@ -20,3 +20,13 @@ dependencies {
     testImplementation "com.theo.voicecast:voicecast-common-1.20.1:${voicecastVersion}"
     testRuntimeOnly "com.theo.voicecast:voicecast-common-1.20.1:${voicecastVersion}"
 }
+
+// S9 production-semantics rematch harness (issue #30 R-5, gated lab tool):
+// forward the CLI gate flags into the test JVM, e.g.
+//   gradlew :wizardreal-common:test --tests "*S9ProductionRematch*" -Ds9prod.rematch=true
+tasks.named("test", Test).configure {
+    ["s9prod.rematch", "s9prod.ws"].each { key ->
+        def value = System.getProperty(key)
+        if (value != null) systemProperty key, value
+    }
+}

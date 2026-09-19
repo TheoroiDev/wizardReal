@@ -1,5 +1,6 @@
 package com.theo.wizardreal.server;
 
+import com.theo.voicecast.server.CastMode;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
@@ -51,6 +52,16 @@ public final class ChantManager {
 
     private ChantManager() {}
 
+    /**
+     * Cast-mode declaration follows the chant lifecycle (issue #30 R-3/D-15):
+     * while a chant is active the player's session hears only the current
+     * spell ({@link CastMode#CHANT_CONFIRM}); the moment it ends the player
+     * falls back to free casting ({@code OPEN}).
+     */
+    private static void declareMode(ServerPlayer player, CastMode mode, Spell spell) {
+        ServerVoiceCast.setCastMode(player, mode, spell == null ? List.of() : List.of(spell.id()));
+    }
+
     private final Map<UUID, ChantEngine> active = new ConcurrentHashMap<>();
     private final Map<UUID, Long> lockoutUntil = new ConcurrentHashMap<>();
     /** Consecutive chant failures per player: {count, lastFailMs} (darkness stacking). */
@@ -99,6 +110,7 @@ public final class ChantManager {
     public void startAtLine(ServerPlayer player, Spell spell, int variant) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
                 timeoutMs(player, spell), variant));
+        declareMode(player, CastMode.CHANT_CONFIRM, spell);
 
         List<List<String>> variantLines = new ArrayList<>();
         for (Chant c : spell.chants()) {
@@ -117,6 +129,7 @@ public final class ChantManager {
     public void start(ServerPlayer player, Spell spell) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
                 timeoutMs(player, spell), -1));
+        declareMode(player, CastMode.CHANT_CONFIRM, spell);
         List<List<String>> variantLines = new ArrayList<>();
         for (Chant c : spell.chants()) {
             List<String> keys = new ArrayList<>();
@@ -165,6 +178,7 @@ public final class ChantManager {
         Spell spell = engine.spell();
         int completedLines = engine.currentLineCount();
         active.remove(player.getUUID());
+        declareMode(player, CastMode.OPEN, null);
         lock(player, COMPLETION_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, true);
         // Power tier for the full chant (chant_policy.power_per_line, default 1.0),
@@ -182,6 +196,7 @@ public final class ChantManager {
         Spell spell = engine.spell();
         ChantPolicy policy = spell.chantPolicy();
         active.remove(player.getUUID());
+        declareMode(player, CastMode.OPEN, null);
         if (policy != null && !policy.skipAllowed()) {
             // 禁咒: the jump is forbidden — treat as a failed chant (no cast).
             WizardReal.LOGGER.info("{} tried to jump chapters on forbidden chant {}",
@@ -267,6 +282,7 @@ public final class ChantManager {
     /** Failed chant: darkness with stacking duration (短时间连续失败叠加). */
     private void fail(ServerPlayer player, ChantEngine engine) {
         active.remove(player.getUUID());
+        declareMode(player, CastMode.OPEN, null);
         lock(player, CANCEL_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, false);
         applyFailBlindness(player);
@@ -293,6 +309,7 @@ public final class ChantManager {
 
     public void cancel(ServerPlayer player, boolean success) {
         if (active.remove(player.getUUID()) != null) {
+            declareMode(player, CastMode.OPEN, null);
             lock(player, CANCEL_LOCKOUT_MS);
             ChantNetwork.sendEnd(player, success);
         }
@@ -300,6 +317,7 @@ public final class ChantManager {
 
     public void onQuit(ServerPlayer player) {
         if (active.remove(player.getUUID()) != null) {
+            declareMode(player, CastMode.OPEN, null);
             ChantNetwork.sendEnd(player, false);
         }
         failStreaks.remove(player.getUUID());
@@ -314,7 +332,10 @@ public final class ChantManager {
         if (active.isEmpty()) return;
         for (UUID uuid : active.keySet()) {
             ServerPlayer p = server.getPlayerList().getPlayer(uuid);
-            if (p != null) ChantNetwork.sendEnd(p, false);
+            if (p != null) {
+                declareMode(p, CastMode.OPEN, null);
+                ChantNetwork.sendEnd(p, false);
+            }
         }
         active.clear();
         WizardReal.LOGGER.info("All active chants cancelled (spell registry reloaded)");
@@ -328,6 +349,7 @@ public final class ChantManager {
             ChantEngine engine = e.getValue();
             if (p == null) return true; // player gone; quit handler covers packet
             if (now - engine.lastActivityMs() <= engine.timeoutMs()) return false;
+            declareMode(p, CastMode.OPEN, null);
             ChantNetwork.sendEnd(p, false);
             applyFailBlindness(p);
             lock(p, CANCEL_LOCKOUT_MS);

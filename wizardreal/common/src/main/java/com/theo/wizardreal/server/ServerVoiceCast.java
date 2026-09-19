@@ -3,6 +3,7 @@ package com.theo.wizardreal.server;
 import com.theo.voicecast.api.Pronunciation;
 import com.theo.voicecast.api.VoiceCastEvents;
 import com.theo.voicecast.api.event.ServerRecognitionFinalEvent;
+import com.theo.voicecast.server.CastMode;
 import com.theo.voicecast.server.VoiceCastServer;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Chant;
@@ -19,6 +20,7 @@ import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +61,14 @@ public final class ServerVoiceCast {
             Map<String, Float> scores = e.result() == null ? Map.of() : e.result().templateScores();
             server.execute(() -> handle(e.player(), text, ipa, conf, scores));
         });
+
+        // Casting-time mode default (issue #30/D-15, amended by the P30
+        // supervisor ruling): free casting = OPEN (full word list ∩ engine
+        // language buckets — identical candidates to the pre-#30 default).
+        // Declared on join so it reaches the session before the first
+        // utterance; re-declared on chant end (see ChantManager).
+        PlayerEvent.PLAYER_JOIN.register(player ->
+                setCastMode(player, CastMode.OPEN, List.of()));
 
         // Clean up chants when a player leaves.
         PlayerEvent.PLAYER_QUIT.register(player -> ChantManager.get().onQuit(player));
@@ -104,6 +114,23 @@ public final class ServerVoiceCast {
         WizardReal.LOGGER.info("Pushed {} recognizer pronunciations (spells + chant lines, "
                         + "languages={}, g2pDrafts={})",
                 merged.size(), enabled.isEmpty() ? "all" : enabled, drafts);
+    }
+
+    /** Casting-time mode declaration (issue #30/D-1 passthrough): forwards the
+     *  player's D-15 routing mode to the voicecast session — free casting =
+     *  {@link CastMode#OPEN} (full word list, P30 supervisor ruling), ladder
+     *  chant = {@link CastMode#CHANT_CONFIRM} + the current spell, practice
+     *  surfaces (M4) = {@link CastMode#PRACTICE_CONFIRM}. {@code null} mode
+     *  clears the declaration (full vocabulary, the pre-#30 behavior). Safe
+     *  from any thread; declarations survive session rebuilds until the player
+     *  quits. */
+    public static void setCastMode(ServerPlayer player, CastMode mode, Collection<String> spellIds) {
+        VoiceCastServer.INSTANCE.setCastMode(player, mode, spellIds);
+    }
+
+    /** Convenience overload for modes that need no declared spells (OPEN). */
+    public static void setCastMode(ServerPlayer player, CastMode mode) {
+        setCastMode(player, mode, List.of());
     }
 
     /** G2P draft fill for template-less entries ([voice] g2pDrafts): every

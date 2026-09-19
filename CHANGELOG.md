@@ -21,6 +21,11 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 - CTC templateScores now reject ambiguous wins: when the top-two posterior candidates finish within 0.02 of each other, the recognizer (VoiceCast-side margin rule) zeroes the whole score set for that utterance, so borderline utterances fall through instead of firing a possibly-wrong spell; `FORWARD_MATCH_THRESHOLD` (0.10) and per-spell threshold overrides still apply unchanged on top
 - Text alias matching breaks exact score ties by LONGEST alias first (most specific match), then by smallest spell id — a short alias contained inside another spell's longer alias no longer steals the win by candidate order
 - New `PerModeThresholdProvider` mechanism interface (match package) exposing the three matcher-tier thresholds per mode, with a `fullVocabulary()` default that returns the shipped constants; per-mode recalibration wiring lands with the four-mode casting-time router (#30)
+- Four-mode casting-time vocabulary routing (issue #30, D-15 user-adjudicated) with the VoiceCast dependency at 0.5.0:
+  - free casting runs in the OPEN cast mode (declared for every player at join) — per the supervisor ruling on the P30 re-verification, OPEN keeps the full word list ∩ engine language buckets, identical candidates to the pre-#30 default: the trigger+release refinement was reverted because the SpellMatcher's Phonetics layer re-shuffles rather than removes false triggers under a narrowed OPEN set, so free-casting behavior is unchanged
+  - ladder chants declare CHANT_CONFIRM for the current spell the moment the chant starts (mid-chant the session hears only that spell's rows) and fall back to OPEN on completion, early release, failure, cancel, timeout, quit and registry reload
+  - per-mode forward thresholds ship in voicecast's `assets/voicecast/mode_thresholds.tsv` (first batch mirrors the shipped 0.10 constant — behavior-neutral); `ResourceModeThresholdProvider` (match package) reads them and stays unwired until recalibrated values deviate from the constants
+  - practice surfaces (B crystal / E guide / mentor NPC) integrate later via `CastMode.PRACTICE_CONFIRM` (M4 — the interface ships now, no consumer yet)
 
 ### Features
 

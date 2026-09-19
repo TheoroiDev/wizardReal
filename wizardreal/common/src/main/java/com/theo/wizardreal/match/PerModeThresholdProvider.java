@@ -28,6 +28,16 @@ public interface PerModeThresholdProvider {
     /** Effective thresholds for the given mode id (see class javadoc). */
     Thresholds thresholds(String mode);
 
+    /**
+     * Effective thresholds for a (mode, spell) pair (#30 D3's per-spell
+     * calibration rows). Default: spell-independent — delegates to
+     * {@link #thresholds(String)}; mode-aware implementations override to
+     * consult per-spell rows first.
+     */
+    default Thresholds thresholds(String mode, String spellId) {
+        return thresholds(mode);
+    }
+
     /** Default implementation: the shipped full-vocabulary constants for
      *  every mode (identical to the pre-#30 hard-coded behavior). */
     static PerModeThresholdProvider fullVocabulary() {

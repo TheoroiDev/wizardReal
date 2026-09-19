@@ -21,6 +21,11 @@
 - CTC templateScores 现拒绝模糊胜出：前两名后验候选差距小于 0.02 时，识别器（VoiceCast 侧 margin 规则）将该语句的整组分数清零，边缘语句按未命中下落而非误发可能错误的法术；`FORWARD_MATCH_THRESHOLD`（0.10）与 per-spell threshold 覆盖原样叠加生效
 - 文本别名匹配的精确同分平局改按最长别名优先（最具体匹配），再按最小 spell id——短别名被包含在其他法术更长别名内时不再靠候选顺序抢胜
 - 新增 `PerModeThresholdProvider` 机制接口（match 包），按模式暴露三层匹配器阈值，`fullVocabulary()` 默认实现返回现行常量；按模式重标定的接线随四模式施法期路由（#30）落地
+- 四模式施法期词表路由（issue #30，D-15 用户裁决）随 VoiceCast 依赖 0.5.0 落地：
+  - 自由施法运行于 OPEN 模式（玩家进服即声明）——按 P30 复验后监工裁决，OPEN 维持全词表 ∩ 引擎语言桶，候选集与 #30 前默认完全一致：触发语+释放语的精炼已回退（Phonetics 层会把缩圈后的 OPEN 误触发重排而非消除），自由施法行为不变
+  - 阶梯咏唱开始即对当前法术声明 CHANT_CONFIRM（咏唱中会话只听该法术的行），完成/提前释放/失败/取消/超时/退出/注册表重载即回退 OPEN
+  - per-mode forward 阈值随 voicecast 资产 `assets/voicecast/mode_thresholds.tsv` 分发（首批镜像出厂 0.10 常数——行为中性）；match 包的 `ResourceModeThresholdProvider` 负责读取，重标定值偏离常数前不接线
+  - 练习入口（B 水晶 / E 引导 / 导师 NPC）后续经 `CastMode.PRACTICE_CONFIRM` 接入（M4——本单只交付接口，尚无消费点）
 
 ### Features
 
