@@ -17,7 +17,7 @@
         "voco"
       ],
       "zh": [
-        "唤林"
+        "唤森"
       ],
       "ja": [
         "シルウァ・ウォコ",
@@ -26,7 +26,7 @@
       "ko": []
     },
     "ipa": [
-      "xwan lin",
+      "xwan sən",
       "ɕi ɾɯ ɯ a ɯ o ko"
     ]
   },
@@ -108,18 +108,18 @@
       "zh": {
         "trigger": {
           "aliases": [
-            "以新芽加冕唤林"
+            "以新芽加冕唤森"
           ],
           "ipa": [
-            "i ɕin ja tɕja mjɛn xwan lin"
+            "i ɕin ja tɕja mjɛn xwan sən"
           ]
         },
         "cast": {
           "aliases": [
-            "唤林"
+            "唤森"
           ],
           "ipa": [
-            "xwan lin"
+            "xwan sən"
           ]
         },
         "body": [

@@ -16,7 +16,6 @@
         "phantom bolt"
       ],
       "zh": [
-        "幻弹",
         "虚影弹"
       ],
       "ja": [
@@ -26,7 +25,6 @@
       "ko": []
     },
     "ipa": [
-      "xwan tan",
       "ɕy ɪŋ tan",
       "ɸa ɾɯ sɯ mɯ",
       "ma bo ɾo ɕi da ma"
@@ -98,18 +96,18 @@
       "zh": {
         "trigger": {
           "aliases": [
-            "幻弹初现，幻影为证"
+            "虚影弹初现，幻影为证"
           ],
           "ipa": [
-            "xwan tan ʈʂʰu ɕjɛn xwan ɪŋ weɪ ʈʂəŋ"
+            "ɕy ɪŋ tan ʈʂʰu ɕjɛn xwan ɪŋ weɪ ʈʂəŋ"
           ]
         },
         "cast": {
           "aliases": [
-            "幻弹"
+            "虚影弹"
           ],
           "ipa": [
-            "xwan tan"
+            "ɕy ɪŋ tan"
           ]
         },
         "body": [

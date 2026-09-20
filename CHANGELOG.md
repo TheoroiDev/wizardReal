@@ -13,6 +13,7 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 ### Changes
 
+- Chinese voice incantations reworked to stop cross-fires (rename batch backtested on the lab bench: the six worst confusion pairs drop from 14-64% false-match to 0-3% on the new words): 幻弹 is retired in favor of 虚影弹 (falsum), 火墙→燎墙 (vestibulum), 唤林→唤森 (silva_voco), 疾风步→迅风步 (volatus), 轻风步→踏云步 (aurae_levitas), 圣光矢→圣光箭 (sagitta); the bare short alias 圣光 is retired (圣光束 stays) because it was contained inside other spells' chant lines and kept firing them. Chant lines were updated to the new wording and old aliases no longer resolve — naming rules for custom words live in the wiki ("Spell-Alias-Guidelines")
 - breaking: `wizardreal:spell_catalog` S2C bumps to formatVersion 3; `spell_catalog.json` export bumps to format 3 with `effects` and `chant_stages`
 
 ### Bugfixes

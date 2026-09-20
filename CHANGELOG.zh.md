@@ -13,6 +13,7 @@
 
 ### Changes
 
+- 中文语音咒文改词（改词批实验室回测：六个最重混淆对在新词面上从 14-64% 误匹配降到 0-3%）：弃用"幻弹"保留"虚影弹"（falsum）、火墙→燎墙（vestibulum）、唤林→唤森（silva_voco）、疾风步→迅风步（volatus）、轻风步→踏云步（aurae_levitas）、圣光矢→圣光箭（sagitta）；裸短别名"圣光"弃用（"圣光束"保留）——它被其它法术的咒文行包含、持续误触发对方。咒文行已同步新词面，旧别名不再生效；自定义词面命名规范见 wiki「Spell-Alias-Guidelines」
 - breaking: `wizardreal:spell_catalog` S2C 升 formatVersion 3；`spell_catalog.json` 导出升 format 3，新增 `effects` 与 `chant_stages`
 
 ### Bugfixes

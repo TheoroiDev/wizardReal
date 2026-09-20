@@ -15,7 +15,7 @@
         "vestibulum"
       ],
       "zh": [
-        "火墙"
+        "燎墙"
       ],
       "ja": [
         "ウェスティブルム"
@@ -23,7 +23,7 @@
       "ko": []
     },
     "ipa": [
-      "xwɔ tɕʰjɑŋ",
+      "ljaʊ tɕʰjɑŋ",
       "ɯ ɛ sɯ ti bɯ ɾɯ mɯ"
     ]
   },
@@ -108,18 +108,18 @@
       "zh": {
         "trigger": {
           "aliases": [
-            "以灰烬加冕火墙"
+            "以灰烬加冕燎墙"
           ],
           "ipa": [
-            "i xweɪ tɕin tɕja mjɛn xwɔ tɕʰjɑŋ"
+            "i xweɪ tɕin tɕja mjɛn ljaʊ tɕʰjɑŋ"
           ]
         },
         "cast": {
           "aliases": [
-            "火墙"
+            "燎墙"
           ],
           "ipa": [
-            "xwɔ tɕʰjɑŋ"
+            "ljaʊ tɕʰjɑŋ"
           ]
         },
         "body": [
