@@ -184,9 +184,10 @@ class PhonemeMatcherTest {
 
     @Test
     void costTableAssetShipsWithAllPairs() {
-        // D2: the table is a tracked jar asset; 872 empirical pairs (plus the
-        // header comment lines, not counted).
-        assertEquals(872, PhonemeMatcher.tableForTest().size());
+        // D2: the table is a tracked jar asset; 872 empirical pairs + 19
+        // engine-swap C1 default-cost rows for the ZIPA symbol inventory
+        // (one duplicate pair folded) — header comment lines not counted.
+        assertEquals(891, PhonemeMatcher.tableForTest().size());
     }
 
     @Test

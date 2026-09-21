@@ -881,3 +881,34 @@ z	tɕ	0.8687
 χ	tɕ	0.8687
 χ	ŋ	0.9872
 ᵻ	ɨ	0.8401
+# --- ZIPA inventory extension (engine-swap C1, 2026-09-21) ---
+# The 0.5.0 ZIPA recognizer (zipa-small-crctc-ns-no-diacritics) emits IPA
+# symbols the wav2vec2-era M2E matrix never observed as HEARD tokens. Each
+# engine-swap decision per work order C1 (equivalence class OR explicit
+# default-cost row):
+#   r -> ɹ, g -> ɡ   IpaText equivalence classes (matching space), not rows here
+#   ▁ (U+2581)       word-boundary marker, stripped by the engine before matching
+#   ʔ                no template adjacency: stays out-of-table (flat default 1.0)
+#   the rest         explicit rows below at the DEFAULT substitution cost 1.0
+#                    (clamp(2.0 * 1.0) = 1.0 — identical to out-of-table; the
+#                    rows make the coverage explicit and throw nothing)
+# heard_token	target_token	cost
+ð	θ	1.0
+ð	d	1.0
+æ	a	1.0
+œ	ø	1.0
+œ	ɔ	1.0
+œ	ə	1.0
+ʁ	ɹ	1.0
+ø	ə	1.0
+ø	u	1.0
+ɳ	n	1.0
+ɖ	d	1.0
+ʈ	t	1.0
+ʂ	ʃ	1.0
+ʂ	s	1.0
+ɻ	ɹ	1.0
+ɻ	ʐ	1.0
+ʒ	ʃ	1.0
+ʒ	z	1.0
+ʒ	dʒ	1.0
