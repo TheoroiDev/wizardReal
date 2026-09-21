@@ -19,9 +19,9 @@ Platform-independent gameplay code. Recognition, matching and cast validation ar
 | `api/catalog/CatalogPayload` | Spell-catalog snapshot pushed to clients / wizardpedia. |
 
 ### Spells (`spell/`) — datapack-driven
-Every shipped spell is defined as datapack JSON under `data/<ns>/voicecast/spells/*.json` (the jar ships 15 files in `data/wizardreal/voicecast/spells/`), parsed by the `SpellDefinition` codec into a `DataSpell`: an ordered list of composable `SpellEffect`s plus trigger/chant pronunciation metadata. `server/SpellDataLoader.registerAll` rebuilds the registry on server start and on `/reload`; same-id datapack definitions override Java-registered spells. `Spells.register()` is kept as an empty Java extension hook for future built-ins that need bespoke logic.
+Every shipped spell is defined as datapack JSON under `data/<ns>/voicecast/spells/*.json` (the jar ships 75 files in `data/wizardreal/voicecast/spells/`), parsed by the `SpellDefinition` codec into a `DataSpell`: an ordered list of composable `SpellEffect`s plus trigger/chant pronunciation metadata. `server/SpellDataLoader.registerAll` rebuilds the registry on server start and on `/reload`; same-id datapack definitions override Java-registered spells. `Spells.register()` is kept as an empty Java extension hook for future built-ins that need bespoke logic.
 
-`effect/` provides 9 composable effect primitives (`BuiltinEffects`): `projectile`, `lightning`, `heal`, `status_effect`, `knockback`, `explosion`, `beam`, `sound`, `particles`. `EffectRegistry` maps type ids to their `MapCodec`s and dispatches JSON on the `"type"` field; addons register their own types through the same path.
+`effect/` provides 22 composable effect primitives (`BuiltinEffects`): `projectile`, `lightning`, `heal`, `status_effect`, `knockback`, `explosion`, `beam`, `sound`, `particles`, `hex`, `bind`, `pull`, `blink`, `surface`, `barrier`, `summon`, `excavate`, `harvest`, `smelt`, `visual`, `weather`, `light`. `EffectRegistry` maps type ids to their `MapCodec`s and dispatches JSON on the `"type"` field; addons register their own types through the same path.
 
 ### Networking (`net/`) — three Architectury `NetworkManager` channels
 - `ChantNetwork` (`wizardreal:chant`) — ritual chant: S2C `START` (spell id + every chant variant's display keys), `PROGRESS` (locked variant / line index / error flash), `END` (finished, cancelled or timed out); C2S `CANCEL` (player-initiated left-click cancel). All chant state lives on the server; the client only renders what it receives.
@@ -29,7 +29,7 @@ Every shipped spell is defined as datapack JSON under `data/<ns>/voicecast/spell
 - `SpellCatalogNetwork` (`wizardreal:spell_catalog`) — S2C full spell-catalog snapshot (keys only); the client caches it and exports `<game-dir>/wizardreal/spell_catalog.json`.
 
 ### Server (`server/`) — all authoritative logic
-- `ServerVoiceCast` — subscribes to VoiceCast's `ServerRecognitionFinalEvent` (marshaled onto the server main thread) and builds/pushes the recognizer vocabulary (trigger words + every chant line) at server start and on spell reload. Each recognized utterance requires a staff in the main hand; an in-progress chant is fed the line, otherwise the utterance is matched (CTC forward scores → IPA phoneme matching → text-alias matching) and either starts a chant (ritual spell) or casts immediately (instant spell).
+- `ServerVoiceCast` — subscribes to VoiceCast's `ServerRecognitionFinalEvent` (marshaled onto the server main thread) and builds/pushes the recognizer vocabulary (a `SessionVocabulary`: trigger words + every chant line, language-routed) at server start and on spell reload, declaring the cast-mode routing (OPEN for free casting, CHANT_CONFIRM for the spell being chanted). Each recognized utterance requires a staff in the main hand; VoiceCast adjudicates the utterance into a semantic `Decision` (EXACT/NEAR/AMBIGUOUS/REJECTED + winning spell id) and the `ChantGate` maps that verdict onto gameplay — an in-progress chant is fed the line, otherwise the decision either starts a chant or casts instantly.
 - `SpellCastHandler` — the validated cast path shared by every entry point; see the chain below.
 - `ChantManager` — per-player chant state; maps `ChantEngine` results onto network packets, lockouts (3 s after completion, 1.2 s after cancel) and the validated cast.
 - `ChantEngine` — pure, MC-free chant state machine (variant lock, 1.2 s line grace window, 90 s timeout), unit-tested in `ChantEngineTest`.
@@ -62,10 +62,8 @@ A non-spectator player and a resolvable spell id are prerequisites before the ch
 - `HeldItemAmbience` — cosmetic wisp particles drifting off a held staff.
 - `WizardSparkParticle` — spark/rune/wisp particle factory (registered by the loader clients).
 
-### Matching (`match/`) — runs on the server
-- `SpellMatcher` — normalized text-alias scoring: exact match 1.0, multi-word contains 0.95, whole-word contains 0.9, Levenshtein similarity otherwise; default threshold 0.8, per-spell override.
-- `PhonemeMatcher` — token-based IPA phoneme fallback.
-- Both are unit-tested (`SpellMatcherTest` / `PhonemeMatcherTest`).
+### Match calibration (`match/`) — threshold data pushed to VoiceCast
+Recognition matching/decision logic lives in VoiceCast (`com.theo.voicecast.match`, semantic contract v2); wizardreal supplies only push-time calibration data: `PerModeThresholdProvider` / `ResourceModeThresholdProvider` turn per-spell `threshold()` overrides and the shipped mode rows (`assets/voicecast/mode_thresholds.tsv`) into `ThresholdHint` values carried on the `SessionVocabulary` push.
 
 ### Items (`item/`)
 `StaffItem` (hard origin gate + school mana/cooldown modifiers; `bypassAll` on the dev staff), `ScrollItem` (consumable instant cast via `SKIP_STAFF` + `SKIP_LEARNING`), `SpellTomeItem` (learning), `WizardRealItems` (supplier registry populated by the loader modules: apprentice/fire/lightning staves + dev `staff_sdevv`, blank scroll, spell tome).
@@ -73,7 +71,7 @@ A non-spectator player and a resolvable spell id are prerequisites before the ch
 ## Resources
 
 - `assets/wizardreal/lang/en_us.json` (+ `zh_cn.json`) — spell names, chant lines and `wizardreal.cast.*` messages.
-- `data/wizardreal/voicecast/spells/*.json` — the 15 built-in datapack spells.
+- `data/wizardreal/voicecast/spells/*.json` — the 75 built-in datapack spells.
 - `data/wizardreal/recipes/` and `assets/wizardreal/{sounds,particles,textures,models}` — crafting recipes, sounds and visuals.
 
 ## Note

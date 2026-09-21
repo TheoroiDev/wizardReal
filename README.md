@@ -10,7 +10,7 @@ Minecraft 1.20.1 mod: **speak incantations to cast spells**. Built with [Archite
 
 - **Staff-gated push-to-talk**: hold a staff in your main hand and hold **right-click** to speak — the mic opens only during that gesture and is released immediately after.
 - **Server-authoritative casting**: the client only streams Opus audio; recognition, matching, mana/cooldown checks and effects all run on the server.
-- **15 built-in spells** (5 instant + 10 ritual chants with English/Chinese/Japanese variants), each with multiple trigger aliases for text and IPA matching.
+- **75 built-in spells**, each with per-language trigger words (English/Chinese/Japanese variants) and a staged ritual chant (skip/interrupt policy, mastery-gated chant-stage ladder), matched as text and IPA.
 - **Mana + cooldowns** with a HUD bar; learnable via spell tomes, castable without learning via bound scrolls; staves modify mana cost by school affinity.
 - **Data-driven spells**: `data/<namespace>/voicecast/spells/*.json` — add or override spells with a datapack (`/reload` applies), including datapack-defined rituals.
 - **Localized**: English + 简体中文 (spell names, HUD, chant lines); recognition is display-language independent.
