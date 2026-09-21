@@ -1,6 +1,6 @@
 package com.theo.wizardreal.g2p;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.TestSpell;
 import com.theo.wizardreal.api.SpellRegistry;
 import org.junit.jupiter.api.AfterEach;

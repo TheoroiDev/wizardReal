@@ -31,6 +31,9 @@
   - 阶梯咏唱开始即对当前法术声明 CHANT_CONFIRM（咏唱中会话只听该法术的行），完成/提前释放/失败/取消/超时/退出/注册表重载即回退 OPEN
   - per-mode forward 阈值随 voicecast 资产 `assets/voicecast/mode_thresholds.tsv` 分发（首批镜像出厂 0.10 常数——行为中性）；match 包的 `ResourceModeThresholdProvider` 负责读取，重标定值偏离常数前不接线
   - 练习入口（B 水晶 / E 引导 / 导师 NPC）后续经 `CastMode.PRACTICE_CONFIRM` 接入（M4——本单只交付接口，尚无消费点）
+- breaking：语音交互契约重键到 VoiceCast 语义化 v2 结果（engine-swap C1b，VoiceCast 依赖仍为 0.5.0 并含 C1b api）：识别 final 携带裁定结果 `Decision`（EXACT / NEAR / AMBIGUOUS / REJECTED）+ `spellId`/`pronId`/`score`/`alternatives`，`ChantGate` 变为纯语义门（Decision -> ENTER / INSTANT / SKIP / NONE）。消费方 matcher 链（templateScores 读取、音素/文本匹配器、`FORWARD_MATCH_THRESHOLD` 常量、ctcPresent 门槛）删除——决策权收归 voicecast，wizardreal 只把裁定映射为玩法；玩家可感知行为由共享等价性向量（`c1b_vectors.json`，voicecast + wizardreal 测试共用）钉死等价，契约文档见 `docs/ref/voicecast-recognition-contract.md`
+- breaking：matcher 机器迁入 voicecast（本仓删除 `PhonemeMatcher`、`SpellMatcher`、`Phonetics` 与代价资产 `assets/wizardreal/phoneme_costs.tsv`）；`com.theo.wizardreal.api.Pronunciation` 成为 wizardreal 自有内容类型（voicecast 推送类型为 `SessionVocabulary`）；`PerModeThresholdProvider`/`ResourceModeThresholdProvider` 改产 `ThresholdHint` 数据而非 matcher 常量
+- reject level 重键到 Decision：`EXACT` 任意 level 接受，`NEAR` 仅 level 0，`AMBIGUOUS`/`REJECTED` 一律不施法；旧 ctcPresent 条件性的分面压制（level ≥ 1 杀触发词匹配面、level ≥ 2 杀宽松首行面）改为推送期阈值 hint（数据过界）——首行即门优先级与咏唱进度门不变
 
 ### Features
 

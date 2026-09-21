@@ -1,47 +1,43 @@
 package com.theo.wizardreal.match;
 
-import com.theo.wizardreal.server.ServerVoiceCast;
+import com.theo.voicecast.api.ThresholdHint;
 
 /**
- * Per-mode threshold provider — issue #29 ④ "mechanism interface" ONLY (P6
- * port): the S7 cross-scale threshold lesson showed that absolute matcher
- * thresholds are not reusable across candidate-set changes, so per-mode
- * re-calibration (same-protocol negative samples, 1st percentile + 0.03)
- * will be needed once the four-mode casting-time routing lands (issue #30).
- * This interface is the seam that routing will consume; the actual
- * multi-mode calibration ships with #30 and nothing wires non-default
- * providers yet.
+ * Per-mode threshold provider — issue #29 ④ "mechanism interface" (P6 port),
+ * reworked by the C1b semantic contract: the provider no longer returns
+ * matcher-tier constants for WizardReal-side matching (matching moved into
+ * voicecast) — it PRODUCES a {@link ThresholdHint} for one (mode, spell)
+ * pair, which travels WITH the vocabulary push as data (work order C1b
+ * §0.3: 玩法调优过界的是数据，不是逻辑).
  *
- * <p>Mode ids are deliberately free-form strings until #30 names them; the
- * default {@link #fullVocabulary()} provider ignores the mode and returns
- * the shipped full-vocabulary constants — the exact pre-#30 behavior.
+ * <p>The S7 cross-scale threshold lesson stands: absolute matcher thresholds
+ * are not reusable across candidate-set changes, so per-mode re-calibration
+ * (same-protocol negative samples, 1st percentile + 0.03) feeds per-mode
+ * hint rows once the four-mode casting-time routing lands (issue #30).
  *
- * <p>{@code forward} = CTC posterior acceptance ({@code FORWARD_MATCH_
- * THRESHOLD} semantics), {@code phoneme} = {@link PhonemeMatcher} tier,
- * {@code text} = {@link SpellMatcher} tier.
+ * <p>{@code forward} = the CTC posterior tier, {@code phoneme} =
+ * the phoneme-similarity tier, {@code text} = the alias-matching tier; a
+ * null component keeps the voicecast engine-calibration default.
  */
 public interface PerModeThresholdProvider {
 
-    /** The three matcher-tier thresholds for one mode. */
-    record Thresholds(float forward, float phoneme, float text) {}
-
-    /** Effective thresholds for the given mode id (see class javadoc). */
-    Thresholds thresholds(String mode);
+    /** Effective hint for the given mode id (see class javadoc). */
+    ThresholdHint thresholds(String mode);
 
     /**
-     * Effective thresholds for a (mode, spell) pair (#30 D3's per-spell
+     * Effective hint for a (mode, spell) pair (#30 D3's per-spell
      * calibration rows). Default: spell-independent — delegates to
      * {@link #thresholds(String)}; mode-aware implementations override to
      * consult per-spell rows first.
      */
-    default Thresholds thresholds(String mode, String spellId) {
+    default ThresholdHint thresholds(String mode, String spellId) {
         return thresholds(mode);
     }
 
-    /** Default implementation: the shipped full-vocabulary constants for
-     *  every mode (identical to the pre-#30 hard-coded behavior). */
+    /** Default implementation: no overrides — every tier keeps the voicecast
+     *  engine-calibration default (identical to the pre-C1b hard-coded
+     *  behavior, which used the same constants). */
     static PerModeThresholdProvider fullVocabulary() {
-        return mode -> new Thresholds(ServerVoiceCast.FORWARD_MATCH_THRESHOLD,
-                PhonemeMatcher.MATCH_THRESHOLD, SpellMatcher.MATCH_THRESHOLD);
+        return mode -> new ThresholdHint(null, null, null);
     }
 }

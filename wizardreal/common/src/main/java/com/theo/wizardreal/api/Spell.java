@@ -1,6 +1,6 @@
 package com.theo.wizardreal.api;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 
 import java.util.List;
 import java.util.Set;

@@ -1,6 +1,7 @@
 package com.theo.wizardreal.server;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.voicecast.api.SessionVocabulary;
+import com.theo.voicecast.api.ThresholdHint;
 import com.theo.voicecast.api.VoiceCastEvents;
 import com.theo.voicecast.api.event.ServerRecognitionFinalEvent;
 import com.theo.voicecast.server.CastMode;
@@ -8,6 +9,7 @@ import com.theo.voicecast.server.VoiceCastServer;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.config.WizardRealConfig;
@@ -28,26 +30,25 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Server-side voice -> spell wiring. Builds the recognizer vocabulary from
- * registered spells (trigger words + every chant line) and routes each
- * recognized utterance via the {@link ChantGate} idle router (D9): a ritual
- * spell's first line (L1) enters the chant pre-locked (首行即门), a ritual
- * trigger / spell-name becomes a skip-cast candidate (破弃, learning-gated),
- * an instant spell casts immediately. Damage mid-chant interrupts (07 M1).
+ * Server-side voice -> spell wiring (semantic contract v2, C1b). Builds the
+ * {@link SessionVocabulary} from registered spells (trigger words + every
+ * chant line) — the ONE push entry point, carrying the game-side threshold
+ * hints (per-spell {@code threshold} overrides + the reject-level overlay) —
+ * and routes each ADJUDICATED utterance via the {@link ChantGate} semantic
+ * gate (D9): a ritual spell's first line (L1) enters the chant pre-locked
+ * (首行即门), a ritual trigger / spell-name becomes a skip-cast candidate
+ * (破弃, learning-gated), an instant spell casts immediately. Damage
+ * mid-chant interrupts (07 M1).
+ *
+ * <p>Decision authority (C1b §0.2): voicecast fuses the evidence lines and
+ * emits {@code Decision + spellId + pronId + score + alternatives};
+ * WizardReal only maps that verdict onto gameplay. The pre-v2
+ * {@code FORWARD_MATCH_THRESHOLD} constant and the consumer-side matcher
+ * chain (templateScores/phoneme/text + ctcPresent gating) are gone — the
+ * threshold brain lives in voicecast config ({@code [match]}) plus the
+ * per-entry hints pushed here.
  */
 public final class ServerVoiceCast {
-    /**
-     * Default posterior threshold for CTC forward scoring (token-length
-     * calibrated, R3 移植 2026-09-15): templates score lp/L (per-token), the
-     * null competitor stays a raw frame-sum, so the posterior scale is much
-     * lower than the pre-calibration 0.6 semantics — 0.10 on the lab bench
-     * (997 positives + 117 negatives, production-scale vocab): 2.6% negative
-     * false-accept (was 82.1%), positive recall +1.5pp. The old 0.6 would
-     * gate the CTC tier almost shut under the new scale. Per-spell override
-     * via {@link Spell#threshold()}; pre-calibration spell overrides must be
-     * re-tuned.
-     */
-    public static final float FORWARD_MATCH_THRESHOLD = 0.10f;
 
     private ServerVoiceCast() {}
 
@@ -55,11 +56,7 @@ public final class ServerVoiceCast {
         VoiceCastEvents.subscribe(ServerRecognitionFinalEvent.class, e -> {
             MinecraftServer server = e.player().getServer();
             if (server == null) return;
-            String text = e.result() == null ? "" : e.result().text();
-            List<String> ipa = e.result() == null ? List.of() : e.result().ipaTokens();
-            float conf = e.result() == null ? 0f : e.result().confidence();
-            Map<String, Float> scores = e.result() == null ? Map.of() : e.result().templateScores();
-            server.execute(() -> handle(e.player(), text, ipa, conf, scores));
+            server.execute(() -> handle(e.player(), e.result()));
         });
 
         // Casting-time mode default (issue #30/D-15, amended by the P30
@@ -84,36 +81,42 @@ public final class ServerVoiceCast {
     }
 
     /** Language-trimmed push ([voice] languages): only the enabled buckets of
-     * every pronunciation reach the recognizer grammar — fewer competing
-     * templates means fewer cross-language false triggers and sharper CTC
-     * posteriors. Legacy (bucket-less) pronunciations always pass. With
-     * {@code [voice] g2pDrafts}, entries without curated templates get G2P
-     * drafts at push time (runtime-only: the JSON stays untouched; the drafts
-     * are unverified — see the 2026-09 backtest notes in docs/ipa/). */
+     * every entry reach the recognizer grammar — fewer competing entries
+     * means fewer cross-language false triggers and sharper CTC posteriors.
+     * Legacy (bucket-less) entries always pass. With {@code [voice]
+     * g2pDrafts}, entries without curated templates get G2P drafts at push
+     * time (runtime-only: the JSON stays untouched; the drafts are
+     * unverified — see the 2026-09 backtest notes in docs/ipa/).
+     *
+     * <p>Threshold hints (C1b §0.3): per-spell {@code threshold()} overrides
+     * (≥ 0) apply to every tier of the spell's entries; the reject level
+     * overlays per-surface suppression as disabled-tier hints (level ≥ 1
+     * kills the trigger text/phoneme surfaces, level ≥ 2 additionally the
+     * first-line surfaces). Data over the boundary — the application logic
+     * is voicecast's. */
     public static void pushVocabulary(MinecraftServer server) {
         WizardRealConfig.VoiceSettings voice = WizardRealConfig.loadCached(
                 server.getServerDirectory().toPath()).voice();
         Set<String> enabled = voice.enabledLanguages();
         boolean drafts = voice.g2pDrafts();
-        Map<String, Pronunciation> merged = new LinkedHashMap<>();
+        int level = ChantGate.rejectLevel();
+        Map<String, SessionVocabulary.Entry> merged = new LinkedHashMap<>();
         for (Spell spell : SpellRegistry.all()) {
-            Pronunciation t = languageTrim(spell.pronunciation(), enabled);
-            if (t != null) {
-                merged.put(t.id(), drafts ? withDrafts(t, enabled) : t);
-            }
+            ThresholdHint spellHint = spell.threshold() >= 0 ? ThresholdHint.all(spell.threshold()) : null;
+            SessionVocabulary.Entry t = entry(spell.pronunciation(), enabled, drafts, level, spellHint);
+            if (t != null) merged.put(t.id(), t);
             for (Chant chant : spell.chants()) {
                 for (ChantLine line : chant.lines()) {
-                    Pronunciation p = languageTrim(line.pronunciation(), enabled);
-                    if (p != null) {
-                        merged.putIfAbsent(p.id(), drafts ? withDrafts(p, enabled) : p);
-                    }
+                    SessionVocabulary.Entry p = entry(line.pronunciation(), enabled, drafts, level,
+                            spellHint, true);
+                    if (p != null) merged.putIfAbsent(p.id(), p);
                 }
             }
         }
-        VoiceCastServer.INSTANCE.setVocabulary(new ArrayList<>(merged.values()));
-        WizardReal.LOGGER.info("Pushed {} recognizer pronunciations (spells + chant lines, "
-                        + "languages={}, g2pDrafts={})",
-                merged.size(), enabled.isEmpty() ? "all" : enabled, drafts);
+        VoiceCastServer.INSTANCE.setVocabulary(new SessionVocabulary(new ArrayList<>(merged.values())));
+        WizardReal.LOGGER.info("Pushed {} recognizer vocabulary entries (spells + chant lines, "
+                        + "languages={}, g2pDrafts={}, rejectLevel={})",
+                merged.size(), enabled.isEmpty() ? "all" : enabled, drafts, level);
     }
 
     /** Casting-time mode declaration (issue #30/D-1 passthrough): forwards the
@@ -131,6 +134,50 @@ public final class ServerVoiceCast {
     /** Convenience overload for modes that need no declared spells (OPEN). */
     public static void setCastMode(ServerPlayer player, CastMode mode) {
         setCastMode(player, mode, List.of());
+    }
+
+    /** Build one push entry: language trim, optional G2P drafts, reject-level
+     *  hint overlay and the per-spell threshold override. */
+    private static SessionVocabulary.Entry entry(Pronunciation p, Set<String> enabled, boolean drafts,
+                                                 int level, ThresholdHint spellHint) {
+        return entry(p, enabled, drafts, level, spellHint, false);
+    }
+
+    private static SessionVocabulary.Entry entry(Pronunciation p, Set<String> enabled, boolean drafts,
+                                                 int level, ThresholdHint spellHint, boolean chantLine) {
+        if (p == null) return null;
+        Pronunciation trimmed = languageTrim(p, enabled);
+        if (trimmed == null) return null;
+        Pronunciation effective = drafts ? withDrafts(trimmed, enabled) : trimmed;
+        // Entry re-flattens: with buckets the flat aliases become the legacy
+        // extras (deduped); legacy entries keep their flat list.
+        return new SessionVocabulary.Entry(effective.id(), effective.ipa(), effective.aliases(),
+                effective.languages(), hintOf(effective, level, spellHint, chantLine));
+    }
+
+    /**
+     * Push-time threshold hint (the reject-level overlay as DATA):
+     * level &ge; 1 disables the text/phoneme tiers of TRIGGER entries (the
+     * pre-v2 "suppress the matcher fallbacks" branch); level &ge; 2
+     * additionally disables both tiers of FIRST-LINE entries (the pre-v2
+     * "suppress the lenient L1 gate" branch). Forward is never level-gated —
+     * a true utterance should clear the CTC/posterior evidence. Per-spell
+     * {@code threshold()} overrides apply beneath the overlay.
+     */
+    static ThresholdHint hintOf(Pronunciation p, int level, ThresholdHint spellHint, boolean chantLine) {
+        ThresholdHint base = spellHint;
+        boolean trigger = !chantLine;
+        boolean firstLine = chantLine && p.id() != null && p.id().endsWith(":0");
+        boolean overlay = (level >= 1 && trigger) || (level >= 2 && firstLine);
+        if (!overlay) return base;
+        Float forward = base == null ? null : base.forward();
+        float phoneme = base == null ? ThresholdHint.DISABLED : orDisabled(base.phoneme());
+        float text = base == null ? ThresholdHint.DISABLED : orDisabled(base.text());
+        return new ThresholdHint(forward, phoneme, text);
+    }
+
+    private static float orDisabled(Float value) {
+        return value == null ? ThresholdHint.DISABLED : Math.max(value, ThresholdHint.DISABLED);
     }
 
     /** G2P draft fill for template-less entries ([voice] g2pDrafts): every
@@ -186,26 +233,23 @@ public final class ServerVoiceCast {
         return kept.isEmpty() ? null : new Pronunciation(p.id(), p.ipa(), List.of(), kept);
     }
 
-    private static void handle(ServerPlayer player, String heard, List<String> heardIpa, float confidence,
-                               Map<String, Float> templateScores) {
+    private static void handle(ServerPlayer player, com.theo.voicecast.api.RecognitionResult result) {
         // Voice casting requires a staff in the main hand.
         if (!(player.getMainHandItem().getItem() instanceof StaffItem)) {
             return;
         }
-        // Language trim for the matcher chain ([voice] languages, empty = all).
-        MinecraftServer server0 = player.getServer();
-        Set<String> allowedLanguages = server0 == null ? Set.of()
-                : WizardRealConfig.loadCached(server0.getServerDirectory().toPath())
-                        .voice().enabledLanguages();
+        String heard = result == null ? "" : result.utteranceText();
+        String ipa = result == null ? "" : result.ipa();
 
         // 1) In a chant? feed the line (never instant-cast mid-chant).
         if (ChantManager.get().isChanting(player)) {
             // Drop utterances with neither text nor tokens (noise that produced
             // no greedy decode) so they don't count as failed chant lines.
-            if ((heard == null || heard.isBlank()) && (heardIpa == null || heardIpa.isEmpty())) {
+            if (heard.isBlank() && ipa.isBlank()) {
                 return;
             }
-            ChantManager.get().feed(player, heard, heardIpa, confidence);
+            ChantManager.get().feed(player, heard, ipa.isBlank()
+                    ? List.of() : List.of(ipa.split(" ")), result.score());
             return;
         }
 
@@ -213,39 +257,38 @@ public final class ServerVoiceCast {
         //     a short window after a chant ended every further utterance is
         //     swallowed — the final word usually matches the ritual trigger
         //     again, and recognition emits several finals per utterance (one
-        //     per engine + endpoint flush), which would restart the chant.
+        //     per flush), which would restart the chant.
         if (ChantManager.get().isLocked(player)) {
             WizardReal.LOGGER.debug("Chant lockout for {}: ignoring '{}'", player.getName().getString(), heard);
             return;
         }
 
-        // 2) Idle routing (D9): L1 entry gate (首行即门) / instant cast /
-        //    skip-cast candidate (破弃). ChantGate owns the matcher chain
-        //    (templateScores -> phoneme -> text), the rejection levels and the
-        //    language trim.
-        ChantGate.Decision gate = ChantGate.route(heard, heardIpa, templateScores, allowedLanguages);
+        // 2) Idle routing (D9) on the ADJUDICATED result (C1b): the semantic
+        //    gate maps Decision+pronId -> gameplay kind; the matcher chain,
+        //    the rejection levels' surface logic and the language trim live
+        //    upstream (voicecast adjudicator + push-time hints).
+        ChantGate.Decision gate = ChantGate.route(result, ChantGate.rejectLevel());
         switch (gate.kind()) {
             case ENTER -> {
                 ChantManager.get().startAtLine(player, gate.spell(), gate.variant());
                 WizardReal.LOGGER.info("Server heard '{}' / [{}] -> chant entry {} variant {}",
-                        heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
-                        gate.spell().id(), gate.variant());
+                        heard, ipa, gate.spell().id(), gate.variant());
             }
             case INSTANT -> {
                 // Instant voice cast: base power 1.0 (recognition confidence is
                 // not a power factor — the performance layer owns that in P2).
                 SpellCastHandler.handleCast(player, gate.spell().id(), 1.0f);
                 WizardReal.LOGGER.info("Server matched '{}' / [{}] -> {} score={} (instant)",
-                        heard, heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa),
-                        gate.spell().id(), String.format(java.util.Locale.ROOT, "%.2f", gate.score()));
+                        heard, ipa, gate.spell().id(),
+                        String.format(java.util.Locale.ROOT, "%.2f", gate.score()));
             }
             case SKIP -> {
                 WizardReal.LOGGER.info("Server heard '{}' -> skip-cast candidate {}",
                         heard, gate.spell().id());
                 ChantManager.get().trySkipCast(player, gate.spell());
             }
-            case NONE -> WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match", heard,
-                    heardIpa == null || heardIpa.isEmpty() ? "" : String.join(" ", heardIpa));
+            case NONE -> WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match "
+                    + "(decision={})", heard, ipa, result == null ? null : result.decision());
         }
     }
 }

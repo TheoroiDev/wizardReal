@@ -1,6 +1,6 @@
 package com.theo.wizardreal.server;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

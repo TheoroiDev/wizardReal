@@ -104,7 +104,7 @@ public final class SpellCatalogBuilder {
     }
 
     /** Trigger words per language bucket; unclaimed flat aliases stay neutral. */
-    private static Map<String, List<String>> triggerAliases(com.theo.voicecast.api.Pronunciation pronunciation) {
+    private static Map<String, List<String>> triggerAliases(com.theo.wizardreal.api.Pronunciation pronunciation) {
         if (pronunciation == null) return Map.of();
         Map<String, List<String>> out = new LinkedHashMap<>(pronunciation.languages());
         if (out.isEmpty()) {

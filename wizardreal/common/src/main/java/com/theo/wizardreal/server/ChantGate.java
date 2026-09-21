@@ -1,51 +1,51 @@
 package com.theo.wizardreal.server;
 
+import com.theo.voicecast.api.Alternative;
+import com.theo.voicecast.api.Decision;
+import com.theo.voicecast.api.RecognitionResult;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
-import com.theo.wizardreal.match.PhonemeMatcher;
-import com.theo.wizardreal.match.SpellMatcher;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * Idle-state utterance routing (D9, voice overhaul): decides what one
- * recognized utterance means while the player is NOT chanting.
+ * Idle-state semantic gate (D9, re-keyed onto the voicecast Decision by the
+ * C1b contract refactor): decides what one ADJUDICATED utterance means while
+ * the player is NOT chanting. Voicecast owns "what was said" — the fusion of
+ * the text/phoneme/CTC lines over the routed vocabulary (see
+ * {@code UtteranceAdjudicator}); this gate owns "what it means":
  *
  * <ul>
- *   <li>{@link Kind#ENTER} — the utterance matched a ritual spell's first line
- *       (L1): the chant starts pre-locked at that variant (首行即门; the entry
- *       utterance counts as completed line 1).</li>
+ *   <li>{@link Kind#ENTER} — the winning pronunciation is a ritual spell's
+ *       first line (L1): the chant starts pre-locked at that variant (首行即门;
+ *       the entry utterance counts as completed line 1).</li>
  *   <li>{@link Kind#INSTANT} — an instant spell's trigger matched: cast now.</li>
- *   <li>{@link Kind#SKIP} — a ritual spell's trigger or spell-name line matched:
+ *   <li>{@link Kind#SKIP} — a ritual spell's trigger / spell-name line matched:
  *       破弃快施 candidate (permission gated by {@link ChantManager#trySkipCast}).</li>
  * </ul>
  *
- * <p>Line hits come from CTC templateScores (chant-line pronunciation ids —
- * including the language dimension of the 0.4.0 language-keyed format) or the
- * lenient {@link ChantEngine} line rules; trigger hits from the
- * CTC/phoneme/text matcher chain. Priority: ENTER &gt; INSTANT &gt; SKIP &gt;
- * NONE — the L1 gate wins because the session router already narrowed the
- * recognizer's grammar to the player's language bucket, so a cross-language
- * false positive here is unlikely while a generic trigger word is not.
+ * <p>Priority: a first-line candidate ENTERs over the decision's SKIP/INSTANT
+ * (首行即门 — the pre-v2 L1 gate outranked every non-ENTER result; first-line
+ * candidates are always EXACT-tier in the v2 fusion, so promoting them from
+ * the alternatives is tier-safe). ENTER &gt; INSTANT &gt; SKIP &gt; NONE
+ * otherwise.
  *
- * <p>Rejection + trimming (0.4.x 误触发治理): the CTC posterior already
- * competes every pushed template against the "nothing said" null path, so
- * when template scores are present they are authoritative. {@link #rejectLevel()}
- * controls how far a CTC miss falls through to the snap-to-nearest fallbacks:
- * 0 = legacy (phoneme → text → lenient L1), 1 = also skip phoneme/text,
- * 2 = also skip the lenient L1 gate (full reject — a true L1 utterance should
- * clear the CTC threshold). The candidate set is additionally trimmed to the
- * configured language buckets ({@code [voice] languages}): legacy
- * pronunciations (no buckets) always stay.
+ * <p>Reject levels (误触发治理), now keyed on the Decision (the work order's
+ * sanctioned re-keying — the pre-v2 ctcPresent conditionality was
+ * engine-conditional and is gone): EXACT is accepted at every level; NEAR
+ * only at level 0; AMBIGUOUS/REJECTED never cast. The per-surface
+ * suppression the old levels performed (kill the trigger matcher surface at
+ * level &ge; 1, the lenient L1 surface at level &ge; 2) travels as DATA:
+ * WizardReal raises per-entry threshold hints at push time
+ * ({@code ServerVoiceCast#pushVocabulary}), so voicecast already refuses to
+ * emit those candidates. Language trimming is likewise upstream (push-time
+ * trim + the session's engine-language projection).
  *
- * <p>Pure JVM logic (SpellRegistry + matchers only) — unit-testable.
+ * <p>Pure JVM logic ({@link SpellRegistry} + the result record only) —
+ * unit-testable, and the shared equivalence vectors (c1b_vectors.json) pin
+ * it against the pre-v2 chain's gameplay outcomes.
  */
 final class ChantGate {
     enum Kind { NONE, INSTANT, ENTER, SKIP }
@@ -54,15 +54,12 @@ final class ChantGate {
         static final Decision NONE = new Decision(Kind.NONE, null, -1, 0f);
     }
 
-    /**
-     * Default CTC-miss rejection level. 0 (legacy fallthrough) per the
-     * 2026-09-08 TTS backtest (docs/ipa/ipa-backtest.md §reject-trim): the CTC
-     * posterior misses ~49% of true utterances into the lenient fallbacks
-     * (level 1 traded -237 hits for -72 wrongs), and no posterior-only
-     * acceptance rule beat the legacy chain — rejection stays available for
-     * servers that prefer precision (raise via
-     * {@code -Dwizardreal.voice.rejectLevel}) until CTC scoring is calibrated.
-     */
+    /** Default rejection level (0 = legacy full acceptance). Precision-minded
+     *  servers raise it via {@code -Dwizardreal.voice.rejectLevel}: level 1
+     *  refuses NEAR verdicts (and, via the push-time hint overlay, stops
+     *  voicecast from emitting trigger-surface candidates at all); level 2
+     *  additionally overlays the first-line surfaces — a true L1 utterance
+     *  should clear voicecast's CTC/text evidence. */
     static final int DEFAULT_REJECT_LEVEL = 0;
 
     private ChantGate() {}
@@ -71,133 +68,63 @@ final class ChantGate {
         return Integer.getInteger("wizardreal.voice.rejectLevel", DEFAULT_REJECT_LEVEL);
     }
 
-    static Decision route(String heard, List<String> heardIpa, Map<String, Float> templateScores) {
-        return route(heard, heardIpa, templateScores, Set.of());
+    static Decision route(RecognitionResult result) {
+        return route(result, rejectLevel());
     }
 
-    /**
-     * @param allowedLanguages enabled language buckets (empty = all); legacy
-     *                         pronunciations without buckets always pass.
-     */
-    static Decision route(String heard, List<String> heardIpa, Map<String, Float> templateScores,
-                          Set<String> allowedLanguages) {
-        Decision fromScores = fromTemplateScores(templateScores, allowedLanguages);
-        if (fromScores.kind() == Kind.ENTER) return fromScores;
-        boolean ctcPresent = templateScores != null && !templateScores.isEmpty();
-        int level = rejectLevel();
-        // Lenient L1 entry gate: the CTC posterior competes against the null
-        // path, so with scores in hand a level >= 2 miss means no ritual entry.
-        if (!ctcPresent || level < 2) {
-            Decision l1 = l1Gate(heard, heardIpa, allowedLanguages);
-            if (l1.kind() == Kind.ENTER) return l1;
+    /** @param level effective reject level (0 = accept NEAR, &ge;1 = EXACT only). */
+    static Decision route(RecognitionResult result, int level) {
+        // The voicecast verdict enum is qualified: this class nests its own
+        // gameplay Decision record.
+        com.theo.voicecast.api.Decision verdict =
+                result == null ? null : result.decision();
+        if (verdict == null) return Decision.NONE;
+        if (verdict == com.theo.voicecast.api.Decision.AMBIGUOUS
+                || verdict == com.theo.voicecast.api.Decision.REJECTED) {
+            return Decision.NONE;
         }
-        if (fromScores.kind() != Kind.NONE) return fromScores;
-
-        // Fallback trigger matchers (phoneme, then text aliases) over the
-        // language-trimmed candidate set. With CTC evidence present these
-        // snap-to-nearest layers are the main noise->false-cast path, so a
-        // level >= 1 miss suppresses them entirely.
-        if (!ctcPresent || level < 1) {
-            List<Spell> candidates = candidates(allowedLanguages);
-            SpellMatcher.Match match = null;
-            if (heardIpa != null && !heardIpa.isEmpty()) {
-                PhonemeMatcher.Match pm = PhonemeMatcher.match(heardIpa, candidates);
-                if (pm != null) match = new SpellMatcher.Match(pm.spell(), pm.score());
-            }
-            if (match == null && heard != null && !heard.isBlank()) {
-                match = SpellMatcher.match(heard, candidates);
-            }
-            if (match == null) return Decision.NONE;
-            return match.spell().chants().isEmpty()
-                    ? new Decision(Kind.INSTANT, match.spell(), -1, match.score())
-                    : new Decision(Kind.SKIP, match.spell(), -1, match.score());
+        if (verdict == com.theo.voicecast.api.Decision.NEAR && level >= 1) {
+            return Decision.NONE;
         }
-        return Decision.NONE;
-    }
-
-    /** CTC forward posteriors: chant-line ids can ENTER (line 0) or SKIP (last
-     * line); spell trigger ids cast instant spells or SKIP rituals. */
-    private static Decision fromTemplateScores(Map<String, Float> templateScores,
-                                               Set<String> allowedLanguages) {
-        if (templateScores == null || templateScores.isEmpty()) return Decision.NONE;
-        Decision best = Decision.NONE;
-        for (Spell spell : SpellRegistry.all()) {
-            if (!languageEnabled(spell.pronunciation(), allowedLanguages)) continue;
-            float threshold = spell.threshold() >= 0 ? spell.threshold() : ServerVoiceCast.FORWARD_MATCH_THRESHOLD;
-            List<Chant> chants = spell.chants();
-            for (int v = 0; v < chants.size(); v++) {
-                List<ChantLine> lines = chants.get(v).lines();
-                for (int i = 0; i < lines.size(); i++) {
-                    ChantLine line = lines.get(i);
-                    if (!lineLanguageEnabled(line, allowedLanguages)) continue;
-                    Float s = templateScores.get(line.pronunciation().id());
-                    if (s == null || s < threshold) continue;
-                    if (i == 0) return new Decision(Kind.ENTER, spell, v, s); // 首行即门
-                    if (i == lines.size() - 1) {
-                        best = promote(best, new Decision(Kind.SKIP, spell, -1, s));
-                    }
-                    // middle lines spoken at idle carry no meaning (yet)
-                }
-            }
-            Float s = templateScores.get(spell.pronunciation().id());
-            if (s != null && s >= threshold) {
-                best = promote(best, spell.chants().isEmpty()
-                        ? new Decision(Kind.INSTANT, spell, -1, s)
-                        : new Decision(Kind.SKIP, spell, -1, s));
-            }
+        Decision best = map(result.spellId(), result.pronId(), result.score());
+        if (best.kind() == Kind.ENTER) return best;
+        // 首行即门: a first-line runner-up (always EXACT-tier in the fusion)
+        // ENTERs over the decision's SKIP/INSTANT.
+        for (Alternative alt : result.alternatives()) {
+            Decision mapped = map(alt.spellId(), alt.pronId(), alt.score());
+            if (mapped.kind() == Kind.ENTER) return mapped;
         }
         return best;
     }
 
-    /** Lenient first-line gate over every ritual chain (text + IPA rules). */
-    private static Decision l1Gate(String heard, List<String> heardIpa, Set<String> allowedLanguages) {
-        if ((heard == null || heard.isBlank()) && (heardIpa == null || heardIpa.isEmpty())) {
-            return Decision.NONE;
+    /** One candidate (decision or alternative) -> gameplay kind via the registry. */
+    private static Decision map(String spellId, String pronId, float score) {
+        Spell spell = byId(spellId);
+        if (spell == null) return Decision.NONE; // not a registered spell (foreign vocabulary id)
+        if (spell.pronunciation() != null && pronId.equals(spell.pronunciation().id())) {
+            // trigger row: instant spells cast, rituals become skip-cast candidates
+            return spell.chants().isEmpty()
+                    ? new Decision(Kind.INSTANT, spell, -1, score)
+                    : new Decision(Kind.SKIP, spell, -1, score);
         }
-        for (Spell spell : candidates(allowedLanguages)) {
-            List<Chant> chants = spell.chants();
-            if (chants.isEmpty()) continue;
-            for (int v = 0; v < chants.size(); v++) {
-                if (ChantEngine.lineMatches(chants.get(v).lines().get(0), heard, heardIpa)) {
-                    return new Decision(Kind.ENTER, spell, v, 1f);
-                }
+        List<Chant> chants = spell.chants();
+        for (int v = 0; v < chants.size(); v++) {
+            List<ChantLine> lines = chants.get(v).lines();
+            for (int i = 0; i < lines.size(); i++) {
+                if (!pronId.equals(lines.get(i).pronunciation().id())) continue;
+                if (i == 0) return new Decision(Kind.ENTER, spell, v, score); // 首行即门
+                if (i == lines.size() - 1) return new Decision(Kind.SKIP, spell, -1, score);
+                return Decision.NONE; // middle lines spoken at idle carry no meaning
             }
         }
-        return Decision.NONE;
+        return Decision.NONE; // unknown pronunciation id for this spell
     }
 
-    /** Spells whose pronunciation passes the language trim (legacy = always). */
-    private static List<Spell> candidates(Set<String> allowedLanguages) {
-        Collection<Spell> all = SpellRegistry.all();
-        List<Spell> out = new ArrayList<>(all.size());
-        for (Spell spell : all) {
-            if (languageEnabled(spell.pronunciation(), allowedLanguages)) out.add(spell);
+    private static Spell byId(String spellId) {
+        if (spellId == null || spellId.isEmpty()) return null;
+        for (Spell spell : SpellRegistry.all()) {
+            if (spellId.equals(spell.id())) return spell;
         }
-        return out;
-    }
-
-    private static boolean languageEnabled(com.theo.voicecast.api.Pronunciation p, Set<String> allowed) {
-        // Legacy (bucket-less) pronunciations are routed to every engine.
-        if (p.languages().isEmpty() || allowed.isEmpty()) return true;
-        for (String lang : p.languages().keySet()) {
-            if (allowed.contains(lang.toLowerCase(Locale.ROOT))) return true;
-        }
-        return false;
-    }
-
-    /** Chant-line ids embed their language: {@code <spell>.chant.<lang>.<v>:<i>}. */
-    private static boolean lineLanguageEnabled(com.theo.wizardreal.api.ChantLine line, Set<String> allowed) {
-        if (allowed.isEmpty()) return true;
-        String id = line.pronunciation().id();
-        int p = id.indexOf(".chant.");
-        if (p < 0) return true;
-        String rest = id.substring(p + 7);
-        int dot = rest.indexOf('.');
-        String lang = (dot < 0 ? rest : rest.substring(0, dot)).toLowerCase(Locale.ROOT);
-        return allowed.contains(lang);
-    }
-
-    private static Decision promote(Decision current, Decision candidate) {
-        return candidate.score() > current.score() ? candidate : current;
+        return null;
     }
 }

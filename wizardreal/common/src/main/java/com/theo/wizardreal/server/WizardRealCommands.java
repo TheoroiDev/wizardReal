@@ -17,7 +17,7 @@ import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.effect.SpellEffect;
 import com.theo.wizardreal.spell.DataSpell;
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import dev.architectury.event.events.common.CommandRegistrationEvent;
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,6 +1,6 @@
 package com.theo.wizardreal.spell;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.CastContext;
 import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.api.Spell;

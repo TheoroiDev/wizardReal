@@ -4,7 +4,7 @@ import com.theo.wizardreal.TestSpell;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

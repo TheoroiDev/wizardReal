@@ -1,6 +1,6 @@
 package com.theo.wizardreal.match;
 
-import com.theo.wizardreal.server.ServerVoiceCast;
+import com.theo.voicecast.api.ThresholdHint;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -10,54 +10,51 @@ import java.util.Map;
 
 /**
  * Mode-aware {@link PerModeThresholdProvider} backed by the calibration
- * resource {@code assets/voicecast/mode_threshold.tsv} (issue #30 D3 — the
+ * resource {@code assets/voicecast/mode_thresholds.tsv} (issue #30 D3 — the
  * file ships in the voicecast jar next to {@code confusion_neighbors.tsv}).
  *
- * <p>Lookup per {@code (mode, spell)}: per-spell row &rarr; mode-wide row
- * ({@code spell = *}) &rarr; shipped constants ({@code FORWARD_MATCH_
- * THRESHOLD} for the forward tier — D3's "缺省行回退"). Only the forward
- * (CTC posterior) tier is table-driven today; the phoneme and text tiers
- * return their shipped constants until their own per-mode recalibration
- * lands (S9 validated the 0.65 text threshold unchanged across all four
- * candidate sets; future rows follow the S7b protocol — same-protocol
- * negatives, 1% quantile + 0.03). A missing or malformed resource degrades
- * to the shipped constants for every mode, never wider acceptance.
+ * <p>C1b rework: the provider PRODUCES a {@link ThresholdHint} per
+ * {@code (mode, spell)} — per-spell row &rarr; mode-wide row ({@code
+ * spell = *}) &rarr; all-null hint (voicecast engine-calibration defaults;
+ * D3's "缺省行回退"). Only the forward (CTC posterior) tier is table-driven
+ * today; the phoneme and text tiers stay null until their own per-mode
+ * recalibration lands (S9 validated the 0.65 text threshold unchanged across
+ * all four candidate sets; future rows follow the S7b protocol). A missing
+ * or malformed resource degrades to the all-null hint, never narrower
+ * acceptance.
  *
- * <p>Nothing wires this provider into the live matcher chain yet: the first
- * batch of rows mirrors the shipped constants, so wiring would be a no-op.
- * Consumption starts when per-mode recalibration data differs from the
- * constants (data-only change, issue #29 ④ follow-up).
+ * <p>Nothing wires this provider into the live push yet (unchanged from the
+ * pre-C1b state): the first batch of rows mirrors the shipped constants, so
+ * wiring would be a no-op. Consumption starts when per-mode recalibration
+ * data differs from the defaults (data-only change, issue #29 ④ follow-up).
  */
 public final class ResourceModeThresholdProvider implements PerModeThresholdProvider {
 
     private static final String RESOURCE = "/assets/voicecast/mode_thresholds.tsv";
 
     private final Map<String, Float> rows;
-    private final float phonemeThreshold;
-    private final float textThreshold;
 
     public ResourceModeThresholdProvider() {
-        this(load(RESOURCE), PhonemeMatcher.MATCH_THRESHOLD, SpellMatcher.MATCH_THRESHOLD);
+        this(load(RESOURCE));
     }
 
-    /** Test-visible constructor: explicit table + tier constants. */
-    ResourceModeThresholdProvider(Map<String, Float> rows, float phonemeThreshold, float textThreshold) {
+    /** Test-visible constructor: explicit table. */
+    ResourceModeThresholdProvider(Map<String, Float> rows) {
         this.rows = Map.copyOf(rows);
-        this.phonemeThreshold = phonemeThreshold;
-        this.textThreshold = textThreshold;
     }
 
     @Override
-    public Thresholds thresholds(String mode) {
+    public ThresholdHint thresholds(String mode) {
         return thresholds(mode, "*");
     }
 
     @Override
-    public Thresholds thresholds(String mode, String spellId) {
+    public ThresholdHint thresholds(String mode, String spellId) {
         Float forward = row(mode, spellId);
         if (forward == null) forward = row(mode, "*");
-        float fw = forward != null ? forward : ServerVoiceCast.FORWARD_MATCH_THRESHOLD;
-        return new Thresholds(fw, phonemeThreshold, textThreshold);
+        // Only the forward tier is table-driven; the other tiers keep the
+        // engine-calibration defaults (null), never wider than the table.
+        return new ThresholdHint(forward, null, null);
     }
 
     /** Row value for a normalized {@code (mode, spell)} key, or null. */
@@ -81,7 +78,7 @@ public final class ResourceModeThresholdProvider implements PerModeThresholdProv
             stream = com.theo.voicecast.server.VoiceCastServer.class.getResourceAsStream(resource);
         }
         if (stream == null) {
-            return out; // degrade to shipped constants (documented fallback)
+            return out; // degrade to defaults (documented fallback)
         }
         try (InputStream in = stream) {
             for (String line : new String(in.readAllBytes(), StandardCharsets.UTF_8).split("\n")) {
@@ -96,7 +93,7 @@ public final class ResourceModeThresholdProvider implements PerModeThresholdProv
                 }
             }
         } catch (Exception ignored) {
-            return Map.of(); // unreadable: shipped constants everywhere
+            return Map.of(); // unreadable: defaults everywhere
         }
         return out;
     }

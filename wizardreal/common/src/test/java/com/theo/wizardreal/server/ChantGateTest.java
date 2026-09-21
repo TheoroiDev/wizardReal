@@ -1,27 +1,48 @@
 package com.theo.wizardreal.server;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.voicecast.api.Alternative;
+import com.theo.voicecast.api.Decision;
+import com.theo.voicecast.api.RecognitionResult;
 import com.theo.wizardreal.TestSpell;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Idle-state routing (D9): L1 entry gate / instant cast / skip candidate. */
+/**
+ * Idle-state semantic gate (D9), re-keyed onto the voicecast Decision by the
+ * C1b contract: the gate consumes {@code Decision + spellId + pronId + score
+ * + alternatives} and maps them onto gameplay kinds (ENTER / INSTANT / SKIP
+ * / NONE). The matching itself (what was said) is voicecast's — the shared
+ * equivalence vectors (ChantGateEquivalenceVectorTest) pin the cross-repo
+ * outcomes; this class pins the gate's own branch semantics.
+ */
 class ChantGateTest {
-
-    private static final long T0 = 1_000_000L;
 
     private static Pronunciation pron(String id, String... aliases) {
         return new Pronunciation(id, List.of(), List.of(aliases));
+    }
+
+    private static RecognitionResult exact(String spellId, String pronId, float score, Alternative... alts) {
+        return RecognitionResult.finality("heard", "", "", Decision.EXACT, spellId, pronId, score,
+                List.of(alts), 0L);
+    }
+
+    private static RecognitionResult near(String spellId, String pronId, float score) {
+        return RecognitionResult.finality("heard", "", "", Decision.NEAR, spellId, pronId, score,
+                List.of(), 0L);
+    }
+
+    private static Alternative alt(String spellId, String pronId, float score) {
+        return new Alternative(spellId, pronId, score);
     }
 
     private static Spell instant() {
@@ -39,150 +60,146 @@ class ChantGateTest {
     @AfterEach
     void clearRegistry() {
         SpellRegistry.clear();
-        System.clearProperty("wizardreal.voice.rejectLevel");
-    }
-
-    private static void rejectLevel(int level) {
-        System.setProperty("wizardreal.voice.rejectLevel", String.valueOf(level));
     }
 
     @Test
     void instantTriggerRoutesInstant() {
         SpellRegistry.replace(instant());
         SpellRegistry.replace(ritual());
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of());
+        ChantGate.Decision d = ChantGate.route(exact("wizardreal:ignis", "wizardreal:ignis", 1.0f));
         assertEquals(ChantGate.Kind.INSTANT, d.kind());
         assertEquals("wizardreal:ignis", d.spell().id());
     }
 
     @Test
-    void ritualL1TextRoutesEnter() {
-        SpellRegistry.replace(instant());
+    void firstLineDecisionRoutesEnter() {
         SpellRegistry.replace(ritual());
-        ChantGate.Decision d = ChantGate.route("o tide and storm", null, Map.of());
-        assertEquals(ChantGate.Kind.ENTER, d.kind());
-        assertEquals("wizardreal:mare", d.spell().id());
-        assertEquals(0, d.variant());
-    }
-
-    @Test
-    void templateScoresLineIdRoutesEnter() {
-        SpellRegistry.replace(ritual());
-        ChantGate.Decision d = ChantGate.route("whatever", List.of(),
-                Map.of("wizardreal:mare.chant.en.0:0", 0.85f));
+        ChantGate.Decision d = ChantGate.route(exact("wizardreal:mare", "wizardreal:mare.chant.en.0:0", 0.85f));
         assertEquals(ChantGate.Kind.ENTER, d.kind());
         assertEquals(0, d.variant());
     }
 
     @Test
-    void templateScoresMidLineIsIgnored() {
+    void midLineIsNeverACandidate() {
         SpellRegistry.replace(ritual());
-        ChantGate.Decision d = ChantGate.route("whatever", List.of(),
-                Map.of("wizardreal:mare.chant.en.0:1", 0.9f));
+        // middle lines carry no idle meaning — voicecast never elects them,
+        // and the gate ignores the id if one ever arrives.
+        ChantGate.Decision d = ChantGate.route(exact("wizardreal:mare", "wizardreal:mare.chant.en.0:1", 0.9f));
         assertEquals(ChantGate.Kind.NONE, d.kind());
     }
 
     @Test
     void ritualTriggerOrSpellNameRoutesSkip() {
         SpellRegistry.replace(ritual());
-        // Trigger id via templateScores...
-        ChantGate.Decision viaTrigger = ChantGate.route("mare", null,
-                Map.of("wizardreal:mare", 0.9f));
+        // Trigger id decision...
+        ChantGate.Decision viaTrigger = ChantGate.route(exact("wizardreal:mare", "wizardreal:mare", 0.9f));
         assertEquals(ChantGate.Kind.SKIP, viaTrigger.kind());
-        // ...and via the text matcher fallback (cast line == trigger word).
-        ChantGate.Decision viaText = ChantGate.route("mare", null, Map.of());
-        assertEquals(ChantGate.Kind.SKIP, viaText.kind());
+        // ...and the spell-name (last chant line) decision.
+        ChantGate.Decision viaLastLine = ChantGate.route(
+                exact("wizardreal:mare", "wizardreal:mare.chant.en.0:2", 0.9f));
+        assertEquals(ChantGate.Kind.SKIP, viaLastLine.kind());
     }
 
     @Test
-    void enterBeatsSkipWhenBothMatch() {
+    void firstLineAlternativePromotesOverSkipDecision() {
         SpellRegistry.replace(ritual());
-        // Levels 0/1 keep the legacy priority: the L1 text match beats the
-        // spell-name SKIP candidate from scores.
-        rejectLevel(1);
-        ChantGate.Decision d = ChantGate.route("o tide and storm", null,
-                Map.of("wizardreal:mare.chant.en.0:2", 0.9f));
+        // 首行即门: the decision is the trigger (SKIP), but a first-line
+        // runner-up in the alternatives ENTERs (the pre-v2 L1-gate priority).
+        ChantGate.Decision d = ChantGate.route(exact("wizardreal:mare", "wizardreal:mare", 1.0f,
+                alt("wizardreal:mare", "wizardreal:mare.chant.en.0:0", 0.85f)));
         assertEquals(ChantGate.Kind.ENTER, d.kind());
-        // Level 2 is CTC-authoritative: the passing last-line score wins and
-        // the lenient L1 gate is not consulted.
-        rejectLevel(2);
-        ChantGate.Decision authoritative = ChantGate.route("o tide and storm", null,
-                Map.of("wizardreal:mare.chant.en.0:2", 0.9f));
-        assertEquals(ChantGate.Kind.SKIP, authoritative.kind());
+        assertEquals(0, d.variant());
     }
 
     @Test
-    void belowThresholdScoresRouteNone() {
-        rejectLevel(0);
+    void level1KeepsExact_firstLineOverCtcSkip() {
+        // Pre-v2 case (enterBeatsSkipWhenBothMatch, level 1): the lenient
+        // first-line hit beat the passing last-line CTC score. In v2 the
+        // fusion elects the first line (tier 1) and the gate keeps it.
+        SpellRegistry.replace(ritual());
+        ChantGate.Decision d = ChantGate.route(
+                exact("wizardreal:mare", "wizardreal:mare.chant.en.0:0", 1.0f), 1);
+        assertEquals(ChantGate.Kind.ENTER, d.kind());
+    }
+
+    @Test
+    void level2CtcAuthoritativeSkip() {
+        // Pre-v2 case (enterBeatsSkipWhenBothMatch, level 2): level 2
+        // suppressed the lenient L1 surface (now a push-time hint overlay, so
+        // voicecast elects the last line) — the gate maps it to SKIP.
+        SpellRegistry.replace(ritual());
+        ChantGate.Decision d = ChantGate.route(
+                exact("wizardreal:mare", "wizardreal:mare.chant.en.0:2", 0.9f), 2);
+        assertEquals(ChantGate.Kind.SKIP, d.kind());
+    }
+
+    @Test
+    void rejectedDecisionRoutesNone() {
         SpellRegistry.replace(instant());
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.05f));
-        // Scores are below the 0.10 calibrated threshold, but the text fallback still matches.
-        assertEquals(ChantGate.Kind.INSTANT, d.kind());
-        // Nothing matches at all.
-        assertTrue(ChantGate.route("zzz qqq", null, Map.of()).kind() == ChantGate.Kind.NONE);
+        RecognitionResult rejected = RecognitionResult.finality("zzz qqq", "", "",
+                Decision.REJECTED, "", "", 0f, List.of(), 0L);
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(rejected, 0).kind());
+        // nothing matches at all
+        assertTrue(ChantGate.route(rejected).kind() == ChantGate.Kind.NONE);
     }
 
     // ------------------------------------------------- rejection (误触发治理)
 
     @Test
-    void level1RejectsTextFallbackWhenCtcPresent() {
-        rejectLevel(1);
+    void level1RejectsNearDecision() {
         SpellRegistry.replace(instant());
-        // CTC scores present but below threshold: the snap-to-nearest text
-        // fallback is suppressed — no cast from ambiguous evidence.
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.05f));
-        assertEquals(ChantGate.Kind.NONE, d.kind());
-        // Without scores the fallbacks still run.
-        assertEquals(ChantGate.Kind.INSTANT, ChantGate.route("ignis", null, Map.of()).kind());
-    }
-
-    @Test
-    void level2AlsoSuppressesLenientL1Gate() {
-        SpellRegistry.replace(ritual());
-        // Level 1 keeps the lenient L1 gate: ritual entry still works...
-        rejectLevel(1);
-        assertEquals(ChantGate.Kind.ENTER,
-                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.05f)).kind());
-        // ...but level 2 suppresses it when CTC evidence is present.
-        rejectLevel(2);
+        // C1b re-keying: the pre-v2 "ctcPresent && level >= 1 suppresses the
+        // matcher fallbacks" branch is now Decision-keyed — NEAR never casts
+        // at level >= 1 (the push-time hint overlay already suppresses the
+        // surfaces, this is the gate-side backstop).
         assertEquals(ChantGate.Kind.NONE,
-                ChantGate.route("o tide and storm", null, Map.of("wizardreal:mare", 0.05f)).kind());
-        // A real L1 utterance that passes CTC still ENTERs (首行即门).
-        ChantGate.Decision d = ChantGate.route("whatever", List.of(),
-                Map.of("wizardreal:mare.chant.en.0:0", 0.85f));
-        assertEquals(ChantGate.Kind.ENTER, d.kind());
+                ChantGate.route(near("wizardreal:ignis", "wizardreal:ignis", 0.8f), 1).kind());
+        // Level 0 keeps the legacy acceptance.
+        assertEquals(ChantGate.Kind.INSTANT,
+                ChantGate.route(near("wizardreal:ignis", "wizardreal:ignis", 0.8f), 0).kind());
     }
 
     @Test
-    void passingCtcStillDecidesUnderRejection() {
-        rejectLevel(2);
+    void level2SuppressedSurfacesArriveAsRejections() {
+        // The pre-v2 "level 2 also suppresses the lenient L1 gate" branch is a
+        // push-time hint overlay now: voicecast REJECTS what the overlay
+        // killed, and the gate maps every rejection to NONE.
+        SpellRegistry.replace(ritual());
+        RecognitionResult rejected = RecognitionResult.finality("o tide and storm", "", "",
+                Decision.REJECTED, "", "", 0f, List.of(), 0L);
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(rejected, 2).kind());
+        // A real L1 utterance that clears the evidence still ENTERs (首行即门).
+        assertEquals(ChantGate.Kind.ENTER, ChantGate.route(
+                exact("wizardreal:mare", "wizardreal:mare.chant.en.0:0", 0.85f), 2).kind());
+    }
+
+    @Test
+    void passingExactStillDecidesUnderRejection() {
         SpellRegistry.replace(instant());
-        ChantGate.Decision d = ChantGate.route("ignis", null, Map.of("wizardreal:ignis", 0.9f));
+        ChantGate.Decision d = ChantGate.route(exact("wizardreal:ignis", "wizardreal:ignis", 0.9f), 2);
         assertEquals(ChantGate.Kind.INSTANT, d.kind());
     }
 
-    // ------------------------------------------------- language trim (裁剪)
+    // ------------------------------------------------- defensive mapping
 
     @Test
-    void languageTrimDropsForeignTemplateScores() {
-        rejectLevel(0);
-        SpellRegistry.replace(ritualZh());
-        // zh not enabled: the zh line score is invisible to the router.
-        ChantGate.Decision d = ChantGate.route("whatever", List.of(),
-                Map.of("wizardreal:mare.chant.zh.0:0", 0.95f), java.util.Set.of("en"));
-        assertEquals(ChantGate.Kind.NONE, d.kind());
-        // zh enabled: ENTER fires (line 0, 首行即门).
-        ChantGate.Decision ok = ChantGate.route("whatever", List.of(),
-                Map.of("wizardreal:mare.chant.zh.0:0", 0.95f), java.util.Set.of("en", "zh"));
-        assertEquals(ChantGate.Kind.ENTER, ok.kind());
+    void ambiguousAndPartialRouteNone() {
+        SpellRegistry.replace(instant());
+        RecognitionResult ambiguous = RecognitionResult.finality("heard", "", "",
+                Decision.AMBIGUOUS, "wizardreal:ignis", "wizardreal:ignis", 0.67f, List.of(), 0L);
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(ambiguous).kind());
+        // partial results carry no decision
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(RecognitionResult.partial("heard", "")).kind());
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(null).kind());
     }
 
-    /** Ritual whose only variant is zh-bucketed (ids embed the language). */
-    private static Spell ritualZh() {
-        Chant variant = new Chant(List.of(
-                new ChantLine(null, pron("wizardreal:mare.chant.zh.0:0", "潮汐听我号令")),
-                new ChantLine(null, pron("wizardreal:mare.chant.zh.0:1", "淹没战场")),
-                new ChantLine(null, pron("wizardreal:mare.chant.zh.0:2", "玛蕾"))));
-        return new TestSpell("wizardreal:mare", pron("wizardreal:mare", "mare"), -1f, List.of(variant));
+    @Test
+    void unknownSpellOrPronunciationRouteNone() {
+        SpellRegistry.replace(instant());
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(
+                exact("wizardreal:other", "wizardreal:other", 1.0f)).kind());
+        // registered spell, foreign pronunciation id (e.g. an addon vocabulary row)
+        assertEquals(ChantGate.Kind.NONE, ChantGate.route(
+                exact("wizardreal:ignis", "addon:foreign", 1.0f)).kind());
     }
 }

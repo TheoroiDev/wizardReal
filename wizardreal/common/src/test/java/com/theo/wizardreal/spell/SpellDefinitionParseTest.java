@@ -2,7 +2,7 @@ package com.theo.wizardreal.spell;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.effect.EffectRegistry;

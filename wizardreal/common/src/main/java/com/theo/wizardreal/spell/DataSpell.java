@@ -7,7 +7,7 @@ import com.theo.wizardreal.api.ChantPolicy;
 import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.api.SpellStage;
 import com.theo.wizardreal.effect.SpellEffect;
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.resources.ResourceLocation;

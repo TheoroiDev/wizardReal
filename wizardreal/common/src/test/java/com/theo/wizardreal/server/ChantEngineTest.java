@@ -1,6 +1,6 @@
 package com.theo.wizardreal.server;
 
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.TestSpell;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;

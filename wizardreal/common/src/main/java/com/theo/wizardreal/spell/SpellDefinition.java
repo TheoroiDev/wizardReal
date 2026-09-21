@@ -11,7 +11,7 @@ import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.api.SpellStage;
 import com.theo.wizardreal.effect.EffectRegistry;
 import com.theo.wizardreal.effect.SpellEffect;
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.wizardreal.api.Pronunciation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -124,7 +124,8 @@ public record SpellDefinition(
      * element becomes one variant chain (trigger + middle lines + cast). Line
      * pronunciations carry a single-language bucket so the voicecast session
      * router feeds them only to that language's engine; line ids embed the
-     * language ({@code <spell>.chant.<lang>.<v>:<i>}) for templateScores routing. */
+     * language ({@code <spell>.chant.<lang>.<v>:<i>}) for the recognizer's
+     * line-structure derivation (semantic contract v2, C1b). */
     private void expandLanguageKeyedChants(List<Chant> out) {
         for (Map.Entry<String, ChantLanguagesDef.LangChant> e : chants.keyed().languages().entrySet()) {
             String lang = e.getKey().trim().toLowerCase(Locale.ROOT);
