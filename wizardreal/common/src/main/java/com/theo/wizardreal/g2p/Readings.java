@@ -43,6 +43,24 @@ public final class Readings {
     public static final String IPA = "ipa";
 
     /**
+     * Pinyin display style for the {@code pinyin} key (D8): symbol tone marks
+     * ({@code zhēn}, the default pending the R-B unifont spike) or the digit
+     * fallback ({@code zhen1}, always renderable). Applies ONLY to pinyin —
+     * romaji and IPA are tone-free transcriptions and never change.
+     */
+    public enum PinyinStyle {
+        /** Tone-marked pinyin via {@link PinyinTone#marked} (default). */
+        MARKS,
+        /** Digit (TONE3-style) pinyin via {@link PinyinTone#numeric}. */
+        NUMBERS
+    }
+
+    /** Derive with the default pinyin style ({@link PinyinStyle#MARKS}). */
+    public static Map<String, String> derive(String text, String lang, List<String> handIpa) {
+        return derive(text, lang, handIpa, PinyinStyle.MARKS);
+    }
+
+    /**
      * Derive the readings map for one chant line (or trigger word).
      *
      * @param text    the line text (display anchor = the line's first alias,
@@ -50,16 +68,17 @@ public final class Readings {
      * @param lang    language bucket key ("zh"/"ja"; other buckets -> empty)
      * @param handIpa the line's hand-curated IPA templates (may be empty;
      *                first entry wins when present)
+     * @param style   pinyin display style (D8); romaji/ipa unaffected
      * @return insertion-ordered readings (pinyin, romaji, ipa — only present
      *         keys), never {@code null}; empty for unannotated buckets
      */
-    public static Map<String, String> derive(String text, String lang, List<String> handIpa) {
+    public static Map<String, String> derive(String text, String lang, List<String> handIpa, PinyinStyle style) {
         Map<String, String> out = new LinkedHashMap<>();
         if (text == null || text.isBlank() || lang == null) return out;
         String bucket = lang.trim().toLowerCase(Locale.ROOT);
         switch (bucket) {
             case "zh" -> {
-                String pinyin = zhPinyin(text);
+                String pinyin = zhPinyin(text, style);
                 if (!pinyin.isEmpty()) out.put(PINYIN, pinyin);
                 String ipa = ipa(text, handIpa, "zh");
                 if (!ipa.isEmpty()) out.put(IPA, ipa);
@@ -84,17 +103,18 @@ public final class Readings {
      * same-source with the hand-curated IPA). Any letter that is not a table
      * hanzi (latin, foreign scripts) voids the key. One token per char.
      */
-    private static String zhPinyin(String text) {
+    private static String zhPinyin(String text, PinyinStyle style) {
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             String hanzi = text.substring(i, i + 1);
             if (!Character.isLetter(hanzi.charAt(0))) continue; // separator
             String tone3 = PinyinIpa.toned(hanzi);
             if (tone3 == null) return ""; // unknown letter -> key absent
-            String marked = PinyinTone.marked(tone3);
-            if (marked == null || marked.isEmpty()) return "";
+            String display = style == PinyinStyle.NUMBERS
+                    ? PinyinTone.numeric(tone3) : PinyinTone.marked(tone3);
+            if (display == null || display.isEmpty()) return "";
             if (out.length() > 0) out.append(' ');
-            out.append(marked);
+            out.append(display);
         }
         return out.toString();
     }

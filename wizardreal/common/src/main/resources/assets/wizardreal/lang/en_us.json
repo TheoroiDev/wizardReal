@@ -474,5 +474,9 @@
   "wizardreal.effect.smelt": "Smelts blocks",
   "wizardreal.effect.visual": "Visual effect",
   "wizardreal.effect.weather": "Changes the weather",
-  "wizardreal.effect.light": "Creates a light source"
+  "wizardreal.effect.light": "Creates a light source",
+  "wizardreal.config.chantReadings.hud": "Chant HUD readings",
+  "wizardreal.config.chantReadings.languagePolicy": "Reading language policy",
+  "wizardreal.config.chantReadings.languages": "Reading languages (selected)",
+  "wizardreal.config.chantReadings.pinyinStyle": "Pinyin tone style"
 }

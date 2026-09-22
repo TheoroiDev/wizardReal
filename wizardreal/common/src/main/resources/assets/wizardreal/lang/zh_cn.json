@@ -474,5 +474,9 @@
   "wizardreal.effect.smelt": "熔炼方块",
   "wizardreal.effect.visual": "视觉效果",
   "wizardreal.effect.weather": "改变天气",
-  "wizardreal.effect.light": "制造光源"
+  "wizardreal.effect.light": "制造光源",
+  "wizardreal.config.chantReadings.hud": "咏唱 HUD 注音",
+  "wizardreal.config.chantReadings.languagePolicy": "注音语言策略",
+  "wizardreal.config.chantReadings.languages": "注音语言集（手选）",
+  "wizardreal.config.chantReadings.pinyinStyle": "拼音声调样式"
 }

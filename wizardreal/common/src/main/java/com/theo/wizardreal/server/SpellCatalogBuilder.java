@@ -42,8 +42,12 @@ public final class SpellCatalogBuilder {
 
     public static CatalogPayload build(MinecraftServer server, UUID player) {
         PlayerMagicState state = PlayerMagicState.get(server);
-        float knownThreshold = com.theo.wizardreal.config.WizardRealConfig
-                .loadCached(server.getServerDirectory().toPath()).learning().knownThreshold();
+        com.theo.wizardreal.config.WizardRealConfig config =
+                com.theo.wizardreal.config.WizardRealConfig.loadCached(server.getServerDirectory().toPath());
+        float knownThreshold = config.learning().knownThreshold();
+        // D8: pinyin display style is applied at catalog DERIVE time (server
+        // start / login sync) — a config change takes effect at the next rebuild.
+        Readings.PinyinStyle pinyinStyle = config.chantReadings().pinyinStyle();
         Map<String, List<CatalogPayload.CatalogSpell>> byOrigin = new LinkedHashMap<>();
         for (Spell spell : SpellRegistry.all()) {
             float t = state.learningPercent(player, spell.id(), spell.difficulty());
@@ -60,7 +64,7 @@ public final class SpellCatalogBuilder {
                     spell.difficulty(), t, spell.chantPolicy().skipAllowed(),
                     pronunciation == null ? List.of() : pronunciation.ipa(),
                     triggerAliases(pronunciation),
-                    chantVariants(spell.chants()),
+                    chantVariants(spell.chants(), pinyinStyle),
                     descKeys(effectsOf(spell)),
                     stages(spell));
             byOrigin.computeIfAbsent(spell.origin(), k -> new ArrayList<>()).add(entry);
@@ -123,6 +127,12 @@ public final class SpellCatalogBuilder {
         return Collections.unmodifiableMap(out);
     }
 
+    /** Default-style overload ({@link Readings.PinyinStyle#MARKS}) — hermetic
+     *  for the structure tests. */
+    static Map<String, List<List<CatalogPayload.CatalogLine>>> chantVariants(List<Chant> chants) {
+        return chantVariants(chants, Readings.PinyinStyle.MARKS);
+    }
+
     /** Chant variants grouped by their lines' language ({@code ""} = legacy).
      *  Catalog v4: each line becomes a structured {@link CatalogPayload.CatalogLine}
      *  whose readings are derived HERE, once, at build time — anchored to the
@@ -131,7 +141,8 @@ public final class SpellCatalogBuilder {
      *  ({@link Readings}, fail-closed). The chant's language bucket (first
      *  line's pronunciation) drives the annotation set for every line of the
      *  chant. Package-private for the v4 structure tests. */
-    static Map<String, List<List<CatalogPayload.CatalogLine>>> chantVariants(List<Chant> chants) {
+    static Map<String, List<List<CatalogPayload.CatalogLine>>> chantVariants(List<Chant> chants,
+                                                                             Readings.PinyinStyle pinyinStyle) {
         Map<String, List<List<CatalogPayload.CatalogLine>>> out = new LinkedHashMap<>();
         for (Chant chant : chants) {
             String lang = LANG_NEUTRAL;
@@ -146,7 +157,7 @@ public final class SpellCatalogBuilder {
                 List<String> handIpa = line.pronunciation() == null
                         ? List.of() : line.pronunciation().ipa();
                 texts.add(new CatalogPayload.CatalogLine(text,
-                        Readings.derive(text, lang, handIpa)));
+                        Readings.derive(text, lang, handIpa, pinyinStyle)));
             }
             out.computeIfAbsent(lang, k -> new ArrayList<>()).add(texts);
         }

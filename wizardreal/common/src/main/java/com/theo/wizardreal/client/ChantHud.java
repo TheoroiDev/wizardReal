@@ -1,5 +1,7 @@
 package com.theo.wizardreal.client;
 
+import com.theo.wizardreal.api.catalog.CatalogPayload;
+import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.net.MagicClientState;
 
 import java.util.List;
@@ -15,6 +17,13 @@ import net.minecraft.network.chat.Component;
  * (red flash on a wrong line), and upcoming lines dimmed. Fades out after the
  * chant ends. Anchor is a constant for now (crosshair-right); it's structured
  * to become a configurable anchor later, like the VoiceCast HUD.
+ *
+ * <p>Annotation layer (R-B, D4 default on): the CURRENT line gets a small
+ * gray reading row underneath (payload-derived readings via
+ * {@link ChantReadings}, {@code [chantReadings]} config). Lines below the
+ * current one shift down by {@link #RUBY_SHIFT} only while a reading is
+ * shown; with the switch off or no mapping the layout is byte-identical to
+ * the pre-annotation HUD (see {@link #lineY}).
  */
 public final class ChantHud {
     private ChantHud() {}
@@ -23,6 +32,12 @@ public final class ChantHud {
     private static final int X_OFFSET = 16;
     private static final int LINE_H = 11;
     private static final int FADE_MS = 2500;
+    /** Extra stride under the current line while its reading row is shown. */
+    static final int RUBY_SHIFT = 6;
+    /** Reading row tone (gray, matches the dimmed upcoming-line family). */
+    private static final int READING_COLOR = 0x999999;
+    /** Indent so the reading sits under the line TEXT, not the "► " prefix. */
+    private static final String CURRENT_PREFIX = "► ";
 
     public static void render(GuiGraphics ctx, Minecraft mc, ChantState state) {
         if (state == null) return;
@@ -66,8 +81,9 @@ public final class ChantHud {
         int startY = crossY - (total * LINE_H) / 2;
         ctx.drawString(tr, title, crossX, startY - LINE_H - 2, 0xFFFFFF);
 
+        String reading = currentReading(mc, state, lines);
         for (int i = 0; i < total; i++) {
-            int y = startY + i * LINE_H;
+            int y = lineY(startY, i, state.lineIndex, reading != null);
             Component text = Component.translatable(lines.get(i));
             if (i < state.lineIndex) {
                 ctx.drawString(tr, Component.literal("✓ ").withStyle(ChatFormatting.GREEN)
@@ -82,10 +98,44 @@ public final class ChantHud {
                     ctx.drawString(tr, Component.translatable("wizardreal.chant.retry").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
                             crossX, y - 9, 0xFF5555);
                 }
+                if (reading != null) {
+                    drawReading(ctx, tr, reading, crossX + tr.width(CURRENT_PREFIX), y);
+                }
             } else {
                 ctx.drawString(tr, Component.literal("   ").append(text.copy().withStyle(ChatFormatting.GRAY)),
                         crossX, y, 0x888888);
             }
         }
+    }
+
+    /** Vertical position of one line. Unchanged from the pre-annotation HUD
+     *  except for the {@link #RUBY_SHIFT} push of the lines BELOW a current
+     *  line that shows its reading row (zero shift otherwise). */
+    static int lineY(int startY, int index, int currentIndex, boolean rubyBelowCurrent) {
+        return startY + index * LINE_H
+                + (rubyBelowCurrent && index > currentIndex ? RUBY_SHIFT : 0);
+    }
+
+    /** The current line's annotation (D2-selected, may be {@code null}):
+     *  config switch (D4 default on) → payload spell lookup → variant/bucket
+     *  alignment with per-line text fallback → policy selection. */
+    private static String currentReading(Minecraft mc, ChantState state, List<String> lines) {
+        WizardRealConfig.ReadingsSettings settings =
+                WizardRealConfig.loadCached(mc.gameDirectory.toPath()).chantReadings();
+        if (!settings.hud()) return null;
+        CatalogPayload.CatalogSpell spell =
+                ChantReadings.findSpell(SpellCatalogState.last(), state.spellId);
+        ChantReadings.Resolved resolved = ChantReadings.resolve(spell, lines, state.lineIndex);
+        return ChantReadings.select(resolved.bucket(), mc.getLanguageManager().getSelected(),
+                settings, resolved.readings());
+    }
+
+    /** Half-size gray reading row under the given anchor line. */
+    private static void drawReading(GuiGraphics ctx, Font font, String reading, int x, int y) {
+        ctx.pose().pushPose();
+        ctx.pose().translate(x, y + LINE_H - 1, 0);
+        ctx.pose().scale(0.5f, 0.5f, 1f);
+        ctx.drawString(font, reading, 0, 0, READING_COLOR, false);
+        ctx.pose().popPose();
     }
 }

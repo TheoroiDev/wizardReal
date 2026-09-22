@@ -1,6 +1,7 @@
 package com.theo.wizardreal.config;
 
 import com.theo.voicecast.config.Toml;
+import com.theo.wizardreal.g2p.Readings;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -43,6 +44,15 @@ import java.util.Set;
  *                                         # G2P drafts at push time (unverified templates;
  *                                         # 2026-09 backtest: no CTC gain until scoring is
  *                                         # calibrated - keep off by default)
+ *
+ * [chantReadings]                         # chant annotation layer (R-B: D2/D4/D8)
+ * hud = true                              # ChantHud current-line reading row (D4: default on)
+ * languagePolicy = "auto"                 # auto | off | selected | all (D2; same semantics
+ *                                         # as the wizardpedia book page, independent file)
+ * languages = ""                          # selected policy: csv of language buckets ("ja,zh")
+ * pinyinStyle = "marks"                   # marks | numbers (D8) — applied when the spell
+ *                                         # catalog is DERIVED (server start / login sync),
+ *                                         # so a change takes effect at the next rebuild
  * </pre>
  */
 public final class WizardRealConfig {
@@ -88,6 +98,31 @@ public final class WizardRealConfig {
         }
     }
 
+    /** {@code [chantReadings]} section (annotation layer R-B, D2/D4/D8):
+     *  HUD annotation switch, language policy and pinyin display style. The
+     *  same policy semantics as the wizardpedia book config, implemented
+     *  independently here (zero cross-repo dependency). */
+    public record ReadingsSettings(boolean hud, LanguagePolicy languagePolicy, List<String> languages,
+                                   Readings.PinyinStyle pinyinStyle) {
+        public static final ReadingsSettings DEFAULT =
+                new ReadingsSettings(true, LanguagePolicy.AUTO, List.of(), Readings.PinyinStyle.MARKS);
+
+        /** D2 language policy: auto = annotate only languages that are NOT
+         *  the MC display language; off; selected = the configured bucket
+         *  set; all = everything with a present reading. */
+        public enum LanguagePolicy { AUTO, OFF, SELECTED, ALL }
+
+        /** Configured buckets for the {@code selected} policy (lowercase). */
+        public Set<String> selectedLanguages() {
+            if (languages == null || languages.isEmpty()) return Set.of();
+            Set<String> out = new LinkedHashSet<>();
+            for (String lang : languages) {
+                if (lang != null && !lang.isBlank()) out.add(lang.trim().toLowerCase(Locale.ROOT));
+            }
+            return out;
+        }
+    }
+
     private static final String HEADER =
             "wizardreal configuration. Delete a key to fall back to its default.";
 
@@ -96,15 +131,17 @@ public final class WizardRealConfig {
     private final ChantSettings chant;
     private final LearningSettings learning;
     private final VoiceSettings voice;
+    private final ReadingsSettings chantReadings;
     private static volatile WizardRealConfig cache;
 
     private WizardRealConfig(FileMode fileMode, PushMode pushMode, ChantSettings chant,
-                             LearningSettings learning, VoiceSettings voice) {
+                             LearningSettings learning, VoiceSettings voice, ReadingsSettings chantReadings) {
         this.fileMode = fileMode;
         this.pushMode = pushMode;
         this.chant = chant;
         this.learning = learning;
         this.voice = voice;
+        this.chantReadings = chantReadings;
     }
 
     /** Cached load for per-cast/per-utterance readers (file reread only when cleared). */
@@ -137,6 +174,10 @@ public final class WizardRealConfig {
         return voice;
     }
 
+    public ReadingsSettings chantReadings() {
+        return chantReadings;
+    }
+
     public static Path file(Path gameDir) {
         return gameDir.resolve("config").resolve("wizardreal").resolve("wizardreal.toml");
     }
@@ -162,7 +203,13 @@ public final class WizardRealConfig {
                         (float) toml.getDouble("learning", "knownThreshold", 10.0)),
                 new VoiceSettings(parseLanguages(
                         toml.getString("voice", "languages", "")),
-                        toml.getBool("voice", "g2pDrafts", false)));        if (!existed) {
+                        toml.getBool("voice", "g2pDrafts", false)),
+                new ReadingsSettings(
+                        toml.getBool("chantReadings", "hud", true),
+                        parseLanguagePolicy(toml.getString("chantReadings", "languagePolicy", "auto")),
+                        parseLanguages(toml.getString("chantReadings", "languages", "")),
+                        parsePinyinStyle(toml.getString("chantReadings", "pinyinStyle", "marks"))));
+        if (!existed) {
             writeDefaults(file);
         }
         return config;
@@ -185,6 +232,10 @@ public final class WizardRealConfig {
                 .setDouble("learning", "knownThreshold", 10.0)
                 .setString("voice", "languages", "")
                 .setBool("voice", "g2pDrafts", false)
+                .setBool("chantReadings", "hud", true)
+                .setString("chantReadings", "languagePolicy", "auto")
+                .setString("chantReadings", "languages", "")
+                .setString("chantReadings", "pinyinStyle", "marks")
                 .save(file);
     }
 
@@ -217,5 +268,19 @@ public final class WizardRealConfig {
         } catch (IllegalArgumentException e) {
             return PushMode.ALL;
         }
+    }
+
+    private static ReadingsSettings.LanguagePolicy parseLanguagePolicy(String value) {
+        if (value == null) return ReadingsSettings.LanguagePolicy.AUTO;
+        try {
+            return ReadingsSettings.LanguagePolicy.valueOf(value.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            return ReadingsSettings.LanguagePolicy.AUTO;
+        }
+    }
+
+    private static Readings.PinyinStyle parsePinyinStyle(String value) {
+        return value != null && "numbers".equalsIgnoreCase(value.trim())
+                ? Readings.PinyinStyle.NUMBERS : Readings.PinyinStyle.MARKS;
     }
 }
