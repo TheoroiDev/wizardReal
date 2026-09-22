@@ -61,7 +61,7 @@ Server operators can also grant or revoke spells directly — see [Commands](Com
 
 - The HUD shows `Heard: "…" — no spell matched` when nothing fits;
 - Speak clearly; every alias of a spell works (see [Spells](Spells.md));
-- The `vosk-en` engine only understands English pronunciation — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phoneme and is more forgiving of accents — an alternative, not the only way to chant in Chinese;
+- The default utterance engine understands many languages (en/zh/ja/ko and more) — if Chinese/Japanese incantations come out fuzzy, try the language route (`/voicecast engine zh`, `ja` / `ko` likewise) or the IPA engine (`/voicecast engine ipa`), which matches by phoneme and is more forgiving of accents — an alternative, not the only way to chant in Chinese;
 - Chant-based spells behave differently — see [Ritual Chants](Ritual-Chants.md).
 
 > [← Home](Home.md) · Previous: [Getting Started](Getting-Started.md) · Next: [Spells](Spells.md)

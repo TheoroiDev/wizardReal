@@ -36,7 +36,8 @@ Explosion               ← spell title (gold)
 ## Tips
 
 - **Display follows the game language**: a zh_CN client shows the Chinese lines. Recognition matches aliases/phonemes, independent of display language — you can chant the Chinese variant from an English client as long as it was locked by your first line;
-- Chinese lines carry **pinyin** and Japanese lines **romaji** aliases, so both the Vosk and IPA engines understand them;
+- Chinese lines carry **pinyin** and Japanese lines **romaji** aliases, so both the utterance and IPA engines understand them;
+- The **current chant line shows its reading** (pinyin/romaji) underneath while chanting — read it aloud to stay on track ([Configuration](Configuration.md) to turn it off or widen it);
 - While chanting, **no instant spells fire**: every utterance feeds the current ritual only;
 - Mana and cooldown settle **on completion** — cancelling costs nothing.
 

@@ -33,7 +33,7 @@ Each ritual spell has **3 chant variants (English/Chinese/Japanese) × 3 lines**
 | **Umbra** | umbra · veil · 幻影 | illusion | 30 | 12 s | — | Invisibility + Speed II for 20 s |
 | **Ventus** | ventus · gale · 狂风 | air | 25 | 10 s | — | strong cone knockback within 8 blocks |
 
-> The Chinese/Japanese chant lines carry **pinyin/romaji aliases** — with the **IPA engine** you can simply speak Mandarin/Japanese; with **Vosk** the romanized aliases are matched too.
+> The Chinese/Japanese chant lines carry **pinyin/romaji aliases** — with the **IPA engine** you can simply speak Mandarin/Japanese; with the **utterance engine** the romanized aliases are matched too. And since 0.6.0 the chant lines themselves show their reading (see [Getting Started](Getting-Started.md)).
 
 ## Filler words are fine
 

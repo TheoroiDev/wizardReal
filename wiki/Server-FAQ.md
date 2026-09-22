@@ -16,12 +16,12 @@ Check in order:
 
 - Add a JVM proxy: `-Dhttps.proxyHost=<host> -Dhttps.proxyPort=<port>`; the downloader also detects the `HTTPS_PROXY` / `HTTP_PROXY` environment variables;
 - Change mirrors / self-host: edit `config/voicecast/models.json` and point `urls` at your own HTTP endpoints (multi-mirror probing and fallback apply);
-- Fully offline: `[server] autoDownload = false`, then place models in `config/voicecast/models/<modelId>/` (extracted Vosk needs `am/ conf/ graph/`);
+- Fully offline: `[server] autoDownload = false`, then place models in `config/voicecast/models/<modelId>/` (extracted models keep the recognizer files at the directory root: `.onnx` weights plus `tokens.txt` — a `tokenizer/` directory for Qwen3-ASR);
 - Downloads are sha256/minBytes verified; failures automatically retry the next mirror.
 
 ## Players say "engine failed to load"
 
-Search the log for `Server voice engine failed to start: <engine>`. Common causes: missing model (above), low disk space, incomplete q4 download (IPA needs a ≥150 MB `model_q4.onnx`). After fixing, players just re-run `/voicecast engine <name>` to rebuild their session.
+Search the log for `Server voice engine failed to start: <engine>`. Common causes: missing model (above), low disk space, an incomplete model download (Qwen3-ASR ~880 MB, IPA ~70 MB). After fixing, players just re-run `/voicecast engine <name>` to rebuild their session.
 
 ## Can I run voicecast without wizardreal?
 

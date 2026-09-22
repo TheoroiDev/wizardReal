@@ -8,6 +8,7 @@
 - **Spell wordings**: [Spell Alias Guidelines](Spell-Alias-Guidelines) · [法术词面规范](Spell-Alias-Guidelines-zh)
 - **Server admin**: [Datapack Spells](Datapack-Spells) · [Datapack 数据包法术](Datapack-Spells-zh) · [Server FAQ](Server-FAQ) · [服务器 FAQ](Server-FAQ-zh)
   · [Commands](Commands) · [命令](Commands-zh)
+- **Config**: [Configuration](Configuration) · [配置](Configuration-zh)
 - **Troubleshooting**: [Troubleshooting & FAQ](Troubleshooting-FAQ) · [排障与 FAQ](Troubleshooting-FAQ-zh)
 
 Voice engine wiki: [VoiceCast](https://github.com/TheoroiDev/voiceCast/wiki)

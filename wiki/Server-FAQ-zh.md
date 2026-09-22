@@ -16,12 +16,12 @@
 
 - 给 JVM 加代理：`-Dhttps.proxyHost=<host> -Dhttps.proxyPort=<port>`；VoiceCast 的下载器也会探测 `HTTPS_PROXY` / `HTTP_PROXY` 环境变量；
 - 换镜像/自托管：编辑 `config/voicecast/models.json`，把 `urls` 指向你的内网 HTTP 服务（支持多镜像自动测速回退）；
-- 完全离线：`[server] autoDownload = false`，然后手动把模型放到 `config/voicecast/models/<模型id>/`（Vosk 解压后需含 `am/ conf/ graph/`）；
+- 完全离线：`[server] autoDownload = false`，然后手动把模型放到 `config/voicecast/models/<模型id>/`（解压后的模型目录根下需含识别器文件：`.onnx` 权重 + `tokens.txt`，Qwen3-ASR 为 `tokenizer/` 目录）；
 - 下载完整性有 sha256/minBytes 校验，失败会自动换镜像重试。
 
 ## 玩家说"引擎 X 加载失败"
 
-日志里找 `Server voice engine failed to start: <engine>`。常见原因：模型缺失（上条）、磁盘空间不足、q4 模型下载不完整（IPA 需 ≥150 MB 的 `model_q4.onnx`）。修复后让玩家重新 `/voicecast engine <名字>` 即可重建会话。
+日志里找 `Server voice engine failed to start: <engine>`。常见原因：模型缺失（上条）、磁盘空间不足、模型下载不完整（Qwen3-ASR ~880 MB、IPA ~70 MB）。修复后让玩家重新 `/voicecast engine <名字>` 即可重建会话。
 
 ## 能只装 voicecast 不装 wizardreal 吗？
 

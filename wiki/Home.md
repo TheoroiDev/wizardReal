@@ -19,6 +19,7 @@ A Minecraft 1.20.1 mod (Fabric + Forge) for **casting spells with your voice**. 
 | [Spellcasting](Spellcasting) | Mana, cooldowns, schools, tomes & scrolls |
 | [Spells](Spells) | All 15 built-in spells: triggers, numbers, effects |
 | [Ritual Chants](Ritual-Chants) | Line-by-line incantations: variants, retries, timeout |
+| [Configuration](Configuration) | Chant readings options (`[chantReadings]`) |
 | [Troubleshooting & FAQ](Troubleshooting-FAQ) | Recognition, HUD, voice mods |
 
 ## Player docs (中文)
@@ -29,6 +30,7 @@ A Minecraft 1.20.1 mod (Fabric + Forge) for **casting spells with your voice**. 
 | [施法系统](Spellcasting-zh) | 法力、冷却、学派、典籍与卷轴 |
 | [法术一览](Spells-zh) | 15 个内置法术的触发词、数值与效果 |
 | [仪式吟唱](Ritual-Chants-zh) | 逐句咏唱：变体、重试、超时、取消 |
+| [配置](Configuration-zh) | 咒文注音选项（`[chantReadings]`） |
 | [排障与 FAQ](Troubleshooting-FAQ-zh) | 识别、HUD、语音模组共存 |
 
 ## Server admin docs

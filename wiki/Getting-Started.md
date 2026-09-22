@@ -19,6 +19,14 @@ Voice recognition is handled by the companion **VoiceCast** mod — see [its wik
 3. Say a spell's **trigger word** (e.g. "ignis"; ritual spells: say the trigger first, then each chant line — see [Ritual Chants](Ritual-Chants));
 4. Release the key (or pause 0.7 s) — the utterance finalizes and the spell casts.
 
+## Chant readings (learn incantations across languages)
+
+Incantations in languages you don't speak come with a small gray **reading row** spelling out the pronunciation — pinyin for Chinese lines, romaji for Japanese lines, or IPA — so you can pronounce and memorize them:
+
+- **Chant HUD**: the current chant line shows its reading underneath (on by default);
+- **Spell tome & spellbook pages**: every chant line shows its reading — by default for lines that are not in your game language;
+- Both surfaces follow the same rules and are configured separately — see [Configuration](Configuration).
+
 ## HUD legend
 
 - **Red static** waveform = model downloading/loading (a gold status line shows progress, red = error);
@@ -32,6 +40,7 @@ Voice recognition is handled by the companion **VoiceCast** mod — see [its wik
 - [Spellcasting](Spellcasting): mana, learning, tomes & scrolls;
 - [Spells](Spells): all 15 built-in spells with trigger words;
 - [Ritual Chants](Ritual-Chants): long incantations;
+- [Configuration](Configuration): chant readings & other options;
 - Problems: [Troubleshooting & FAQ](Troubleshooting-FAQ).
 
 > [← Home](Home) · Next: [Spellcasting](Spellcasting)

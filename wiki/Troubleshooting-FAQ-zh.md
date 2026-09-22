@@ -14,7 +14,7 @@
 
 红色 = 模型尚未就绪。看波形上方的**状态行**：
 
-- **金色**"正在下载/准备模型"：首次下载，耐心等待（Vosk ~40 MB / IPA ~150 MB，int4/q4 ONNX）；
+- **金色**"正在下载/准备模型"：首次下载，耐心等待（Qwen3-ASR ~880 MB / IPA ~70 MB，int8 ONNX）；
 - **红色**"引擎加载失败/模型缺失"：看服务器日志 `logs/latest.log`。若服务器设置了 `autoDownload = false`，需要管理员手动放置模型文件；
 - **红色**"麦克风不可用"：见下一条。
 
@@ -28,7 +28,7 @@
 ## 识别不到我的咒语
 
 - **语速放慢、发音清晰**，尤其触发词（"ignis" 不要吞音成 "ign"）；
-- `vosk-en` 引擎只认**英文**发音——中文/日文吟唱请切换 CJK 母语引擎（`/voicecast engine vosk-cn` / `vosk-jp`，韩语 `vosk-kr`）；IPA 引擎按音素匹配是另一种替代项，并非中文吟唱的唯一途径；
+- 整句引擎默认覆盖多语言（en/zh/ja/ko 等）——中文/日文吟唱识别发糊时，可试语言码路由（`/voicecast engine zh`，日语/韩语同理 `ja` / `ko`）或 IPA 引擎（`/voicecast engine ipa`）——IPA 按音素匹配是另一种替代项，并非中文吟唱的唯一途径；
 - IPA 引擎按音素匹配，对非母语发音更宽容（自动容忍松紧元音偏移、吞掉音节尾的辅音）；
 - 每个法术有多个别名（见[法术一览](Spells-zh)），换一个好念的试试；
 - 准星下方的灰色文字是实时识别结果——如果显示的内容离触发词太远，先确认引擎下载完整（红色状态行消失）。
@@ -36,8 +36,8 @@
 ## 切换引擎
 
 ```
-/voicecast engine vosk-en  # 词语识别（英文单词）
-/voicecast engine vosk-cn  # 中文词语识别（日语/韩语：vosk-jp / vosk-kr）
+/voicecast engine en       # 整句识别（Qwen3-ASR，默认；覆盖 en/zh/ja/ko 等）
+/voicecast engine zh       # 同一引擎的语言码路由（日语/韩语同理：ja / ko）
 /voicecast engine ipa      # 音素识别（按发音，支持中/日）
 /voicecast settings       # 打开选择界面
 ```
@@ -50,7 +50,7 @@
 
 ## 高级排障（开发者/服主）
 
-- 启动时加 `-Dvoicecast.verbose=true`（单人开发可用 `gradlew runClient -PvoicecastVerbose=true`）输出识别管线日志：`[Mic]`、`[Vosk]`、`[IPA DEBUG]`；
+- 启动时加 `-Dvoicecast.verbose=true`（单人开发可用 `gradlew runClient -PvoicecastVerbose=true`）输出识别管线日志：`[Mic]`、`[QWEN3]`、`[ZIPA]`；
 - 日志：客户端与服务器均为 `logs/latest.log`；崩溃看 `crash-reports/`；
 - 客户端调试 WAV 录音（源码常量 `VoiceCastConfig.saveDebugWav`，默认关）可证明"录音是否正常"，区别于"识别是否正常"。
 

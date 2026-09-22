@@ -19,6 +19,7 @@ Minecraft 1.20.1 模组（Fabric + Forge）：**用语音咏唱施法**。手持
 | [施法系统](Spellcasting-zh) | 法力、冷却、学派、典籍与卷轴 |
 | [法术一览](Spells-zh) | 15 个内置法术的触发词、数值与效果 |
 | [仪式吟唱](Ritual-Chants-zh) | 逐句咏唱：变体、重试、超时、取消 |
+| [配置](Configuration-zh) | 咒文注音选项（`[chantReadings]`） |
 | [排障与 FAQ](Troubleshooting-FAQ-zh) | 识别、HUD、语音模组共存 |
 
 ## 玩家文档（English）
@@ -29,6 +30,7 @@ Minecraft 1.20.1 模组（Fabric + Forge）：**用语音咏唱施法**。手持
 | [Spellcasting](Spellcasting-zh) | Mana, cooldowns, tomes & scrolls |
 | [Spells](Spells-zh) | All 15 built-in spells |
 | [Ritual Chants](Ritual-Chants-zh) | Line-by-line incantations |
+| [Configuration](Configuration-zh) | Chant readings options (`[chantReadings]`) |
 | [Troubleshooting & FAQ](Troubleshooting-FAQ-zh) | Recognition, HUD, voice mods |
 
 ## 服务器管理员

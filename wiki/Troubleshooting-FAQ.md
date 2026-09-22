@@ -14,7 +14,7 @@
 
 Red = the model isn't ready. Read the **status line** above the waveform:
 
-- **Gold** "preparing/downloading model": first download, wait a moment (Vosk ~40 MB / IPA ~150 MB, int4/q4 ONNX);
+- **Gold** "preparing/downloading model": first download, wait a moment (Qwen3-ASR ~880 MB / IPA ~70 MB, int8 ONNX);
 - **Red** "engine failed / model missing": check `logs/latest.log`. If the server set `autoDownload = false`, an admin must place the model files manually;
 - **Red** "Microphone unavailable": next section.
 
@@ -28,7 +28,7 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 ## My spell doesn't match
 
 - Slow down and pronounce clearly, especially the trigger ("ignis", not "ign");
-- The `vosk-en` engine only understands English — for Chinese/Japanese incantations switch to the CJK native engines (`/voicecast engine vosk-cn` / `vosk-jp`, Korean `vosk-kr`); the IPA engine (`/voicecast engine ipa`) matches by phonemes and is an alternative, not the only way to chant in Chinese;
+- The default utterance engine understands many languages (en/zh/ja/ko and more) — if Chinese/Japanese incantations come out fuzzy, try the language route (`/voicecast engine zh`, `ja` / `ko` likewise) or the IPA engine (`/voicecast engine ipa`), which matches by phonemes and is an alternative, not the only way to chant in Chinese;
 - The IPA engine matches by phonemes and is forgiving to non-native accents (tolerates tense/lax vowel shifts, dropped syllable-final consonants);
 - Each spell has several aliases (see [Spells](Spells.md)) — try another;
 - The gray text under the crosshair is the live recognition — if it's far from any trigger word, first confirm the model finished loading (red status line gone).
@@ -36,8 +36,8 @@ Red = the model isn't ready. Read the **status line** above the waveform:
 ## Switching engines
 
 ```
-/voicecast engine vosk-en  # word recognition (English words)
-/voicecast engine vosk-cn  # Chinese word recognition (Japanese/Korean: vosk-jp / vosk-kr)
+/voicecast engine en       # utterance recognition (Qwen3-ASR, default; en/zh/ja/ko/…)
+/voicecast engine zh       # the same engine via the language route (ja / ko likewise)
 /voicecast engine ipa      # phoneme recognition (pronunciation-based, supports zh/ja)
 /voicecast settings       # picker UI
 ```
@@ -50,7 +50,7 @@ Recognition runs **server-side** and the mic is open only during staff + right-c
 
 ## Advanced diagnostics (devs/admins)
 
-- Start with `-Dvoicecast.verbose=true` (dev: `gradlew runClient -PvoicecastVerbose=true`) to log the recognition pipeline: `[Mic]`, `[Vosk]`, `[IPA DEBUG]`;
+- Start with `-Dvoicecast.verbose=true` (dev: `gradlew runClient -PvoicecastVerbose=true`) to log the recognition pipeline: `[Mic]`, `[QWEN3]`, `[ZIPA]`;
 - Logs: `logs/latest.log`; crashes: `crash-reports/`;
 - A client-side debug WAV recording (`VoiceCastConfig.saveDebugWav` source constant, off by default) proves whether capture works — separate from whether recognition works.
 
