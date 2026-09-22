@@ -15,7 +15,10 @@ import java.util.Map;
  * <ul>
  *   <li><b>zh</b>: {@code pinyin} = toned citation pinyin per hanzi
  *       ({@link PinyinIpa#toned} + {@link PinyinTone#marked}); {@code ipa} =
- *       the line's hand-curated template when present, else the G2P draft.</li>
+ *       the line's hand-curated template when present, else the G2P draft.
+ *       Kana inside a zh line yields an ipa draft only (G2p's KANA segment is
+ *       language-agnostic — the same asymmetry as the recognition chain) and
+ *       no pinyin.</li>
  *   <li><b>ja</b>: {@code romaji} = kanji phrases through {@link KanjiIpa}
  *       then {@link KanaRomaji} (pure-kana lines pass straight through);
  *       {@code ipa} = hand-curated first, else the G2P draft.</li>
@@ -23,7 +26,11 @@ import java.util.Map;
  *
  * <p>Fail-closed, same discipline as {@link G2p}: any unconvertible letter
  * (unknown hanzi, kanji left after the KanjiIpa pass, latin in a non-latin
- * bucket) voids the whole KEY — no partial or invented readings. Punctuation
+ * bucket) voids the whole KEY — no partial or invented readings. Letters are
+ * walked as CODE POINTS, not UTF-16 units: a supplementary (non-BMP) letter
+ * such as 𠮷 is CONTENT — zh voids the key on the table miss, ja feeds it
+ * through the KanaRomaji run whose strict conversion voids the key; it is
+ * never skipped as a separator. Punctuation
  * and whitespace are SEPARATORS, dropped rather than fatal: the recognition
  * templates transcribe the same syllables with no pause tokens, so dropping
  * keeps the reading same-source with the hand-curated IPA (e.g. "アクア・ウィタエ"
@@ -101,14 +108,18 @@ public final class Readings {
      * separators (dropped — the recognition templates transcribe the same
      * syllables with no pause tokens, so dropping keeps the reading
      * same-source with the hand-curated IPA). Any letter that is not a table
-     * hanzi (latin, foreign scripts) voids the key. One token per char.
+     * hanzi (latin, foreign scripts, supplementary han outside the table)
+     * voids the key. Letters are walked as CODE POINTS: a supplementary
+     * (non-BMP) letter such as 𠮷 is content and voids the key on the table
+     * miss — never a skippable separator (no partial readings).
      */
     private static String zhPinyin(String text, PinyinStyle style) {
         StringBuilder out = new StringBuilder();
-        for (int i = 0; i < text.length(); i++) {
-            String hanzi = text.substring(i, i + 1);
-            if (!Character.isLetter(hanzi.charAt(0))) continue; // separator
-            String tone3 = PinyinIpa.toned(hanzi);
+        for (int i = 0; i < text.length();) {
+            int cp = text.codePointAt(i);
+            i += Character.charCount(cp);
+            if (!Character.isLetter(cp)) continue; // separator
+            String tone3 = PinyinIpa.toned(new String(Character.toChars(cp)));
             if (tone3 == null) return ""; // unknown letter -> key absent
             String display = style == PinyinStyle.NUMBERS
                     ? PinyinTone.numeric(tone3) : PinyinTone.marked(tone3);
@@ -124,16 +135,20 @@ public final class Readings {
      * kanji pass through untouched), then every letter run must be pure kana
      * for {@link KanaRomaji} — punctuation/whitespace separate runs (dropped,
      * same-source with the hand templates which carry no pause tokens);
-     * anything else (leftover kanji, latin) voids the key.
+     * anything else (leftover kanji, latin) voids the key. Letters are walked
+     * as CODE POINTS: a supplementary (non-BMP) letter stays inside its run
+     * and the KanaRomaji strict conversion voids the key — it is never
+     * skipped as a separator (no partial readings).
      */
     private static String jaRomaji(String text) {
         String kana = KanjiIpa.toKana(text);
         StringBuilder out = new StringBuilder();
         StringBuilder run = new StringBuilder();
-        for (int i = 0; i < kana.length(); i++) {
-            char c = kana.charAt(i);
-            if (Character.isLetter(c)) {
-                run.append(c);
+        for (int i = 0; i < kana.length();) {
+            int cp = kana.codePointAt(i);
+            i += Character.charCount(cp);
+            if (Character.isLetter(cp)) {
+                run.appendCodePoint(cp);
                 continue;
             }
             if (run.length() > 0) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -64,6 +65,25 @@ class ReadingsTest {
         assertTrue(r.isEmpty(), "unknown char -> no pinyin AND no derived ipa");
     }
 
+    @Test
+    void zhSupplementaryLetterVoidsKey() {
+        // 𠮷 (U+20BB7, non-BMP) is a LETTER — content, not a separator: the
+        // pinyin table has no such row -> key voided. Pre-fix the surrogate
+        // pair was skipped as separators, yielding a partial "huǒ".
+        assertTrue(Readings.derive("火𠮷", "zh", List.of()).isEmpty(),
+                "non-BMP letter -> no pinyin AND no derived ipa");
+    }
+
+    @Test
+    void zhLineWithKanaGetsIpaButNoPinyin() {
+        // pinned asymmetry: G2p's KANA segment is language-agnostic (KanaIpa),
+        // so a zh line containing kana derives an ipa draft but no pinyin —
+        // mirrors the recognition chain, which scores kana the same way
+        Map<String, String> r = Readings.derive("火アネモス", "zh", List.of());
+        assertFalse(r.containsKey(Readings.PINYIN), "kana yields no pinyin in zh bucket");
+        assertEquals("xwɔ a nɛ mo sɯ", r.get(Readings.IPA));
+    }
+
     // ------------------------------------------------------------ ja
 
     @Test
@@ -95,6 +115,15 @@ class ReadingsTest {
         // corpus reality: unknown kanji is CONTENT -> romaji + G2P draft fail closed
         Map<String, String> r = Readings.derive("アネモスよ、疾風を聴け", "ja", List.of());
         assertTrue(r.isEmpty());
+    }
+
+    @Test
+    void jaSupplementaryLetterVoidsRomaji() {
+        // 𠮷 (U+20BB7, non-BMP) rides inside the kana run -> KanaRomaji strict
+        // "" -> key voided. Pre-fix the surrogate pair split/dropped, yielding
+        // a partial "no".
+        assertTrue(Readings.derive("𠮷の", "ja", List.of()).isEmpty(),
+                "non-BMP letter -> no romaji AND no derived ipa");
     }
 
     // ------------------------------------------------------------ unannotated buckets

@@ -99,7 +99,11 @@ public final class ChantHud {
                             crossX, y - 9, 0xFF5555);
                 }
                 if (reading != null) {
-                    drawReading(ctx, tr, reading, crossX + tr.width(CURRENT_PREFIX), y);
+                    int anchorX = crossX + tr.width(CURRENT_PREFIX);
+                    // half-scale row: glyph budget is twice the screen-space
+                    // width right of the anchor (ChantRuby maxWidth*2 semantics)
+                    drawReading(ctx, tr, reading, anchorX, y,
+                            Math.max(1, (screenW - anchorX) * 2));
                 }
             } else {
                 ctx.drawString(tr, Component.literal("   ").append(text.copy().withStyle(ChatFormatting.GRAY)),
@@ -130,12 +134,17 @@ public final class ChantHud {
                 settings, resolved.readings());
     }
 
-    /** Half-size gray reading row under the given anchor line. */
-    private static void drawReading(GuiGraphics ctx, Font font, String reading, int x, int y) {
+    /** Half-size gray reading row under the given anchor line, clipped to
+     *  {@code maxGlyphWidth} glyphs (the row is drawn at half scale, so its
+     *  glyph budget is twice the screen-space width — ChantRuby's
+     *  maxWidth*2 semantics). */
+    private static void drawReading(GuiGraphics ctx, Font font, String reading, int x, int y,
+                                    int maxGlyphWidth) {
+        String clipped = font.plainSubstrByWidth(reading, maxGlyphWidth);
         ctx.pose().pushPose();
         ctx.pose().translate(x, y + LINE_H - 1, 0);
         ctx.pose().scale(0.5f, 0.5f, 1f);
-        ctx.drawString(font, reading, 0, 0, READING_COLOR, false);
+        ctx.drawString(font, clipped, 0, 0, READING_COLOR, false);
         ctx.pose().popPose();
     }
 }

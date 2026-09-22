@@ -32,8 +32,10 @@ import java.util.Map;
  *       (った tta, っし sshi; ち-series doubles t per MLIT-style Hepburn:
  *       っち tchi, っちゃ tcha). Word-final っ renders as an apostrophe "'"
  *       (the established convention for terminal sokuon — no letter exists
- *       for a terminal glottal catch); before a vowel the mark is dropped
- *       (nothing to double, same rule as {@link KanaIpa}).</li>
+ *       for a terminal glottal catch); before a vowel — and likewise before
+ *       ー or ん, which cannot take gemination — the mark is dropped and the
+ *       geminate flag cleared (leaving it set would mis-render the orphan
+ *       as a word-final apostrophe; same rule as {@link KanaIpa}).</li>
  *   <li><b>Foreign morae</b> via small-kana composition: ティ ti, ディ di,
  *       トゥ tu, ドゥ du, ファ fi-family fa/fi/fe/fo, フュ fyu, ウィ wi,
  *       ウェ we, ウォ wo, クァ kwa, グァ gwa, ツァ tsa/tsi/tse/tso, シェ she,
@@ -181,17 +183,22 @@ public final class KanaRomaji {
             switch (ch) {
                 case "ん" -> {
                     // modern Hepburn: always n (no m variant); attaches to the
-                    // previous token as the coda (にほん -> ni hon)
+                    // previous token as the coda (にほん -> ni hon). A pending
+                    // sokuon is dropped: ん is a coda, nothing to double.
                     if (!out.isEmpty()) {
                         out.set(out.size() - 1, out.get(out.size() - 1) + "n");
                     } else {
                         out.add("n");
                     }
+                    geminate = false;
                 }
                 case "っ" -> geminate = true;
                 case "ー" -> {
                     // chōonpu: lengthen the previous vowel; strict at word
-                    // start or after a non-vowel token (ンー is not n̄)
+                    // start or after a non-vowel token (ンー is not n̄). A
+                    // pending sokuon is dropped: ー lengthens, nothing to
+                    // double.
+                    geminate = false;
                     if (out.isEmpty()) return "";
                     String prev = out.get(out.size() - 1);
                     if (prev.isEmpty()) return "";
@@ -206,7 +213,6 @@ public final class KanaRomaji {
                             || ch.equals("ぇ") || ch.equals("ぉ");
                     boolean smallGlide = ch.equals("ゃ") || ch.equals("ゅ") || ch.equals("ょ");
                     String token;
-                    boolean standalone = false;
                     if (smallGlide) {
                         // きゃ kya / しゃ sha / ちゃ cha / じゃ ja: strip the
                         // previous token's vowel, append ya/yu/yo — EXCEPT the
@@ -256,16 +262,20 @@ public final class KanaRomaji {
                     }
                     // Long-vowel merge fires only on plain vowel kana
                     // (あいうえお) — same-vowel continuation (おお -> ō),
-                    // お+う -> ō, え+い -> ē.
-                    if (!standalone && (ch.equals("あ") || ch.equals("い") || ch.equals("う")
-                            || ch.equals("え") || ch.equals("お"))) {
+                    // お+う -> ō, え+い -> ē. The mora is swallowed
+                    // (continue) only when a rewrite actually happened, i.e.
+                    // the previous token ends in a PLAIN vowel: past an
+                    // already-macron ending the merge rewrites nothing, so
+                    // this mora must still be emitted (こうう -> "kō u",
+                    // not the mora-swallowing "kō").
+                    if (ch.equals("あ") || ch.equals("い") || ch.equals("う")
+                            || ch.equals("え") || ch.equals("お")) {
                         if (!out.isEmpty()) {
                             String prev = out.get(out.size() - 1);
                             char last = prev.charAt(prev.length() - 1);
-                            if (isVowel(last) && isLongVowel(last, token.charAt(0))) {
-                                if (last < 0x0100) {
-                                    out.set(out.size() - 1, stripVowels(prev) + macron(last));
-                                }
+                            if (isVowel(last) && last < 0x0100
+                                    && isLongVowel(last, token.charAt(0))) {
+                                out.set(out.size() - 1, stripVowels(prev) + macron(last));
                                 continue;
                             }
                         }

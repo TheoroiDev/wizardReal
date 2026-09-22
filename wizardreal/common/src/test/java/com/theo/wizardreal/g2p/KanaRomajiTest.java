@@ -80,6 +80,23 @@ class KanaRomajiTest {
         assertEquals("a'", KanaRomaji.toRomaji("あっ"));
     }
 
+    @Test
+    void sokuonForeignMorae() {
+        // gemination composes through small-kana foreign morae: the onset
+        // doubles on the base kana, then the small-vowel composition lands
+        assertEquals("tti", KanaRomaji.toRomaji("っティ"));
+        assertEquals("ffa", KanaRomaji.toRomaji("っファ"));
+    }
+
+    @Test
+    void sokuonBeforeNonSyllables() {
+        // っ before ー/ん has nothing to double: the mark is dropped and the
+        // geminate flag cleared (same rule as っ+vowel) — no phantom
+        // terminal-sokuon apostrophe on the orphan
+        assertEquals("ā", KanaRomaji.toRomaji("あっー"));
+        assertEquals("n", KanaRomaji.toRomaji("っん"));
+    }
+
     // ------------------------------------------------------------ long vowels (長音, Hepburn macron)
 
     @Test
@@ -88,7 +105,7 @@ class KanaRomajiTest {
         assertEquals("kyō", KanaRomaji.toRomaji("きょう"));
         assertEquals("bī ru", KanaRomaji.toRomaji("ビール"));
         assertEquals("ryō i ki", KanaRomaji.toRomaji("りょういき"));
-        assertEquals("kō ryō i ki", KanaRomaji.toRomaji("こううりょういき")); // 降-雨-領-域 kō + u stays split
+        assertEquals("kō u ryō i ki", KanaRomaji.toRomaji("こううりょういき")); // 降-雨-領-域: kō + u, the second mora survives the merge
         assertEquals("ban kō", KanaRomaji.toRomaji("ばんこう"));
         assertEquals("ā", KanaRomaji.toRomaji("ああ"));
         assertEquals("ū", KanaRomaji.toRomaji("うう"));
@@ -97,6 +114,12 @@ class KanaRomajiTest {
         assertEquals("ō", KanaRomaji.toRomaji("おお"));
         assertEquals("ō", KanaRomaji.toRomaji("オー"));     // chōonpu
         assertEquals("ra i", KanaRomaji.toRomaji("らい"));  // a+i is NOT a long vowel: per-mora
+    }
+
+    @Test
+    void consecutiveChoonpu() {
+        // the second ー sees an already-macron vowel: no rewrite, no mora drop
+        assertEquals("ō", KanaRomaji.toRomaji("オーー"));
     }
 
     // ------------------------------------------------------------ ん (拨音)
@@ -148,6 +171,13 @@ class KanaRomajiTest {
         assertEquals("che", KanaRomaji.toRomaji("チェ"));
         assertEquals("je", KanaRomaji.toRomaji("ジェ"));
         assertEquals("va ru", KanaRomaji.toRomaji("ヴァル"));
+    }
+
+    @Test
+    void wordInitialSmallKana() {
+        // a small kana at word start stands alone (BASE fallback, KanaIpa)
+        assertEquals("a", KanaRomaji.toRomaji("ぁ"));
+        assertEquals("ya", KanaRomaji.toRomaji("ゃ"));
     }
 
     // ------------------------------------------------------------ strict fail-closed
