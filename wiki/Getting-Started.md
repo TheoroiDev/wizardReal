@@ -23,7 +23,7 @@ Voice recognition is handled by the companion **VoiceCast** mod — see [its wik
 
 Incantations in languages you don't speak come with a small gray **reading row** spelling out the pronunciation — pinyin for Chinese lines, romaji for Japanese lines, or IPA — so you can pronounce and memorize them:
 
-- **Chant HUD**: the current chant line shows its reading underneath (on by default);
+- **Chant HUD**: the current chant line shows its reading above it (on by default);
 - **Spell tome & spellbook pages**: every chant line shows its reading — by default for lines that are not in your game language;
 - Both surfaces follow the same rules and are configured separately — see [Configuration](Configuration).
 

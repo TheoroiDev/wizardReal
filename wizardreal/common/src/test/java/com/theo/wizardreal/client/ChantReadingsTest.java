@@ -167,11 +167,13 @@ class ChantReadingsTest {
     }
 
     @Test
-    void lineLayoutWithReadingRowPushesOnlyBelowCurrent() {
-        // current line itself and everything above keep their offsets
+    void lineLayoutWithReadingRowPushesCurrentAndBelow() {
+        // ruby-above (user ruling 2026-09-22): the current line shifts down
+        // so the reading fits in the gap above it — everything above keeps
+        // its offset
         assertEquals(100 + 0 * 11, ChantHud.lineY(100, 0, 1, true));
-        assertEquals(100 + 1 * 11, ChantHud.lineY(100, 1, 1, true));
-        // lines below the annotated current line shift by RUBY_SHIFT
+        assertEquals(100 + 1 * 11 + ChantHud.RUBY_SHIFT, ChantHud.lineY(100, 1, 1, true));
+        // lines below the annotated current line shift by RUBY_SHIFT as well
         assertEquals(100 + 2 * 11 + ChantHud.RUBY_SHIFT, ChantHud.lineY(100, 2, 1, true));
         assertEquals(100 + 3 * 11 + ChantHud.RUBY_SHIFT, ChantHud.lineY(100, 3, 1, true));
     }

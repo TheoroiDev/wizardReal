@@ -2,7 +2,7 @@
 
 # Configuration
 
-**Chant readings** put a small pronunciation row — pinyin, romaji or IPA — under chant lines you don't speak, in the chant HUD and on spell tome / spellbook pages. Gameplay overview: [Getting Started](Getting-Started).
+**Chant readings** put a small pronunciation row — pinyin, romaji or IPA — above chant lines you don't speak, in the chant HUD and on spell tome / spellbook pages. Gameplay overview: [Getting Started](Getting-Started).
 
 ## Be a Real Wizard — `config/wizardreal/wizardreal.toml`
 
@@ -10,7 +10,7 @@ The `[chantReadings]` section:
 
 | Key | Default | Meaning |
 |---|---|---|
-| `hud` | `true` | Show the reading row under the current chant line in the chant HUD |
+| `hud` | `true` | Show the reading row above the current chant line in the chant HUD |
 | `languagePolicy` | `"auto"` | Which lines get a reading: `auto` = only lines **not** in your game language (a Chinese line is annotated on an English client, not on a Chinese one); `off` = nowhere; `selected` = only the language buckets in `languages`; `all` = every line that has a reading |
 | `languages` | `""` | With `selected`: comma-separated language buckets, e.g. `"ja,zh"` |
 | `pinyinStyle` | `"marks"` | Pinyin tone display: `marks` (zhēn) or `numbers` (zhen1) |

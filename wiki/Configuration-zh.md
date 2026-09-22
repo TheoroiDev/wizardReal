@@ -2,7 +2,7 @@
 
 # 配置
 
-**咒文注音**会在你不会念的咒文行下方附一行小字读音（拼音 / 罗马音 / IPA）——吟唱 HUD 与法术典籍/图鉴书页均如此。玩法概述见[快速开始](Getting-Started-zh)。
+**咒文注音**会在你不会念的咒文行上方附一行小字读音（拼音 / 罗马音 / IPA）——吟唱 HUD 与法术典籍/图鉴书页均如此。玩法概述见[快速开始](Getting-Started-zh)。
 
 ## Be a Real Wizard — `config/wizardreal/wizardreal.toml`
 
@@ -10,7 +10,7 @@
 
 | 键 | 默认值 | 含义 |
 |---|---|---|
-| `hud` | `true` | 吟唱 HUD 当前咒文行下方显示注音行 |
+| `hud` | `true` | 吟唱 HUD 当前咒文行上方显示注音行 |
 | `languagePolicy` | `"auto"` | 哪些行注音：`auto` = 只注**非当前游戏语言**的行（英文客户端下的中文行会注音，中文客户端下不会）；`off` = 不注；`selected` = 只注 `languages` 列出的语言桶；`all` = 所有带注音的行都注 |
 | `languages` | `""` | `selected` 时生效：逗号分隔的语言桶，如 `"ja,zh"` |
 | `pinyinStyle` | `"marks"` | 拼音声调样式：`marks`（符号调 zhēn）或 `numbers`（数字调 zhen1） |

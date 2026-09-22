@@ -18,12 +18,13 @@ import net.minecraft.network.chat.Component;
  * chant ends. Anchor is a constant for now (crosshair-right); it's structured
  * to become a configurable anchor later, like the VoiceCast HUD.
  *
- * <p>Annotation layer (R-B, D4 default on): the CURRENT line gets a small
- * gray reading row underneath (payload-derived readings via
- * {@link ChantReadings}, {@code [chantReadings]} config). Lines below the
- * current one shift down by {@link #RUBY_SHIFT} only while a reading is
- * shown; with the switch off or no mapping the layout is byte-identical to
- * the pre-annotation HUD (see {@link #lineY}).
+ * <p>Annotation layer (R-B, D4 default on; ruby-above per user ruling
+ * 2026-09-22): the CURRENT line gets a small gray reading row above it
+ * (payload-derived readings via {@link ChantReadings}, {@code [chantReadings]}
+ * config). The current line and everything below it shift down by
+ * {@link #RUBY_SHIFT} only while a reading is shown; with the switch off, no
+ * mapping, or an error retry hint occupying the space above the line, the
+ * layout is byte-identical to the pre-annotation HUD (see {@link #lineY}).
  */
 public final class ChantHud {
     private ChantHud() {}
@@ -32,11 +33,11 @@ public final class ChantHud {
     private static final int X_OFFSET = 16;
     private static final int LINE_H = 11;
     private static final int FADE_MS = 2500;
-    /** Extra stride under the current line while its reading row is shown. */
+    /** Extra stride for the current line while its reading row is shown. */
     static final int RUBY_SHIFT = 6;
     /** Reading row tone (gray, matches the dimmed upcoming-line family). */
     private static final int READING_COLOR = 0x999999;
-    /** Indent so the reading sits under the line TEXT, not the "► " prefix. */
+    /** Indent so the reading sits over the line TEXT, not the "► " prefix. */
     private static final String CURRENT_PREFIX = "► ";
 
     public static void render(GuiGraphics ctx, Minecraft mc, ChantState state) {
@@ -82,8 +83,12 @@ public final class ChantHud {
         ctx.drawString(tr, title, crossX, startY - LINE_H - 2, 0xFFFFFF);
 
         String reading = currentReading(mc, state, lines);
+        // The error-retry hint is drawn ABOVE the current line (y-9) — the
+        // same space the ruby row uses, so on a wrong line the hint wins and
+        // the layout falls back to the pre-annotation geometry entirely.
+        boolean ruby = reading != null && !state.error;
         for (int i = 0; i < total; i++) {
-            int y = lineY(startY, i, state.lineIndex, reading != null);
+            int y = lineY(startY, i, state.lineIndex, ruby);
             Component text = Component.translatable(lines.get(i));
             if (i < state.lineIndex) {
                 ctx.drawString(tr, Component.literal("✓ ").withStyle(ChatFormatting.GREEN)
@@ -98,7 +103,7 @@ public final class ChantHud {
                     ctx.drawString(tr, Component.translatable("wizardreal.chant.retry").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
                             crossX, y - 9, 0xFF5555);
                 }
-                if (reading != null) {
+                if (ruby) {
                     int anchorX = crossX + tr.width(CURRENT_PREFIX);
                     // half-scale row: glyph budget is twice the screen-space
                     // width right of the anchor (ChantRuby maxWidth*2 semantics)
@@ -113,11 +118,13 @@ public final class ChantHud {
     }
 
     /** Vertical position of one line. Unchanged from the pre-annotation HUD
-     *  except for the {@link #RUBY_SHIFT} push of the lines BELOW a current
-     *  line that shows its reading row (zero shift otherwise). */
-    static int lineY(int startY, int index, int currentIndex, boolean rubyBelowCurrent) {
+     *  except for the {@link #RUBY_SHIFT} push of the current line AND
+     *  everything below it while the current line shows its reading row
+     *  above itself (zero shift otherwise — the reading then fits in the
+     *  gap the push opens, clear of the previous line's text). */
+    static int lineY(int startY, int index, int currentIndex, boolean rubyAboveCurrent) {
         return startY + index * LINE_H
-                + (rubyBelowCurrent && index > currentIndex ? RUBY_SHIFT : 0);
+                + (rubyAboveCurrent && index >= currentIndex ? RUBY_SHIFT : 0);
     }
 
     /** The current line's annotation (D2-selected, may be {@code null}):
@@ -134,7 +141,7 @@ public final class ChantHud {
                 settings, resolved.readings());
     }
 
-    /** Half-size gray reading row under the given anchor line, clipped to
+    /** Half-size gray reading row above the given anchor line, clipped to
      *  {@code maxGlyphWidth} glyphs (the row is drawn at half scale, so its
      *  glyph budget is twice the screen-space width — ChantRuby's
      *  maxWidth*2 semantics). */
@@ -142,7 +149,7 @@ public final class ChantHud {
                                     int maxGlyphWidth) {
         String clipped = font.plainSubstrByWidth(reading, maxGlyphWidth);
         ctx.pose().pushPose();
-        ctx.pose().translate(x, y + LINE_H - 1, 0);
+        ctx.pose().translate(x, y - RUBY_SHIFT, 0);
         ctx.pose().scale(0.5f, 0.5f, 1f);
         ctx.drawString(font, clipped, 0, 0, READING_COLOR, false);
         ctx.pose().popPose();
