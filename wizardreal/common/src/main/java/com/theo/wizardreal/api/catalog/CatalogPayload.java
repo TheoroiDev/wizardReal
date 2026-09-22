@@ -10,13 +10,41 @@ import java.util.Map;
  * for the client-side {@code spell_catalog.json} export and the
  * zero-dependency wizardpedia push.
  *
- * <p>Catalog v3 (voice overhaul SS8 + chant-stage ladder, magic_eco 03):
- * trigger aliases and chant lines carry a <b>language annotation</b> (map key
- * = two-letter language code, {@code ""} = language-neutral bucket); effect
- * descriptions ride as lang keys in the neutral bucket; the chant-stage
- * ladder is pushed per spell so compendiums can render tier cycles.
+ * <p>Catalog v4 (chant annotation layer, plan
+ * docs/plans/chant_reading_annotation.md): chant lines are STRUCTURED —
+ * {@link CatalogLine} carries the display text plus its derived
+ * {@code readings} map (fixed keys {@code pinyin/romaji/ipa}, absent keys =
+ * not derivable, fail-closed). Trigger aliases keep their language
+ * annotation; the chant-stage ladder is pushed per spell.
  */
 public record CatalogPayload(List<CatalogOrigin> origins) {
+
+    /** Fixed readings key set (annotation layer). */
+    public static final String READING_PINYIN = "pinyin";
+    /** Fixed readings key set (annotation layer). */
+    public static final String READING_ROMAJI = "romaji";
+    /** Fixed readings key set (annotation layer). */
+    public static final String READING_IPA = "ipa";
+
+    /**
+     * One chant line: the display text ({@code ChantLine#displayText} — the
+     * legacy lang key or the line's first alias, the same value the
+     * recognizer scores against) plus its derived readings. {@code readings}
+     * is an insertion-ordered map over the fixed key set, possibly empty
+     * (en lines, unconvertible text — fail-closed); values are display
+     * strings derived server-side at catalog build time.
+     */
+    public record CatalogLine(String text, Map<String, String> readings) {
+
+        public CatalogLine {
+            readings = readings == null || readings.isEmpty() ? Map.of() : Map.copyOf(readings);
+        }
+
+        /** Line without readings (unannotated bucket / plain text). */
+        public static CatalogLine plain(String text) {
+            return new CatalogLine(text, Map.of());
+        }
+    }
 
     /** One origin ("wizardreal:wizardry") with its spells, insertion-ordered. */
     public record CatalogOrigin(String id, String nameKey, List<CatalogSpell> spells) {
@@ -34,7 +62,7 @@ public record CatalogPayload(List<CatalogOrigin> origins) {
                                float difficulty, float learning, boolean skipAllowed,
                                List<String> ipa,
                                Map<String, List<String>> triggerAliases,
-                               Map<String, List<List<String>>> chantVariants,
+                               Map<String, List<List<CatalogLine>>> chantVariants,
                                List<String> descKeys,
                                List<CatalogStage> stages) {
     }

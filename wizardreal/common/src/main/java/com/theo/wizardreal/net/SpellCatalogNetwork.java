@@ -18,10 +18,11 @@ import java.util.Map;
  * receiving player (keys or literal text). The client caches it (future
  * HUD/tooling use) and exports {@code <game-dir>/wizardreal/spell_catalog.json}.
  *
- * <p>Layout (formatVersion 3 — catalog v3: language annotation + mastery
- * scalars + effect descriptions + chant-stage ladder):
+ * <p>Layout (formatVersion 4 — catalog v4: chant lines structured as
+ * {@code CatalogLine(text, readings)} with the annotation layer's derived
+ * readings; values capped at 128 UTF-16 units):
  * <pre>
- * byte formatVersion = 3
+ * byte formatVersion = 4
  * varInt originCount { utf originId≤128, utf nameKey≤160,
  *     varInt spellCount { utf id≤128, utf nameKey≤160, bool learned, bool requiresLearning,
  *         bool ritual, varInt schoolCount{utf school≤32}, varInt manaCost,
@@ -29,7 +30,8 @@ import java.util.Map;
  *         varInt ipaCount{utf ipa≤96},
  *         varInt aliasLangCount { utf lang≤8, varInt n{utf alias≤96} },
  *         varInt chantLangCount { utf lang≤8,
- *             varInt variantCount { varInt lineCount{utf line≤160} } },
+ *             varInt variantCount { varInt lineCount {
+ *                 utf line≤160, varInt readingCount { utf key≤8, utf value≤128 } } } },
  *         varInt descCount { utf key≤160 },
  *         varInt stageCount { varInt afterLines, float mastery, varInt manaCost(-1=inherit),
  *             float cooldownSeconds(-1=inherit), varInt descCount { utf key≤160 } } } }
@@ -39,7 +41,12 @@ import java.util.Map;
  */
 public final class SpellCatalogNetwork {
     public static final ResourceLocation CHANNEL = WizardReal.id("spell_catalog");
-    public static final byte FORMAT_VERSION = 3;
+    public static final byte FORMAT_VERSION = 4;
+
+    /** Wire cap for one readings key/value (annotation layer). */
+    static final int MAX_READING_KEY = 8;
+    /** Wire cap for one readings value (128 UTF-16 units, WireText-style). */
+    static final int MAX_READING_VALUE = 128;
 
     private SpellCatalogNetwork() {}
 
@@ -81,9 +88,16 @@ public final class SpellCatalogNetwork {
                 });
                 writeLangMap(buf, spell.chantVariants(), (b, variants) -> {
                     b.writeVarInt(variants.size());
-                    for (List<String> lines : variants) {
+                    for (List<CatalogPayload.CatalogLine> lines : variants) {
                         b.writeVarInt(lines.size());
-                        for (String line : lines) b.writeUtf(line, 160);
+                        for (CatalogPayload.CatalogLine line : lines) {
+                            b.writeUtf(line.text(), 160);
+                            b.writeVarInt(line.readings().size());
+                            for (Map.Entry<String, String> r : line.readings().entrySet()) {
+                                b.writeUtf(truncate(r.getKey(), MAX_READING_KEY), MAX_READING_KEY);
+                                b.writeUtf(truncate(r.getValue(), MAX_READING_VALUE), MAX_READING_VALUE);
+                            }
+                        }
                     }
                 });
                 buf.writeVarInt(spell.descKeys().size());
@@ -108,6 +122,17 @@ public final class SpellCatalogNetwork {
             buf.writeUtf(e.getKey(), 8);
             writer.write(buf, e.getValue());
         }
+    }
+
+    /** Truncate to at most {@code maxLen} UTF-16 units, never splitting a
+     *  surrogate pair (WireText semantics — oversized readings shrink instead
+     *  of breaking the whole sync). */
+    private static String truncate(String value, int maxLen) {
+        if (value == null) return "";
+        if (value.length() <= maxLen) return value;
+        int end = Math.max(0, maxLen);
+        if (end > 0 && Character.isHighSurrogate(value.charAt(end - 1))) end--;
+        return value.substring(0, end);
     }
 
     private interface LangWriter<T> {
@@ -147,13 +172,22 @@ public final class SpellCatalogNetwork {
                     for (int k = 0; k < n; k++) out.add(b.readUtf(96));
                     return List.copyOf(out);
                 });
-                Map<String, List<List<String>>> chants = readLangMap(buf, b -> {
+                Map<String, List<List<CatalogPayload.CatalogLine>>> chants = readLangMap(buf, b -> {
                     int variantCount = b.readVarInt();
-                    List<List<String>> variants = new ArrayList<>(variantCount);
+                    List<List<CatalogPayload.CatalogLine>> variants = new ArrayList<>(variantCount);
                     for (int v = 0; v < variantCount; v++) {
                         int lineCount = b.readVarInt();
-                        List<String> lines = new ArrayList<>(lineCount);
-                        for (int l = 0; l < lineCount; l++) lines.add(b.readUtf(160));
+                        List<CatalogPayload.CatalogLine> lines = new ArrayList<>(lineCount);
+                        for (int l = 0; l < lineCount; l++) {
+                            String text = b.readUtf(160);
+                            int readingCount = b.readVarInt();
+                            Map<String, String> readings = new LinkedHashMap<>(readingCount);
+                            for (int r = 0; r < readingCount; r++) {
+                                String key = b.readUtf(MAX_READING_KEY);
+                                readings.put(key, b.readUtf(MAX_READING_VALUE));
+                            }
+                            lines.add(new CatalogPayload.CatalogLine(text, readings));
+                        }
                         variants.add(List.copyOf(lines));
                     }
                     return List.copyOf(variants);

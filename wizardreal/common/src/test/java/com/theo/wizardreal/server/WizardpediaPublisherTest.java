@@ -28,8 +28,12 @@ class WizardpediaPublisherTest {
                 List.of("fire"), 10, 2.0f, 1.5f, 42.5f, true,
                 List.of("ˈɪgnɪs"),
                 Map.of("", List.of("_legacy_"), "en", List.of("ignis"), "zh", List.of("火焰")),
-                Map.of("en", List.of(List.of("o flame", "lick my lance")),
-                        "", List.of(List.of("wizardreal.chant.l1"))),
+                Map.of("en", List.of(List.of(
+                                CatalogPayload.CatalogLine.plain("o flame"),
+                                CatalogPayload.CatalogLine.plain("lick my lance"))),
+                        "zh", List.of(List.of(new CatalogPayload.CatalogLine("黑袍蔽空",
+                                Map.of(CatalogPayload.READING_PINYIN, "hēi páo bì kōng")))),
+                        "", List.of(List.of(CatalogPayload.CatalogLine.plain("wizardreal.chant.l1")))),
                 List.of("wizardreal.effect.projectile"),
                 List.of(stage));
         return new CatalogPayload(List.of(
@@ -98,17 +102,27 @@ class WizardpediaPublisherTest {
         return out;
     }
 
-    private static Map<String, List<List<String>>> readVariantBuckets(FriendlyByteBuf buf) {
-        Map<String, List<List<String>>> out = new java.util.LinkedHashMap<>();
+    private static Map<String, List<List<Map<String, Object>>>> readVariantBuckets(FriendlyByteBuf buf) {
+        Map<String, List<List<Map<String, Object>>>> out = new java.util.LinkedHashMap<>();
         int langs = buf.readVarInt();
         for (int i = 0; i < langs; i++) {
             String lang = buf.readUtf(8);
             int variants = buf.readVarInt();
-            List<List<String>> list = new java.util.ArrayList<>(variants);
+            List<List<Map<String, Object>>> list = new java.util.ArrayList<>(variants);
             for (int v = 0; v < variants; v++) {
                 int n = buf.readVarInt();
-                List<String> lines = new java.util.ArrayList<>(n);
-                for (int k = 0; k < n; k++) lines.add(buf.readUtf(160));
+                List<Map<String, Object>> lines = new java.util.ArrayList<>(n);
+                for (int k = 0; k < n; k++) {
+                    Map<String, Object> line = new java.util.LinkedHashMap<>();
+                    line.put("text", buf.readUtf(160));
+                    int readingCount = buf.readVarInt();
+                    Map<String, String> readings = new java.util.LinkedHashMap<>();
+                    for (int r = 0; r < readingCount; r++) {
+                        readings.put(buf.readUtf(8), buf.readUtf(128));
+                    }
+                    line.put("readings", readings);
+                    lines.add(line);
+                }
                 list.add(lines);
             }
             out.put(lang, list);
@@ -117,11 +131,11 @@ class WizardpediaPublisherTest {
     }
 
     @Test
-    void encodesContractV3WithLanguageBuckets() {
+    void encodesContractV4WithLanguageBuckets() {
         FriendlyByteBuf buf = WizardpediaPublisher.encode(payload(), WizardRealConfig.PushMode.ALL);
         Object[] decoded = decode(buf);
 
-        assertEquals(3, decoded[0], "formatVersion must be 3");
+        assertEquals(4, decoded[0], "formatVersion must be 4");
         assertEquals((byte) 1, decoded[1], "type must be PROVIDER_PUSH");
 
         @SuppressWarnings("unchecked")
@@ -144,9 +158,16 @@ class WizardpediaPublisherTest {
         assertEquals(List.of("wizardreal.effect.projectile"), desc.get(""));
 
         @SuppressWarnings("unchecked")
-        Map<String, List<List<String>>> chants = (Map<String, List<List<String>>>) entry.get("chants");
-        assertEquals(List.of(List.of("o flame", "lick my lance")), chants.get("en"));
-        assertEquals(List.of(List.of("wizardreal.chant.l1")), chants.get(""));
+        Map<String, List<List<Map<String, Object>>>> chants =
+                (Map<String, List<List<Map<String, Object>>>>) entry.get("chants");
+        List<Map<String, Object>> enLines = chants.get("en").get(0);
+        assertEquals("o flame", enLines.get(0).get("text"));
+        assertEquals(Map.of(), enLines.get(0).get("readings"), "en lines carry no readings");
+        assertEquals("lick my lance", enLines.get(1).get("text"));
+        List<Map<String, Object>> zhLines = chants.get("zh").get(0);
+        assertEquals("黑袍蔽空", zhLines.get(0).get("text"));
+        assertEquals(Map.of("pinyin", "hēi páo bì kōng"), zhLines.get(0).get("readings"));
+        assertEquals("wizardreal.chant.l1", chants.get("").get(0).get(0).get("text"));
 
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> stages = (List<Map<String, Object>>) entry.get("stages");
@@ -163,7 +184,7 @@ class WizardpediaPublisherTest {
         FriendlyByteBuf buf = WizardpediaPublisher.encode(payload(), WizardRealConfig.PushMode.CASTABLE);
         Object[] decoded = decode(buf);
         // the only spell is learned -> still present
-        assertEquals(3, decoded[0]);
+        assertEquals(4, decoded[0]);
         assertEquals(1, ((List<?>) decoded[3]).size());
     }
 }

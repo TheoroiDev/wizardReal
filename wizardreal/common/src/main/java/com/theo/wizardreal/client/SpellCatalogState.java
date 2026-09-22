@@ -55,7 +55,7 @@ public final class SpellCatalogState {
             Path file = mc.gameDirectory.toPath().resolve("wizardreal").resolve("spell_catalog.json");
 
             Map<String, Object> root = new LinkedHashMap<>();
-            root.put("format", 3);
+            root.put("format", 4);
             root.put("player", mc.getUser().getName());
             root.put("language", mc.getLanguageManager().getSelected());
 
@@ -85,10 +85,12 @@ public final class SpellCatalogState {
     }
 
     /**
-     * Export schema v2: language-annotated trigger/chants + mastery scalars.
-     * Line {@code text} is the resolved display text (legacy lang keys go
-     * through I18n; language-keyed lines are literal text that passes through
-     * unchanged); {@code key} keeps the raw wire value for traceability.
+     * Export schema v3 (catalog v4): language-annotated trigger + structured
+     * chant lines. Line {@code text} is the resolved display text (legacy
+     * lang keys go through I18n; language-keyed lines are literal text that
+     * passes through unchanged); {@code key} keeps the raw wire value for
+     * traceability; {@code readings} is the server-derived annotation map
+     * (pinyin/romaji/ipa — present keys only, may be empty).
      */
     private static Map<String, Object> spellJson(CatalogPayload.CatalogSpell spell) {
         Map<String, Object> json = new LinkedHashMap<>();
@@ -112,15 +114,17 @@ public final class SpellCatalogState {
         json.put("effects", spell.descKeys());
 
         Map<String, Object> chants = new LinkedHashMap<>();
-        for (Map.Entry<String, List<List<String>>> e : spell.chantVariants().entrySet()) {
+        for (Map.Entry<String, List<List<CatalogPayload.CatalogLine>>> e
+                : spell.chantVariants().entrySet()) {
             List<Object> variants = new ArrayList<>();
-            for (List<String> lines : e.getValue()) {
+            for (List<CatalogPayload.CatalogLine> lines : e.getValue()) {
                 List<Object> lineJson = new ArrayList<>();
-                for (String key : lines) {
-                    Map<String, Object> line = new LinkedHashMap<>();
-                    line.put("key", key);
-                    line.put("text", I18n.get(key));
-                    lineJson.add(line);
+                for (CatalogPayload.CatalogLine line : lines) {
+                    Map<String, Object> lineEntry = new LinkedHashMap<>();
+                    lineEntry.put("key", line.text());
+                    lineEntry.put("text", I18n.get(line.text()));
+                    lineEntry.put("readings", line.readings());
+                    lineJson.add(lineEntry);
                 }
                 Map<String, Object> chant = new LinkedHashMap<>();
                 chant.put("lines", lineJson);

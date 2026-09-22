@@ -20,12 +20,20 @@ import java.util.Map;
  * spell corpus (e.g. 熔甲 rongjia -> ʐʊŋ tɕja, 屏障 pingzhang -> pʰɪŋ ʈʂɑŋ,
  * 奥术 aoshu -> aʊ ʂu). Tone is dropped (templates are stress/tone-free, like
  * every curated template in the corpus).
+ *
+ * <p>Since catalog v4 (chant annotation layer, plan
+ * docs/plans/chant_reading_annotation.md §10) the table also carries a tone
+ * digit column (1-5, 5 = neutral): {@link #toned} exposes the TONE3 form
+ * ("zhen1") for the display pinyin composer {@link PinyinTone}. The toneless
+ * column and the IPA chain are byte-identical to the pre-v4 table — the
+ * recognition path is untouched.
  */
 public final class PinyinIpa {
     private PinyinIpa() {}
 
     private static final String TABLE = "/assets/wizardreal/g2p_pinyin.tsv";
     private static volatile Map<String, String> hanziToPinyin;
+    private static volatile Map<String, String> hanziToTone3;
 
     /** Longest-first initials (zh/ch/sh must win over single letters). */
     private static final List<String> INITIALS = List.of(
@@ -140,27 +148,55 @@ public final class PinyinIpa {
     }
 
     private static Map<String, String> table() {
+        load();
+        return hanziToPinyin;
+    }
+
+    /** Public hanzi -> toneless pinyin query (annotation layer; same data the
+     *  IPA chain uses). {@code null} when the char is not in the table. */
+    public static String toneless(String hanzi) {
+        if (hanzi == null || hanzi.length() != 1) return null;
+        return table().get(hanzi);
+    }
+
+    /** Public hanzi -> TONE3 pinyin with tone digit ("zhen1", neutral = 5),
+     *  for {@link PinyinTone}. {@code null} when the char is not in the table
+     *  or the row predates the tone column. */
+    public static String toned(String hanzi) {
+        if (hanzi == null || hanzi.length() != 1) return null;
+        load();
+        return hanziToTone3.get(hanzi);
+    }
+
+    private static void load() {
         Map<String, String> t = hanziToPinyin;
-        if (t != null) return t;
+        if (t != null) return;
         synchronized (PinyinIpa.class) {
-            if (hanziToPinyin != null) return hanziToPinyin;
+            if (hanziToPinyin != null) return;
             Map<String, String> out = new HashMap<>();
+            Map<String, String> tonedOut = new HashMap<>();
             try (InputStream in = PinyinIpa.class.getResourceAsStream(TABLE)) {
                 if (in == null) throw new IllegalStateException("pinyin table missing: " + TABLE);
                 try (BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = r.readLine()) != null) {
                         if (line.isBlank() || line.startsWith("#")) continue;
-                        int tab = line.indexOf('\t');
-                        if (tab <= 0) continue;
-                        out.putIfAbsent(line.substring(0, tab), line.substring(tab + 1));
+                        String[] cols = line.split("\t");
+                        if (cols.length < 2 || cols[0].isEmpty()) continue;
+                        out.putIfAbsent(cols[0], cols[1]);
+                        if (cols.length >= 3) {
+                            // TONE3 form: base + digit (tone 5 = neutral, kept explicit)
+                            String digit = cols[2].isEmpty() ? "5" : cols[2];
+                            if (digit.charAt(0) < '1' || digit.charAt(0) > '5') digit = "5";
+                            tonedOut.putIfAbsent(cols[0], cols[1] + digit);
+                        }
                     }
                 }
             } catch (Exception e) {
                 throw new IllegalStateException("failed to load " + TABLE, e);
             }
             hanziToPinyin = Map.copyOf(out);
-            return hanziToPinyin;
+            hanziToTone3 = Map.copyOf(tonedOut);
         }
     }
 }

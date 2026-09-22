@@ -29,7 +29,8 @@ import net.minecraft.server.level.ServerPlayer;
  *       {@code locked} = !learned, tags = schools (right-rail filter),
  *       aliases = trigger words per language bucket + IPA (neutral),
  *       desc = base effect-summary lang keys, chants = per-language nested
- *       variants, stages = the chant-stage ladder.</li>
+ *       variants of structured lines (text + derived readings, annotation
+ *       layer), stages = the chant-stage ladder.</li>
  * </ul>
  *
  * <p>Channel id + formatVersion are hardcoded here BY DESIGN — that is the
@@ -45,8 +46,12 @@ import net.minecraft.server.level.ServerPlayer;
  */
 public final class WizardpediaPublisher {
 
-    /** wizardpedia:catalog wire contract (hardcoded per contract, v3). */
-    private static final int FORMAT_VERSION = 3;
+    /** wizardpedia:catalog wire contract (hardcoded per contract, v4). */
+    private static final int FORMAT_VERSION = 4;
+    /** Wire cap for one chant-line readings key/value (annotation layer). */
+    private static final int MAX_READING_KEY = 8;
+    /** Wire cap for one chant-line readings value (128 UTF-16 units). */
+    private static final int MAX_READING_VALUE = 128;
     private static final byte TYPE_PROVIDER_PUSH = 1;
     private static final ResourceLocation CHANNEL = new ResourceLocation("wizardpedia", "catalog");
 
@@ -72,7 +77,7 @@ public final class WizardpediaPublisher {
         WizardReal.LOGGER.debug("wizardpedia catalog push sent to {}", player.getName().getString());
     }
 
-    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v3. */
+    /** Encode a PROVIDER_PUSH packet per the wizardpedia wire contract v4. */
     static FriendlyByteBuf encode(CatalogPayload payload, WizardRealConfig.PushMode pushMode) {
         List<CatalogPayload.CatalogOrigin> origins = filterOrigins(payload, pushMode);
 
@@ -142,17 +147,37 @@ public final class WizardpediaPublisher {
         }
     }
 
-    /** varInt language count, then per language: utf lang + nested variant lists. */
-    private static void writeVariantBuckets(FriendlyByteBuf buf, Map<String, List<List<String>>> variants) {
+    /** varInt language count, then per language: utf lang + nested variant
+     *  lists of structured lines (text + readings map, annotation layer). */
+    private static void writeVariantBuckets(FriendlyByteBuf buf,
+                                            Map<String, List<List<CatalogPayload.CatalogLine>>> variants) {
         buf.writeVarInt(variants.size());
-        for (Map.Entry<String, List<List<String>>> e : variants.entrySet()) {
+        for (Map.Entry<String, List<List<CatalogPayload.CatalogLine>>> e : variants.entrySet()) {
             buf.writeUtf(e.getKey(), 8);
             buf.writeVarInt(e.getValue().size());
-            for (List<String> lines : e.getValue()) {
+            for (List<CatalogPayload.CatalogLine> lines : e.getValue()) {
                 buf.writeVarInt(lines.size());
-                for (String line : lines) buf.writeUtf(line, 160);
+                for (CatalogPayload.CatalogLine line : lines) {
+                    buf.writeUtf(line.text(), 160);
+                    buf.writeVarInt(line.readings().size());
+                    for (Map.Entry<String, String> r : line.readings().entrySet()) {
+                        buf.writeUtf(truncate(r.getKey(), MAX_READING_KEY), MAX_READING_KEY);
+                        buf.writeUtf(truncate(r.getValue(), MAX_READING_VALUE), MAX_READING_VALUE);
+                    }
+                }
             }
         }
+    }
+
+    /** Truncate to at most {@code maxLen} UTF-16 units, never splitting a
+     *  surrogate pair (WireText semantics — oversized readings shrink instead
+     *  of breaking the whole push). */
+    private static String truncate(String value, int maxLen) {
+        if (value == null) return "";
+        if (value.length() <= maxLen) return value;
+        int end = Math.max(0, maxLen);
+        if (end > 0 && Character.isHighSurrogate(value.charAt(end - 1))) end--;
+        return value.substring(0, end);
     }
 
     /** castable mode keeps only spells the player can actually cast. */

@@ -6,6 +6,7 @@
 
 ### Features
 
+- 咒文注音层（咏唱读法标注）：服务端在目录构建期对每条咏唱行一次性派生 `readings` 注音映射——zh 行得有调本调拼音（教科书标调规则，调号取自内嵌数据表；v1 不做变调），ja 行得平文式罗马字（新增纯 JVM KanaRomaji 表：促音叠辅音、语尾 っ 以撇号表示、长音合流为 macron、按 mora 分隔输出、外来音节 ティ/ファ/ウィ 与 ん=n）。注音以固定键集（`pinyin`/`romaji`/`ipa`）随目录下发；派生严格 fail-closed（任一不可转字母即缺该键——不造假读法），标点/空白按分隔符丢弃（手订模板本就不含停顿 token，丢标点才与手订同源）；行手订 IPA 永远优先于 G2P 派生。lab 新增 lint（`check_readings.py`）交叉核对派生与手订 IPA，兼任 Stage-A 吸收清单（首跑全量：689 条手订行中 687 条完全收敛）
 - G2P 管线补全：为全部 75 个法术 JSON 此前为空的 ipa 字段生成 769 条草案（zh 咏唱行全覆盖；ja 受限于假名行待形态分析器），并新增可选 `[voice] g2pDrafts` 运行时填充（默认关——2026-09 回测显示在后验评分校准前无 CTC 收益），服主无需动数据包即可给自定义词生成模板
 - 游戏内 G2P（字素转音素）草案：为未知/自定义咒语词生成 IPA 模板——汉字转拼音（内置 MIT 许可数据表，2.67 万字）+ 声母/韵母 espeak 风格 IPA 组合、假名（促音/长音/拗音）与谚文分解；人工精选模板永远优先，草案保持严格（任一段不可转换即不出模板），且必须通过 ipa 回测质量闸门才会进入识别器
 - 语音误触发治理：`[voice] languages` 配置把识别词表与匹配候选裁剪到启用语言桶（无桶的 legacy 发音始终保留）；CTC 权威拒识等级（`wizardreal.voice.rejectLevel`，默认 0 = 原行为）可在精度优先服务器上抑制就近吸附的兜底匹配层
@@ -22,6 +23,7 @@
 
 ### Modding/API
 
+- breaking: CatalogPayload v4——咏唱行结构化为 `CatalogLine(text, readings)` 记录（取代纯字符串）；`wizardreal:spell_catalog` S2C 通道升 formatVersion 4（每行 = 文本 ≤160 + readings 映射，键 ≤8 / 值 ≤128 UTF-16 单位，超限截断不拒绝）；`spell_catalog.json` 导出升 format 4，每条咏唱行携带 `key`/`text`/`readings`
 - 语音匹配器落定 lab 校准的 S6 工作点（wizardreal#29）：IPA 音素匹配器以数据驱动的加权编辑距离取代平权 Levenshtein——872 对混淆代价表以 jar 资产随包分发（`assets/wizardreal/phoneme_costs.tsv`；表内代价匹配时 `clamp(raw x 2.0, 0.1, 1)`，表外替换保持平权 1.0，插入/删除双向 0.6，原"目标音素免费跳过"取消——被吞音素现计 0.6）。lab 台架上方言口音召回显著提升（正样本 74.3% vs 60.7%，负误触 8/300）；代价资产缺失为硬错误，无平权回退
 - CTC margin 拒识随语义 v2 链沿用（VoiceCast 侧规则）：前两名模板后验差距小于 0.02 时该语句整组 CTC 分数清零——voicecast 裁定器读取 margin 前的差距，被压制的 top1 本可过 forward 阈值时判 `AMBIGUOUS`；per-spell 阈值以推送期 `ThresholdHint` 数据过界（v2，见下）
 - 文本别名匹配的精确同分平局改按最长别名优先（最具体匹配），再按最小 spell id——短别名被包含在其他法术更长别名内时不再靠候选顺序抢胜

@@ -5,6 +5,7 @@ import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.api.catalog.CatalogPayload;
+import com.theo.wizardreal.g2p.Readings;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,6 +26,8 @@ import net.minecraft.server.MinecraftServer;
  * bucket straight from the spell's {@code Pronunciation}; chant variants are
  * grouped under the language of their lines (language-keyed lines carry a
  * single-language bucket, legacy lines the neutral {@code ""} bucket).
+ * Catalog v4 (chant annotation layer): chant lines additionally carry
+ * build-time derived readings (pinyin/romaji/ipa, {@link Readings}).
  */
 public final class SpellCatalogBuilder {
 
@@ -120,9 +123,16 @@ public final class SpellCatalogBuilder {
         return Collections.unmodifiableMap(out);
     }
 
-    /** Chant variants grouped by their lines' language ({@code ""} = legacy). */
-    private static Map<String, List<List<String>>> chantVariants(List<Chant> chants) {
-        Map<String, List<List<String>>> out = new LinkedHashMap<>();
+    /** Chant variants grouped by their lines' language ({@code ""} = legacy).
+     *  Catalog v4: each line becomes a structured {@link CatalogPayload.CatalogLine}
+     *  whose readings are derived HERE, once, at build time — anchored to the
+     *  line's display text (= first alias, the value the recognizer scores)
+     *  with the line's hand-curated IPA winning over G2P drafts
+     *  ({@link Readings}, fail-closed). The chant's language bucket (first
+     *  line's pronunciation) drives the annotation set for every line of the
+     *  chant. Package-private for the v4 structure tests. */
+    static Map<String, List<List<CatalogPayload.CatalogLine>>> chantVariants(List<Chant> chants) {
+        Map<String, List<List<CatalogPayload.CatalogLine>>> out = new LinkedHashMap<>();
         for (Chant chant : chants) {
             String lang = LANG_NEUTRAL;
             List<ChantLine> lines = chant.lines();
@@ -130,11 +140,18 @@ public final class SpellCatalogBuilder {
                 var buckets = lines.get(0).pronunciation().languages();
                 if (!buckets.isEmpty()) lang = buckets.keySet().iterator().next();
             }
-            List<String> texts = lines.stream().map(ChantLine::displayText).toList();
+            List<CatalogPayload.CatalogLine> texts = new ArrayList<>(lines.size());
+            for (ChantLine line : lines) {
+                String text = line.displayText();
+                List<String> handIpa = line.pronunciation() == null
+                        ? List.of() : line.pronunciation().ipa();
+                texts.add(new CatalogPayload.CatalogLine(text,
+                        Readings.derive(text, lang, handIpa)));
+            }
             out.computeIfAbsent(lang, k -> new ArrayList<>()).add(texts);
         }
-        Map<String, List<List<String>>> copy = new LinkedHashMap<>();
-        for (Map.Entry<String, List<List<String>>> e : out.entrySet()) {
+        Map<String, List<List<CatalogPayload.CatalogLine>>> copy = new LinkedHashMap<>();
+        for (Map.Entry<String, List<List<CatalogPayload.CatalogLine>>> e : out.entrySet()) {
             copy.put(e.getKey(), List.copyOf(e.getValue()));
         }
         return Collections.unmodifiableMap(copy);
