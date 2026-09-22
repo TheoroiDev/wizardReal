@@ -1,6 +1,6 @@
 # wizardreal 真机测试 Checklist（语音施法 E2E）
 
-> **如何使用**：① 执行环境——JDK 21 跑 Gradle，`gradlew :wizardreal-<fabric|forge>:runClient / runServer`；run 目录自动分离、runClient 用户名固定 `dev`、模型按 `resources/models/manifest.txt` 硬链接预置（先确认 voicecast 0.4.0 已 `publishToMavenLocal` 且 `gradle.properties` 的 `voicecast_version` 同步）。② 判定记录回写本文件末"判定记录"表；日志与截图写 `wizardreal/test/logs/`。③ 双终端流程/服务端冒烟判定词/排障以 `docs/testing/README.md` 为准，本清单不重复。
+> **如何使用**：① 执行环境——JDK 21 跑 Gradle，`gradlew :wizardreal-<fabric|forge>:runClient / runServer`；run 目录自动分离、runClient 用户名固定 `dev`、模型按 `resources/models/manifest.txt` 硬链接预置（先确认 voicecast 0.5.0 已 `publishToMavenLocal` 且 `gradle.properties` 的 `voicecast_version` 同步）。② 判定记录回写本文件末"判定记录"表；日志与截图写 `wizardreal/test/logs/`。③ 双终端流程/服务端冒烟判定词/排障以 `docs/testing/README.md` 为准，本清单不重复。
 > 分级：P0 = 挡 TRL 8 闸门（builder plan 循环 2：真机 E2E 此前为零）；P1 = 发布前必过；P2 = 质量加固。**命题 P3：双终端 E2E 施法成功率 ≥80%（每法术 10 次，含首试）。**
 
 ## 0. 环境前置
@@ -41,7 +41,7 @@
 ### WR-P0-4 · g2p 真机拼读验证
 
 - 场景：游戏内 g2p 草案（汉/假名/谚文 → 音素）在 IPA 引擎下真机可拼可识。
-- 前置：客户端引擎切到 `wav2vec2-espeak-ipa`；选 3 组模板缺失的法术词（未登录汉字、含促音/拗音/长音的日语词、可分解谚文词）。
+- 前置：客户端引擎切到 `zipa-ipa`；选 3 组模板缺失的法术词（未登录汉字、含促音/拗音/长音的日语词、可分解谚文词）。
 - 步骤：① 每组词真人念 10 次 ② 对照同词的 ipa-backtest 实验室命中率 ③ 故意混入完全不可转换段。
 - 判定：真机命中率与实验室回测结论同量级（偏差 >20pp 记挂起待查）；不可转换段只降级不出坏模板（无崩溃、无错误施法）。
 - 证据：`wizardreal/test/logs/e2e-g2p-<日期>.log`（逐组命中表）。

@@ -1,7 +1,8 @@
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.voicecast.api.RecognitionDiagnostics;
 import com.theo.voicecast.api.RecognitionResult;
+import com.theo.voicecast.api.SessionVocabulary;
 import com.theo.voicecast.api.SpeechOptions;
-import com.theo.voicecast.engine.IpaPhonemeRecognizer;
+import com.theo.voicecast.engine.ZipaPhonemeRecognizer;
 import com.theo.voicecast.model.Json;
 
 import javax.sound.sampled.AudioInputStream;
@@ -17,25 +18,30 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Production-chain IPA bench for the wizardreal backtest tools (SS2 tool A/B
- * backend): runs the REAL {@link IpaPhonemeRecognizer} from the voicecast fat
+ * backend): runs the REAL {@link ZipaPhonemeRecognizer} from the voicecast
  * jar over candidate WAVs — no lab-side LocalIpa replica, so scores always
- * match what the server would compute.
+ * match what the server would compute. 0.5.0 contract v2 (C1b): vocabulary
+ * is pushed as a {@link SessionVocabulary} (IPA templates ride in the
+ * entry's {@code ipa} list) and the CTC posterior map is read back through
+ * {@link ZipaPhonemeRecognizer#lastDiagnostics()} — the post-margin
+ * {@code templateScores} map, the same quantity the pre-v2 result contract
+ * carried.
  *
  * <p>Input (JSON file, argv[0]):
  * <pre>
  * {
- *   "modelDir": "path/to/wav2vec2-espeak-ipa",
+ *   "modelDir": "path/to/zipa-ipa",
  *   "vocabulary": [ {"id": "spell:a", "aliases": [...], "ipa": [...] } ],
  *   "items": [ {"id": "cand-1", "ipa": "ˈkændɪdət", "wav": "cand-1.wav"} ]
  * }
  * </pre>
  * Each item is scored as a one-entry vocabulary so the recognizer's CTC
- * posterior ({@code templateScores}) directly grades the candidate template
- * against its own TTS rendering. Output: one JSON line per item
- * {@code {"id":..., "score":..., ...}} on stdout.
+ * posterior ({@code lastDiagnostics().templateScores()}) directly grades the
+ * candidate template against its own TTS rendering. Output: one JSON line
+ * per item {@code {"id":..., "score":..., ...}} on stdout.
  *
- * <p>Run: {@code java -cp voicecast-common-1.20.1.jar;tools/ipa IpaBench input.json}
- * (no MC classes touched; the fat jar alone suffices).
+ * <p>Run: {@code java -cp voicecast-common-1.20.1.jar;slf4j-api.jar;tools/benchmark IpaBench input.json}
+ * (no MC classes touched; the voicecast jar + slf4j alone suffice).
  */
 public final class IpaBench {
 
@@ -48,18 +54,16 @@ public final class IpaBench {
                 new String(java.nio.file.Files.readAllBytes(Path.of(args[0]))));
         Path modelDir = Path.of(Json.getString(input, "modelDir", ""));
 
-        List<Pronunciation> vocab = new ArrayList<>();
+        List<SessionVocabulary.Entry> initial = new ArrayList<>();
         for (Object o : Json.getList(input, "vocabulary")) {
             Map<String, Object> m = Json.asMap(o);
-            vocab.add(new Pronunciation(Json.getString(m, "id", "v"), Json.getStringList(m, "ipa"),
-                    Json.getStringList(m, "aliases")));
+            initial.add(new SessionVocabulary.Entry(Json.getString(m, "id", "v"),
+                    Json.getStringList(m, "ipa"), Json.getStringList(m, "aliases"), null, null));
         }
 
-        IpaPhonemeRecognizer recognizer = new IpaPhonemeRecognizer();
-        AtomicReference<RecognitionResult> latest = new AtomicReference<>();
-        recognizer.setResultSink(res -> latest.set(res));
-        recognizer.setVocabulary(vocab);
-        recognizer.start(new SpeechOptions(true, 0.65f, modelDir.toString(), true));
+        ZipaPhonemeRecognizer recognizer = new ZipaPhonemeRecognizer();
+        recognizer.setVocabulary(new SessionVocabulary(initial));
+        recognizer.start(new SpeechOptions(true, 0.65f, modelDir.toString(), true, null));
 
         for (Object o : Json.getList(input, "items")) {
             Map<String, Object> item = Json.asMap(o);
@@ -80,8 +84,9 @@ public final class IpaBench {
             }
 
             // One-entry vocabulary: the template's own CTC posterior is the grade.
-            recognizer.setVocabulary(List.of(new Pronunciation(id, List.of(ipa), List.of(ipa))));
-            latest.set(null);
+            recognizer.setVocabulary(new SessionVocabulary(List.of(
+                    new SessionVocabulary.Entry(id, List.of(ipa), List.of(ipa), null, null))));
+            AtomicReference<RecognitionResult> latest = new AtomicReference<>();
             CountDownLatch done = new CountDownLatch(1);
             recognizer.setResultSink(res -> {
                 latest.set(res);
@@ -91,7 +96,8 @@ public final class IpaBench {
             recognizer.finishUtterance();
             boolean finished = done.await(30, TimeUnit.SECONDS);
             RecognitionResult res = latest.get();
-            Map<String, Float> scores = res == null ? null : res.templateScores();
+            RecognitionDiagnostics diag = recognizer.lastDiagnostics();
+            Map<String, Float> scores = diag == null ? null : diag.templateScores();
             Float score = scores == null ? null : scores.get(id);
             out.put("score", score == null ? 0.0 : score.doubleValue());
             if (!finished) out.put("error", "decode timeout");

@@ -23,7 +23,7 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 ### Modding/API
 
 - Voice matchers ship the lab-calibrated S6 working point (wizardreal#29): the IPA phoneme matcher replaces the flat Levenshtein with a data-driven weighted edit distance — an 872-pair confusion cost table ships as a jar asset (`assets/wizardreal/phoneme_costs.tsv`; in-table costs are `clamp(raw x 2.0, 0.1, 1)` at match time, out-of-table substitutions stay a flat 1.0, insertions/deletions cost 0.6 in both directions, and the former free target-phoneme skip is gone — a swallowed phoneme now costs 0.6). Accented-speech recall improves markedly on the lab bench (positives 74.3% vs 60.7%, negative false-fires 8/300); a missing cost asset is a hard error — there is no equal-weight fallback
-- CTC templateScores now reject ambiguous wins: when the top-two posterior candidates finish within 0.02 of each other, the recognizer (VoiceCast-side margin rule) zeroes the whole score set for that utterance, so borderline utterances fall through instead of firing a possibly-wrong spell; `FORWARD_MATCH_THRESHOLD` (0.10) and per-spell threshold overrides still apply unchanged on top
+- CTC margin rejection carries over into the semantic v2 chain (VoiceCast-side rule): when the top-two template posteriors finish within 0.02 of each other, the whole CTC score set is zeroed for that utterance — the voicecast adjudicator sees the pre-margin gap and rules `AMBIGUOUS` when the suppressed top1 would have passed its forward threshold; per-spell thresholds travel as push-time `ThresholdHint` data (v2, below)
 - Text alias matching breaks exact score ties by LONGEST alias first (most specific match), then by smallest spell id — a short alias contained inside another spell's longer alias no longer steals the win by candidate order
 - New `PerModeThresholdProvider` mechanism interface (match package) exposing the three matcher-tier thresholds per mode, with a `fullVocabulary()` default that returns the shipped constants; per-mode recalibration wiring lands with the four-mode casting-time router (#30)
 - Four-mode casting-time vocabulary routing (issue #30, D-15 user-adjudicated) with the VoiceCast dependency at 0.5.0:
@@ -74,6 +74,7 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 - CI builds the voicecast dependency into mavenLocal as a bridge until a remote maven exists (voicecast#13)
 - Dev-only testing mods moved out of gradle: release jars are pre-downloaded under workspace `resources/devmods/<loader>/` and wired from `manifest.txt` (fabric: hardlinked into the run mods folder; forge: file dependency so Loom remaps the SRG jar; Forge port of Carpet stays blocked, voicecast#38); voice-model fact source moved to `resources/models/`
+- The backtest tools (`tools/benchmark`: `IpaBench`/`EngineBench`/`LiveBench` + `ipafill.py`/`engbench.py`) are ported to the 0.5.0 contract — the ipa arm drives `ZipaPhonemeRecognizer` through `SessionVocabulary` and reads `RecognitionDiagnostics.templateScores()`, the text arm is the Qwen3-ASR offline engine, compiled against the published voicecast jar; the removed streaming/SenseVoice engine branches are gone
 
 ## 0.3.2 — 2026-09-02
 

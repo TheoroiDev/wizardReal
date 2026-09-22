@@ -2,7 +2,7 @@
 """engbench - full-preset-engine backtest for the wizardreal benchmark harness.
 
 Drives every engine declared in the voicecast models.json v2 catalog
-(type in stream|offline|ipa; `denoiser` models are auxiliary and skipped)
+(type in offline|ipa — the offline family is the Qwen3-ASR engine; `denoiser` models are auxiliary and skipped)
 over spell-trigger aliases rendered by pluggable TTS backends, optionally
 degraded by synthetic noise, and produces a per-engine per-language report.
 
@@ -257,7 +257,7 @@ def load_catalog(catalog: Path, models_root: Path,
     for name, entry in cat.get("models", {}).items():
         props = entry.get("properties", {})
         etype = props.get("type", "")
-        if etype not in ("stream", "offline", "ipa"):
+        if etype not in ("offline", "ipa"):
             continue
         if engine_filter and name not in engine_filter:
             continue

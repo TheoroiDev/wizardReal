@@ -3,7 +3,7 @@
 Backtest harness for voicecast speech engines (voice_overhaul SS2 tools;
 re-exported here so reports always reflect the production recognition chain
 from the voicecast fat jar — no lab-side replicas). Not shipped in the mod
-jar. Same locality policy as the workspace-root `ipa/` lab: sources and
+jar. Same locality policy as the workspace-root `lab/` (formerly `ipa/`): sources and
 fixtures are tracked; `corpus/`, `out/`, `libs/`, `build/` stay local
 (anchored in the repo `.gitignore`).
 
@@ -11,7 +11,7 @@ fixtures are tracked; `corpus/`, `out/`, `libs/`, `build/` stay local
 
 | Tool | Purpose |
 |---|---|
-| `ipafill.py` + `IpaBench.java` | SS2 tool A — auto-draft IPA templates for aliases missing `trigger.ipa` (espeak G2P -> edge-tts -> IpaPhonemeRecognizer score). See its `--help`. |
+| `ipafill.py` + `IpaBench.java` | SS2 tool A — auto-draft IPA templates for aliases missing `trigger.ipa` (espeak G2P -> edge-tts -> ZipaPhonemeRecognizer score). See its `--help`. |
 | `engbench.py` + `EngineBench.java` | Full-preset-engine backtest: every non-denoiser engine in the models.json v2 catalog x languages x TTS backends x noise conditions, with a per-engine per-language report. |
 | `testdata/spells/` | Tracked deterministic fixtures (e.g. `bench_sample.json`). |
 
@@ -28,7 +28,8 @@ python engbench.py --spells-dir <.../data/wizardreal/voicecast/spells> \
 ```
 
 - **Engines** come from the v2 catalog (`models.<name>.properties.type` in
-  `stream|offline|ipa`; `denoiser` is auxiliary and never benched). A model
+  `offline|ipa` — the offline family is the Qwen3-ASR engine; `denoiser` is
+  auxiliary and never benched). A model
   whose directory is missing under `--models-root` is skipped with a warning.
 - **TTS backends**: `edge` (edge-tts, cloud), `sapi` (Windows System.Speech,
   zero install), `piper` (local neural; needs the `piper` executable, voice
@@ -62,7 +63,7 @@ Typical session:
 ```
 # smoke: one engine, cloud TTS, no noise
 python engbench.py --spells-dir <spells> --limit 3 \
-    --engines wav2vec2-espeak-ipa --backends edge --conditions clean
+    --engines zipa-ipa --backends edge --conditions clean
 
 # full matrix, all engines, both local + cloud TTS
 python engbench.py --spells-dir <spells>

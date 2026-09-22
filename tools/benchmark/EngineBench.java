@@ -1,10 +1,10 @@
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.voicecast.api.RecognitionDiagnostics;
 import com.theo.voicecast.api.RecognitionResult;
+import com.theo.voicecast.api.SessionVocabulary;
 import com.theo.voicecast.api.SpeechOptions;
 import com.theo.voicecast.api.engine.EngineSpec;
-import com.theo.voicecast.engine.IpaPhonemeRecognizer;
-import com.theo.voicecast.engine.SherpaSenseVoiceRecognizer;
-import com.theo.voicecast.engine.SherpaStreamingRecognizer;
+import com.theo.voicecast.engine.SherpaQwen3Recognizer;
+import com.theo.voicecast.engine.ZipaPhonemeRecognizer;
 import com.theo.voicecast.model.Json;
 
 import javax.sound.sampled.AudioInputStream;
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * <pre>
  * {
  *   "ipaThreshold": 0.85,
- *   "engines": [ {"id": "...", "type": "stream|offline|ipa", "modelDir": "...",
+ *   "engines": [ {"id": "...", "type": "offline|ipa", "modelDir": "...",
  *                 "languages": ["zh","en"], "options": {"num_threads": "2", ...}} ],
  *   "items":   [ {"id": "...", "spell": "...", "lang": "en", "alias": "ignis",
  *                 "ipa": "i g n i s", "wav": "...", "condition": "clean"} ]
@@ -39,9 +39,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * </pre>
  * Per engine, only items whose {@code lang} is in the engine's languages run
  * (type=ipa takes every item). Text engines load ALL of their items' aliases
- * as one vocabulary — mirroring production, where a session's recognizer is
- * fed every spell alias of the chosen engine. The IPA engine grades each item
- * as a one-entry vocabulary (its own CTC posterior), like IpaBench.
+ * as one {@link SessionVocabulary} — mirroring production, where a session's
+ * recognizer is fed every spell alias of the chosen engine. The IPA engine
+ * grades each item as a one-entry vocabulary (its own CTC posterior), like
+ * IpaBench.
  *
  * <p>Verdict for text engines mirrors wizardreal's production
  * {@code com.theo.wizardreal.match.SpellMatcher} (normalize + whole-word
@@ -139,7 +140,6 @@ public final class EngineBench {
                     + " items=" + mine.size());
             switch (type) {
                 case "ipa" -> benchIpa(spec, mine, ipaThreshold);
-                case "stream" -> benchStream(spec, mine);
                 case "offline" -> benchOffline(spec, mine);
                 default -> System.err.println("[EngineBench] unknown type '" + type + "' for " + id);
             }
@@ -151,8 +151,8 @@ public final class EngineBench {
 
     private static void benchIpa(EngineSpec spec, List<Map<String, Object>> items,
                                  double threshold) throws Exception {
-        IpaPhonemeRecognizer recognizer = new IpaPhonemeRecognizer();
-        recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true));
+        ZipaPhonemeRecognizer recognizer = new ZipaPhonemeRecognizer();
+        recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true, null));
         for (Map<String, Object> it : items) {
             String id = Json.getString(it, "id", "item");
             String ipa = Json.getString(it, "ipa", "");
@@ -165,7 +165,8 @@ public final class EngineBench {
                 continue;
             }
             // One-entry vocabulary: the template's own CTC posterior is the grade.
-            recognizer.setVocabulary(List.of(new Pronunciation(id, List.of(ipa), List.of(ipa))));
+            recognizer.setVocabulary(new SessionVocabulary(List.of(
+                    new SessionVocabulary.Entry(id, List.of(ipa), List.of(ipa), null, null))));
             AtomicReference<RecognitionResult> latest = new AtomicReference<>();
             CountDownLatch done = new CountDownLatch(1);
             recognizer.setResultSink(res -> {
@@ -177,10 +178,6 @@ public final class EngineBench {
                 SHARED_NS.process(pcm, 0, pcm.length);
             }
             recognizer.acceptPcm(pcm, 0, pcm.length);
-            // trailing silence mirrors a real PTT release (the mic keeps
-            // running briefly); without it the streaming transducer drops
-            // the trailing frames of the final token
-            recognizer.acceptPcm(new short[9600], 0, 9600); // 600 ms right-context for the trailing token
             recognizer.finishUtterance();
             if (SHARED_NS != null) {
                 SHARED_NS.reset();
@@ -188,7 +185,8 @@ public final class EngineBench {
             boolean finished = done.await(30, TimeUnit.SECONDS);
             long latency = (System.nanoTime() - t0) / 1_000_000L;
             RecognitionResult res = latest.get();
-            Map<String, Float> scores = res == null ? null : res.templateScores();
+            RecognitionDiagnostics diag = recognizer.lastDiagnostics();
+            Map<String, Float> scores = diag == null ? null : diag.templateScores();
             Float score = scores == null ? null : scores.get(id);
             double s = score == null ? 0.0 : score.doubleValue();
             out.put("score", s);
@@ -200,39 +198,13 @@ public final class EngineBench {
         recognizer.stop();
     }
 
-    private static void benchStream(EngineSpec spec, List<Map<String, Object>> items) throws Exception {
-        SherpaStreamingRecognizer recognizer = new SherpaStreamingRecognizer(spec);
-        recognizer.setResultSink(res -> { }); // finals arrive synchronously; set per item below
-        recognizer.setVocabulary(productionVocabulary(items)); // hotwords, like a live session
-        recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true));
-        runTextItems(recognizer, spec, items);
-        recognizer.stop();
-    }
-
     private static void benchOffline(EngineSpec spec, List<Map<String, Object>> items) throws Exception {
-        // Hybrid language strategy (measured 20260906): auto mode is best for
-        // en/zh, but ja collapses (auto cross-lingual errors). ja items run a
-        // separate language=ja-pinned recognizer; everything else stays auto.
-        List<Map<String, Object>> auto = new ArrayList<>();
-        List<Map<String, Object>> ja = new ArrayList<>();
-        for (Map<String, Object> it : items) {
-            if ("ja".equals(Json.getString(it, "lang", ""))) ja.add(it);
-            else auto.add(it);
-        }
-        if (!auto.isEmpty()) runOfflineLang(spec, auto);
-        if (!ja.isEmpty()) {
-            Map<String, String> options = new LinkedHashMap<>(spec.options());
-            options.put("language", "ja");
-            EngineSpec pinned = new EngineSpec(spec.type(), spec.engineId(),
-                    spec.modelDir(), spec.languages(), options);
-            runOfflineLang(pinned, ja);
-        }
-    }
-
-    private static void runOfflineLang(EngineSpec spec, List<Map<String, Object>> items) throws Exception {
-        SherpaSenseVoiceRecognizer recognizer = new SherpaSenseVoiceRecognizer(spec);
-        recognizer.setVocabulary(List.of()); // no-op by contract (open vocabulary)
-        recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true));
+        // Qwen3-ASR is a single 9-language auto model (no language pin option;
+        // ja/zh/en ride the same arm — the SenseVoice ja-pinned split is gone
+        // with the 0.5.0 engine swap).
+        SherpaQwen3Recognizer recognizer = new SherpaQwen3Recognizer(spec);
+        recognizer.setVocabulary(productionVocabulary(items)); // hotwords, like a live session
+        recognizer.start(new SpeechOptions(true, 0.65f, spec.modelDir().toString(), true, null));
         runTextItems(recognizer, spec, items);
         recognizer.stop();
     }
@@ -253,7 +225,7 @@ public final class EngineBench {
             AtomicReference<RecognitionResult> fin = new AtomicReference<>();
             CountDownLatch done = new CountDownLatch(1);
             recognizer.setResultSink(res -> {
-                if (res != null && !res.partial()) {
+                if (res != null && res.decision() != null) {
                     fin.set(res);
                     done.countDown();
                 }
@@ -271,7 +243,7 @@ public final class EngineBench {
             }
             long latency = (System.nanoTime() - t0) / 1_000_000L;
             RecognitionResult res = fin.get();
-            String text = res == null ? "" : res.text();
+            String text = res == null ? "" : res.utteranceText();
             float match = Mirror.scoreAlias(alias, text);
             out.put("text", text);
             out.put("matchScore", (double) match);
@@ -284,13 +256,10 @@ public final class EngineBench {
         }
     }
 
-    /** Production session shape: one Pronunciation per spell, aliases = every
-     * distinct alias seen for this engine's items. */
-    private static List<Pronunciation> productionVocabulary(List<Map<String, Object>> items) {
-        // Language-bucketed like production (wizardreal builds per-language
-        // Pronunciations; the session router only feeds the engine its own
-        // buckets). The flat constructor would dump every language's aliases
-        // into every engine's grammar and bias bilingual models toward CJK.
+    /** Production session shape: one vocabulary entry per spell, aliases in
+     *  per-language buckets (the session router only feeds the engine its own
+     *  buckets — a flat list would bias bilingual models toward CJK). */
+    private static SessionVocabulary productionVocabulary(List<Map<String, Object>> items) {
         Map<String, Map<String, Set<String>>> bySpellLang = new LinkedHashMap<>();
         for (Map<String, Object> it : items) {
             String spell = Json.getString(it, "spell", "spell");
@@ -301,13 +270,13 @@ public final class EngineBench {
                         .computeIfAbsent(lang, k -> new LinkedHashSet<>()).add(alias);
             }
         }
-        List<Pronunciation> vocab = new ArrayList<>();
+        List<SessionVocabulary.Entry> vocab = new ArrayList<>();
         for (Map.Entry<String, Map<String, Set<String>>> en : bySpellLang.entrySet()) {
             Map<String, List<String>> buckets = new LinkedHashMap<>();
             en.getValue().forEach((lang, aliases) -> buckets.put(lang, List.copyOf(aliases)));
-            vocab.add(new Pronunciation(en.getKey(), List.of(), List.of(), buckets));
+            vocab.add(new SessionVocabulary.Entry(en.getKey(), List.of(), List.of(), buckets, null));
         }
-        return vocab;
+        return new SessionVocabulary(vocab);
     }
 
     private static Map<String, Object> base(EngineSpec spec, Map<String, Object> it) {
@@ -377,11 +346,16 @@ public final class EngineBench {
         static String latinize(String s) {
             if (s == null || s.isEmpty()) return "";
             try {
-                com.ibm.icu.text.Transliterator t =
-                        com.ibm.icu.text.Transliterator.getInstance("Any-Latin; Latin-ASCII");
-                return t.transform(s).toLowerCase(Locale.ROOT);
+                // ICU is not bundled in the standalone voicecast jar (MC ships
+                // it); resolve reflectively so the bench compiles from the jar
+                // alone and upgrades when icu is on the classpath.
+                Class<?> tz = Class.forName("com.ibm.icu.text.Transliterator");
+                Object t = tz.getMethod("getInstance", String.class)
+                        .invoke(null, "Any-Latin; Latin-ASCII");
+                return ((String) tz.getMethod("transform", String.class).invoke(t, s))
+                        .toLowerCase(Locale.ROOT);
             } catch (Throwable e) {
-                return s.toLowerCase(Locale.ROOT);
+                return s.toLowerCase(Locale.ROOT); // production Phonetics fallback path
             }
         }
 

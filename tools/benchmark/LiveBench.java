@@ -1,11 +1,11 @@
-import com.theo.voicecast.api.Pronunciation;
+import com.theo.voicecast.api.RecognitionDiagnostics;
 import com.theo.voicecast.api.RecognitionResult;
+import com.theo.voicecast.api.SessionVocabulary;
 import com.theo.voicecast.api.SpeechOptions;
 import com.theo.voicecast.api.engine.EngineSpec;
 import com.theo.voicecast.audio.NoiseSuppression;
-import com.theo.voicecast.engine.IpaPhonemeRecognizer;
-import com.theo.voicecast.engine.SherpaSenseVoiceRecognizer;
-import com.theo.voicecast.engine.SherpaStreamingRecognizer;
+import com.theo.voicecast.engine.SherpaQwen3Recognizer;
+import com.theo.voicecast.engine.ZipaPhonemeRecognizer;
 import com.theo.voicecast.model.Json;
 import com.theo.voicecast.model.ModelConfig;
 
@@ -265,7 +265,7 @@ public class LiveBench {
             Map<String, Object> m = Json.asMap(e.getValue());
             Map<String, Object> props = Json.getMap(m, "properties");
             String type = Json.getString(props, "type", "");
-            if (!type.equals("stream") && !type.equals("offline") && !type.equals("ipa")) continue;
+            if (!type.equals("offline") && !type.equals("ipa")) continue;
             if (!enginesArg.isBlank() && !e.getKey().contains(enginesArg)) continue;
             Path modelDir = modelsRoot.resolve(e.getKey());
             if (!Files.isDirectory(modelDir)) continue;
@@ -344,8 +344,10 @@ public class LiveBench {
                 if (it.ipa() == null || it.ipa().isBlank()) {
                     return new Attempt("", 0, "no g2p template for " + it.lang() + ":" + it.alias());
                 }
-                h.ipa.setVocabulary(List.of(new Pronunciation(it.spell(), List.of(it.ipa()), List.of(it.ipa()))));
-                h.ipa.start(new SpeechOptions(true, 0.65f, active.modelDir().toString(), true));
+                h.ipa.setVocabulary(new SessionVocabulary(List.of(
+                        new SessionVocabulary.Entry(it.spell(), List.of(it.ipa()),
+                                List.of(it.ipa()), null, null))));
+                h.ipa.start(new SpeechOptions(true, 0.65f, active.modelDir().toString(), true, null));
                 AtomicReference<RecognitionResult> res = new AtomicReference<>();
                 CountDownLatch done = new CountDownLatch(1);
                 h.ipa.setResultSink(r -> {
@@ -357,17 +359,18 @@ public class LiveBench {
                 done.await(30, TimeUnit.SECONDS);
                 h.ipa.stop();
                 RecognitionResult r = res.get();
-                Map<String, Float> scores = r == null ? null : r.templateScores();
+                RecognitionDiagnostics diag = h.ipa.lastDiagnostics();
+                Map<String, Float> scores = diag == null ? null : diag.templateScores();
                 Float s = scores == null ? null : scores.get(it.spell());
                 double score = s == null ? 0.0 : s;
-                return new Attempt(r == null ? "" : r.text(), score, "ipa-template");
+                return new Attempt(r == null ? "" : r.utteranceText(), score, "ipa-template");
             }
             h.text.setVocabulary(vocabulary());
-            h.text.start(new SpeechOptions(true, 0.65f, active.modelDir().toString(), true));
+            h.text.start(new SpeechOptions(true, 0.65f, active.modelDir().toString(), true, null));
             AtomicReference<RecognitionResult> res = new AtomicReference<>();
             CountDownLatch done = new CountDownLatch(1);
             h.text.setResultSink(r -> {
-                if (r != null && !r.partial()) {
+                if (r != null && r.decision() != null) {
                     res.set(r);
                     done.countDown();
                 }
@@ -382,7 +385,7 @@ public class LiveBench {
             done.await(30, TimeUnit.SECONDS);
             h.text.stop();
             RecognitionResult r = res.get();
-            String text = r == null ? "" : r.text();
+            String text = r == null ? "" : r.utteranceText();
             double score = text.isBlank() ? 0.0 : bestScore(text, it);
             return new Attempt(text, score, "mirror");
         } catch (Exception e) {
@@ -401,18 +404,18 @@ public class LiveBench {
         return best;
     }
 
-    private static List<Pronunciation> vocabulary() {
+    private static SessionVocabulary vocabulary() {
         Map<String, Map<String, List<String>>> bySpellLang = new LinkedHashMap<>();
         for (Item it : ITEMS) {
             bySpellLang.computeIfAbsent(it.spell(), k -> new LinkedHashMap<>())
                     .computeIfAbsent(it.lang(), k -> new ArrayList<>()).add(it.alias());
         }
-        List<Pronunciation> vocab = new ArrayList<>();
+        List<SessionVocabulary.Entry> vocab = new ArrayList<>();
         for (Map.Entry<String, Map<String, List<String>>> e : bySpellLang.entrySet()) {
-            Map<String, List<String>> buckets = new LinkedHashMap<>(e.getValue());
-            vocab.add(new Pronunciation(e.getKey(), List.of(), List.of(), buckets));
+            vocab.add(new SessionVocabulary.Entry(e.getKey(), List.of(), List.of(),
+                    new LinkedHashMap<>(e.getValue()), null));
         }
-        return vocab;
+        return new SessionVocabulary(vocab);
     }
 
     private static void grade(Item it, Attempt a) {
@@ -426,25 +429,16 @@ public class LiveBench {
     // ---- recognizer holder -------------------------------------------------
 
     private static final class SpeechRecognizerHolder {
-        SherpaStreamingRecognizer stream;
-        SherpaSenseVoiceRecognizer offline;
-        IpaPhonemeRecognizer ipa;
-        com.theo.voicecast.api.SpeechRecognizer text;
+        SherpaQwen3Recognizer text;
+        ZipaPhonemeRecognizer ipa;
     }
 
     private static SpeechRecognizerHolder ensureRecognizer() throws Exception {
         if (holder != null) return holder;
         holder = new SpeechRecognizerHolder();
         switch (active.type()) {
-            case "stream" -> {
-                holder.stream = new SherpaStreamingRecognizer(active);
-                holder.text = holder.stream;
-            }
-            case "offline" -> {
-                holder.offline = new SherpaSenseVoiceRecognizer(active);
-                holder.text = holder.offline;
-            }
-            case "ipa" -> holder.ipa = new IpaPhonemeRecognizer();
+            case "offline" -> holder.text = new SherpaQwen3Recognizer(active);
+            case "ipa" -> holder.ipa = new ZipaPhonemeRecognizer();
             default -> throw new IllegalStateException("unsupported type " + active.type());
         }
         return holder;
@@ -636,11 +630,16 @@ public class LiveBench {
         static String latinize(String s) {
             if (s == null || s.isEmpty()) return "";
             try {
-                com.ibm.icu.text.Transliterator t =
-                        com.ibm.icu.text.Transliterator.getInstance("Any-Latin; Latin-ASCII");
-                return t.transform(s).toLowerCase(Locale.ROOT);
+                // ICU is not bundled in the standalone voicecast jar (MC ships
+                // it); resolve reflectively so the bench compiles from the jar
+                // alone and upgrades when icu is on the classpath.
+                Class<?> tz = Class.forName("com.ibm.icu.text.Transliterator");
+                Object t = tz.getMethod("getInstance", String.class)
+                        .invoke(null, "Any-Latin; Latin-ASCII");
+                return ((String) tz.getMethod("transform", String.class).invoke(t, s))
+                        .toLowerCase(Locale.ROOT);
             } catch (Throwable e) {
-                return s.toLowerCase(Locale.ROOT);
+                return s.toLowerCase(Locale.ROOT); // production Phonetics fallback path
             }
         }
 

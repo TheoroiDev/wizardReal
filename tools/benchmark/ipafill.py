@@ -6,8 +6,8 @@ Pipeline per alias without an IPA template (coverage gap):
   in out/g2p_cache.json doubles as the zh/ja mapping table) -> normalization
   (ports voicecast IpaText: NFD strip + vowel-class relaxation, so templates
   never contain tokens the CTC vocab silently drops) -> edge-tts one-shot WAV
-  (16 kHz mono via ffmpeg, mirrors ipa/gen_corpus.py) -> IpaBench (production
-  IpaPhonemeRecognizer from the voicecast fat jar) -> score.
+  (16 kHz mono via ffmpeg, mirrors lab/gen_corpus.py) -> IpaBench (production
+  ZipaPhonemeRecognizer from the voicecast jar) -> score.
 
   score >= threshold  -> out/ipafill_candidates.json  (overrides.json-shaped
                          {spellId: {"apply_to": "trigger", "ipa_add": [...]}}
@@ -17,7 +17,7 @@ Pipeline per alias without an IPA template (coverage gap):
 
 Usage:
   python ipafill.py --spells-dir <.../data/wizardreal/voicecast/spells> \
-      --model-dir <.../wav2vec2-espeak-ipa> [--langs en,zh,ja] \
+      --model-dir <.../zipa-ipa> [--langs en,zh,ja] \
       [--threshold 0.85] [--limit N] [--out-dir out] [--fatjar <jar>]
 
 Deps: espeak-ng (PATH or Program Files), ffmpeg, python -m edge_tts, pypinyin
@@ -34,7 +34,7 @@ import sys
 import unicodedata
 from pathlib import Path
 
-# ---------------------------------------------------------------- mirrors of ipa/gen_corpus.py
+# ---------------------------------------------------------------- mirrors of lab/gen_corpus.py
 
 
 def find_ffmpeg() -> str:
@@ -81,7 +81,7 @@ ESPEAK_LANG = {"en": [], "zh": ["-v", "cmn"], "ja": ["-v", "ja"]}
 # Mirrors voicecast IpaText.stripDiacritics/normalizeTokens: what the CTC vocab
 # actually contains after espeak's IPA output is cleaned up. Anything the model
 # vocab lacks is dropped here INSTEAD of silently killing the whole template at
-# IpaPhonemeRecognizer.mapTemplate (Round-1 lesson).
+# ZipaShared.mapTemplate (Round-1 lesson).
 _DROP_CHARS = set("ˈˌː.ʰʲ˥˦˧˨˩ᵝɜ0123456789")
 _VOWEL_MAP = {"ɪ": "i", "ʊ": "u", "ɛ": "e", "ʌ": "ə"}  # NOTE: ɡ (U+0261) stays — the model vocab uses the script g, not ASCII g
 
@@ -96,7 +96,7 @@ def normalize_ipa(text: str) -> str:
     s = "".join(out)
     s = re.sub(r"\s+", " ", s).strip()
     s = s.lower()
-    # Production rule (IpaPhonemeRecognizer.mapTemplate + empirical): templates
+    # Production rule (ZipaShared.mapTemplate + empirical): templates
     # must be SPACE-SEPARATED phonemes - contiguous multi-phone strings score 0
     # in the production CTC scorer (the '|' word marker between phones matters).
     # Affricate pairs are kept as one part (matches IpaText.tokenize).
@@ -344,7 +344,7 @@ def main() -> int:
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "ipafill_candidates.json").write_text(
-        json.dumps({"_doc": "Merge-ready overrides.json fragments (review, then fold into ipa/overrides.json or port to spell JSONs via the lab process).",
+        json.dumps({"_doc": "Merge-ready overrides.json fragments (review, then fold into lab/overrides.json or port to spell JSONs via the lab process).",
                     **candidates}, ensure_ascii=False, indent=1), encoding="utf-8")
     (args.out_dir / "ipafill_manual.json").write_text(
         json.dumps(manual, ensure_ascii=False, indent=1), encoding="utf-8")

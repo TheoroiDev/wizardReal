@@ -23,7 +23,7 @@
 ### Modding/API
 
 - 语音匹配器落定 lab 校准的 S6 工作点（wizardreal#29）：IPA 音素匹配器以数据驱动的加权编辑距离取代平权 Levenshtein——872 对混淆代价表以 jar 资产随包分发（`assets/wizardreal/phoneme_costs.tsv`；表内代价匹配时 `clamp(raw x 2.0, 0.1, 1)`，表外替换保持平权 1.0，插入/删除双向 0.6，原"目标音素免费跳过"取消——被吞音素现计 0.6）。lab 台架上方言口音召回显著提升（正样本 74.3% vs 60.7%，负误触 8/300）；代价资产缺失为硬错误，无平权回退
-- CTC templateScores 现拒绝模糊胜出：前两名后验候选差距小于 0.02 时，识别器（VoiceCast 侧 margin 规则）将该语句的整组分数清零，边缘语句按未命中下落而非误发可能错误的法术；`FORWARD_MATCH_THRESHOLD`（0.10）与 per-spell threshold 覆盖原样叠加生效
+- CTC margin 拒识随语义 v2 链沿用（VoiceCast 侧规则）：前两名模板后验差距小于 0.02 时该语句整组 CTC 分数清零——voicecast 裁定器读取 margin 前的差距，被压制的 top1 本可过 forward 阈值时判 `AMBIGUOUS`；per-spell 阈值以推送期 `ThresholdHint` 数据过界（v2，见下）
 - 文本别名匹配的精确同分平局改按最长别名优先（最具体匹配），再按最小 spell id——短别名被包含在其他法术更长别名内时不再靠候选顺序抢胜
 - 新增 `PerModeThresholdProvider` 机制接口（match 包），按模式暴露三层匹配器阈值，`fullVocabulary()` 默认实现返回现行常量；按模式重标定的接线随四模式施法期路由（#30）落地
 - 四模式施法期词表路由（issue #30，D-15 用户裁决）随 VoiceCast 依赖 0.5.0 落地：
@@ -74,6 +74,7 @@
 
 - CI 将 voicecast 依赖构建进 mavenLocal（远程 maven 就绪前的过渡；voicecast#13）
 - 纯开发测试 mod 移出 gradle 依赖：release jar 预下载到工作区 `resources/devmods/<loader>/`，由 `manifest.txt` 驱动接线（fabric 硬链接进 run mods 目录；forge 作为文件依赖由 Loom 重映射；Carpet 的 Forge 移植仍受阻，voicecast#38）；语音模型事实源移至 `resources/models/`
+- 回测工具（`tools/benchmark`：`IpaBench`/`EngineBench`/`LiveBench` + `ipafill.py`/`engbench.py`）移植到 0.5.0 契约——ipa 臂经 `SessionVocabulary` 驱动 `ZipaPhonemeRecognizer`、读取 `RecognitionDiagnostics.templateScores()`，文本臂为 Qwen3-ASR 离线引擎，对着已发布的 voicecast jar 编译验证；已删除的 streaming/SenseVoice 引擎分支移除
 
 ### Changes
 
