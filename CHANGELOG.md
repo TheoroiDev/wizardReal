@@ -22,6 +22,10 @@ English primary; Chinese mirror: [CHANGELOG.zh.md](CHANGELOG.zh.md) (keep both i
 
 - Quitting mid-chant no longer re-declares the OPEN cast mode from the quit handler: VoiceCast's own quit cleanup already clears the player's session and cast-mode declaration, and racing it could re-insert a stale declaration keyed by the departed player's UUID
 
+### Infrastructure
+
+- The common subproject now publishes to Maven (`gradlew publishToMavenLocal` -> `com.theo.wizardreal:wizardreal-common-1.20.1`, mirroring the voicecast-common block): the plain unclassified jar + sources lets non-MC consumers (the lab/java-harness recognition harness, future tooling) resolve the pure-JVM subset (G2P, Pronunciation/SpellRegistry api) by coordinate. Build-infra only — zero logic change
+
 ### Modding/API
 
 - breaking: CatalogPayload v4 — chant lines are structured `CatalogLine(text, readings)` records instead of plain strings; the `wizardreal:spell_catalog` S2C channel bumps to formatVersion 4 (per line: text ≤160 plus a readings map, keys ≤8 / values ≤128 UTF-16 units — oversized values are truncated, never rejected); the `spell_catalog.json` export bumps to format 4 with each chant line carrying `key`/`text`/`readings`

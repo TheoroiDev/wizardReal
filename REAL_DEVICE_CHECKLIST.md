@@ -1,5 +1,7 @@
 # wizardreal 真机测试 Checklist（语音施法 E2E）
 
+> **〔已取代 2026-09-22〕** 本文件已由 **`docs/testing/e2e_checklist.md`**（实机 E2E 唯一跟踪清单）合并取代，此后不再更新；未勾选条目已全部并入新清单（ID 沿用）。本文件保留作历史记录。
+
 > **如何使用**：① 执行环境——JDK 21 跑 Gradle，`gradlew :wizardreal-<fabric|forge>:runClient / runServer`；run 目录自动分离、runClient 用户名固定 `dev`、模型按 `resources/models/manifest.txt` 硬链接预置（先确认 voicecast 0.5.0 已 `publishToMavenLocal` 且 `gradle.properties` 的 `voicecast_version` 同步）。② 判定记录回写本文件末"判定记录"表；日志与截图写 `wizardreal/test/logs/`。③ 双终端流程/服务端冒烟判定词/排障以 `docs/testing/README.md` 为准，本清单不重复。
 > 分级：P0 = 挡 TRL 8 闸门（builder plan 循环 2：真机 E2E 此前为零）；P1 = 发布前必过；P2 = 质量加固。**命题 P3：双终端 E2E 施法成功率 ≥80%（每法术 10 次，含首试）。**
 

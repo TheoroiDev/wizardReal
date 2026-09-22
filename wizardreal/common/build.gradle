@@ -30,3 +30,27 @@ tasks.named("test", Test).configure {
         if (value != null) systemProperty key, value
     }
 }
+
+// ---- Maven publication --------------------------------------------------
+// Mirrors the voicecast-common publish block: publish the plain unclassified
+// common jar so non-MC consumers (the lab/java-harness recognition harness,
+// future tooling) can resolve the pure-JVM subset (G2p, api Pronunciation/
+// SpellRegistry, matcher contract types) from mavenLocal by coordinate
+// com.theo.wizardreal:wizardreal-common-1.20.1. Do NOT publish via
+// components.java: Loom's default main artifact for a common subproject is
+// the ghost unclassified jar that never exists (same reasoning as voicecast).
+apply plugin: "maven-publish"
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = "wizardreal-common-${rootProject.minecraft_version}"
+            artifact(tasks.named("jar")) { classifier = "" }
+            artifact(tasks.named("sourcesJar")) { classifier = "sources" }
+            pom {
+                name = "WizardReal Common"
+                description = "Game-side spells/chant logic for Minecraft - pure-JVM subset (g2p, api) usable without Minecraft."
+            }
+        }
+    }
+}

@@ -22,6 +22,10 @@
 
 - 咏唱中退出不再由退出处理器重新声明 OPEN 施法模式：VoiceCast 自身的退出清理本就会清掉该玩家的会话与模式声明，两者竞争可能在 VoiceCast 侧留下以已退出玩家 UUID 为键的残留声明
 
+### Infrastructure（基础设施）
+
+- common 子工程现可发布到 Maven（`gradlew publishToMavenLocal` -> `com.theo.wizardreal:wizardreal-common-1.20.1`，镜像 voicecast-common 的 publish 块）：普通未分类 jar + sources，让非 MC 消费方（lab/java-harness 识别 harness、未来工具链）能按坐标解析纯 JVM 子集（G2P、Pronunciation/SpellRegistry api）。仅构建基建——零逻辑改动
+
 ### Modding/API
 
 - breaking: CatalogPayload v4——咏唱行结构化为 `CatalogLine(text, readings)` 记录（取代纯字符串）；`wizardreal:spell_catalog` S2C 通道升 formatVersion 4（每行 = 文本 ≤160 + readings 映射，键 ≤8 / 值 ≤128 UTF-16 单位，超限截断不拒绝）；`spell_catalog.json` 导出升 format 4，每条咏唱行携带 `key`/`text`/`readings`
