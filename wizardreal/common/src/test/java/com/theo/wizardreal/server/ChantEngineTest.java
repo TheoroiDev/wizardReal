@@ -1,5 +1,6 @@
 package com.theo.wizardreal.server;
 
+import com.theo.voicecast.match.LenientLine;
 import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.TestSpell;
 import com.theo.wizardreal.api.Chant;
@@ -19,6 +20,14 @@ class ChantEngineTest {
 
     private static Pronunciation pron(String... aliases) {
         return new Pronunciation("p", List.of(), List.of(aliases));
+    }
+
+    private static Spell cjkRitualSpell() {
+        Chant zh = new Chant(List.of(
+                new ChantLine("key.zh0", pron("以雷暴之名应召")),
+                new ChantLine("key.zh1", pron("织电光入我言")),
+                new ChantLine("key.zh2", pron("雷暴"))));
+        return new TestSpell("wizardreal:cjk", null, -1f, List.of(zh));
     }
 
     private static Spell ritualSpell() {
@@ -133,27 +142,27 @@ class ChantEngineTest {
     @Test
     void looseTextRules() {
         // Whole line spoken with filler words.
-        assertTrue(ChantEngine.looseText("oh mighty fire burn loudly!", "Fire, Burn"));
+        assertTrue(LenientLine.looseText("oh mighty fire burn loudly!", "Fire, Burn"));
         // Exact match.
-        assertTrue(ChantEngine.looseText("explosion", "explosion"));
+        assertTrue(LenientLine.looseText("explosion", "explosion"));
         // Punctuation/case normalized away.
-        assertTrue(ChantEngine.looseText("Explosion!", "explosion"));
+        assertTrue(LenientLine.looseText("Explosion!", "explosion"));
         // Token coverage: only 1 of 2 tokens -> not a line.
-        assertFalse(ChantEngine.looseText("fire", "fire burn"));
+        assertFalse(LenientLine.looseText("fire", "fire burn"));
         // 2 of 2 tokens (>=75%) -> matches.
-        assertTrue(ChantEngine.looseText("burning fire", "fire burn"));
+        assertTrue(LenientLine.looseText("burning fire", "fire burn"));
         // Single-word line: fuzzy full-string match.
-        assertTrue(ChantEngine.looseText("igniss", "ignis"));
-        assertFalse(ChantEngine.looseText("xyzwvu", "ignis"));
-        assertFalse(ChantEngine.looseText("", "ignis"));
+        assertTrue(LenientLine.looseText("igniss", "ignis"));
+        assertFalse(LenientLine.looseText("xyzwvu", "ignis"));
+        assertFalse(LenientLine.looseText("", "ignis"));
     }
 
     @Test
     void loosePhoneticRules() {
-        assertTrue(ChantEngine.loosePhonetic("f ʊ l m ɛ n", "ˈfʊlmɛn"));
-        assertTrue(ChantEngine.loosePhonetic("fu mn", "fulmen")); // 0.667 >= 0.6
-        assertFalse(ChantEngine.loosePhonetic("xxxx", "fulmen"));
-        assertFalse(ChantEngine.loosePhonetic("anything", ""));
+        assertTrue(LenientLine.loosePhonetic("f ʊ l m ɛ n", "ˈfʊlmɛn"));
+        assertTrue(LenientLine.loosePhonetic("fu mn", "fulmen")); // 0.667 >= 0.6
+        assertFalse(LenientLine.loosePhonetic("xxxx", "fulmen"));
+        assertFalse(LenientLine.loosePhonetic("anything", ""));
     }
 
     @Test
@@ -240,5 +249,24 @@ class ChantEngineTest {
         // The retreated line must be spoken again.
         ChantEngine.FeedResult r = engine.feed("fire burn", null, T0 + 3000);
         assertEquals(new ChantEngine.Progress(0, 2, false), r.progress().get(0));
+    }
+
+    @Test
+    void cjkTextAdvancesTheLine() {
+        // voiceCast#47 follow-up: the hasText gate stripped CJK via an
+        // ASCII-only regex, silently swallowing every zh/ja text-lane chant
+        // line (qwen3 progression 0% in the chant-sequence bench).
+        ChantEngine ce = new ChantEngine(cjkRitualSpell(), T0, 600_000L, 0);
+        var fr = ce.feed("织电光入我言", List.of(), T0 + 6_000L);
+        assertTrue(fr.consumed());
+        assertTrue(fr.progress().stream().anyMatch(p -> p.lineIndex() >= 2));
+    }
+
+    @Test
+    void cjkWrongLineStillCountsAsWrong() {
+        ChantEngine ce = new ChantEngine(cjkRitualSpell(), T0, 600_000L, 0);
+        var fr = ce.feed("完全无关的一句话", List.of(), T0 + 6_000L);
+        assertTrue(fr.consumed());
+        assertTrue(fr.progress().stream().anyMatch(p -> p.error()));
     }
 }

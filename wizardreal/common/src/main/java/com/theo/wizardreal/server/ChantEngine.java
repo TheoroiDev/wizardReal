@@ -4,7 +4,7 @@ import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
-import com.theo.wizardreal.util.Levenshtein;
+import com.theo.voicecast.match.LenientLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +129,10 @@ public final class ChantEngine {
         lastActivity = nowMs;
 
         // Ignore empty/noise utterances (silence flush, breath, short blips).
-        boolean hasText = heard != null && heard.replaceAll("[^a-z0-9A-Z]", "").length() >= MIN_HEARD_CHARS;
+        // \p{L}\p{N} keeps CJK: the ASCII-only form stripped zh/ja transcripts
+        // to empty, silently swallowing every text-lane chant line (found by
+        // the chant-sequence bench, 2026-09-25 — qwen3 zh/ja progression 0%).
+        boolean hasText = heard != null && heard.replaceAll("[^\\p{L}\\p{N}]", "").length() >= MIN_HEARD_CHARS;
         boolean hasIpa = heardIpa != null && heardIpa.size() >= 2;
         if (!hasText && !hasIpa) {
             return FeedResult.of(false, false, List.of()); // swallowed, not counted as a wrong line
@@ -220,58 +223,17 @@ public final class ChantEngine {
         if (heardIpa != null && !heardIpa.isEmpty() && !p.ipa().isEmpty()) {
             String ipaText = String.join(" ", heardIpa);
             for (String templ : p.ipa()) {
-                if (loosePhonetic(ipaText, templ)) return true;
+                if (LenientLine.loosePhonetic(ipaText, templ)) return true;
             }
         }
         if (heard != null && !heard.isBlank()) {
             for (String alias : p.aliases()) {
-                if (looseText(heard.toLowerCase(Locale.ROOT),
+                if (LenientLine.looseText(heard.toLowerCase(Locale.ROOT),
                         alias.toLowerCase(Locale.ROOT))) return true;
             }
         }
         return false;
     }
 
-    static boolean looseText(String heard, String alias) {
-        String h = normalize(heard);
-        String a = normalize(alias);
-        if (h.isEmpty() || a.isEmpty()) return false;
-        // The whole line spoken (filler words around it are fine).
-        if (h.contains(a)) return true;
-        // Token coverage: most of the line's words must appear in the
-        // utterance. This deliberately REPLACED the old `alias.contains(heard)`
-        // substring rule, which matched a line on its first word alone (any
-        // substring of the alias counted as a full line).
-        String[] tokens = a.split(" ");
-        if (tokens.length >= 2) {
-            int hit = 0;
-            for (String token : tokens) {
-                if (!token.isEmpty() && h.contains(token)) hit++;
-            }
-            return (double) hit / tokens.length >= 0.75;
-        }
-        // Single-word lines: fuzzy full-string match.
-        int dist = Levenshtein.distance(h, a);
-        return 1.0 - (double) dist / Math.max(1, Math.max(h.length(), a.length())) >= 0.6;
-    }
 
-    /** Lowercase, strip punctuation, collapse whitespace — chant aliases and
-     *  recognizer transcripts otherwise differ by trailing "!" etc. */
-    static String normalize(String s) {
-        return s.toLowerCase(Locale.ROOT)
-                .replaceAll("[^\\p{L}\\p{N} ]", " ")
-                .replaceAll("\\s+", " ")
-                .trim();
-    }
-
-    /** Very lenient phonetic: normalized template's letters mostly appear in order. */
-    static boolean loosePhonetic(String heardIpa, String template) {
-        String h = heardIpa.replaceAll("[\\sˈˌː.]", "").toLowerCase(Locale.ROOT);
-        String t = template.replaceAll("[\\sˈˌː.]", "").toLowerCase(Locale.ROOT);
-        if (t.isEmpty()) return false;
-        if (h.contains(t)) return true;
-        // Levenshtein-ish ratio on chars
-        int dist = Levenshtein.distance(h, t);
-        return 1.0 - (double) dist / Math.max(1, Math.max(h.length(), t.length())) >= 0.6;
-    }
 }

@@ -1,5 +1,6 @@
 package com.theo.wizardreal.server;
 
+import com.theo.voicecast.match.LenientLine;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
@@ -129,8 +130,8 @@ public final class SpellLoadValidator {
      * couplets the matcher itself never confuses.
      */
     private static float normalizedSimilarity(String a, String b) {
-        String na = ChantEngine.normalize(a);
-        String nb = ChantEngine.normalize(b);
+        String na = LenientLine.normalize(a);
+        String nb = LenientLine.normalize(b);
         if (na.isEmpty() || nb.isEmpty()) return 0f;
         String[] ta = na.split(" ");
         String[] tb = nb.split(" ");

@@ -40,10 +40,10 @@ import java.util.Set;
  *
  * [voice]
  * languages = ""                          # enabled language buckets, csv (en,zh,ja,ko); "" = all
- * g2pDrafts = false                       # fill vocabulary entries without curated ipa with
- *                                         # G2P drafts at push time (unverified templates;
- *                                         # 2026-09 backtest: no CTC gain until scoring is
- *                                         # calibrated - keep off by default)
+ * g2pDrafts = true                        # fill vocabulary entries without curated ipa with
+ *                                         # G2P drafts at push time (strict per-alias;
+ *                                         # unconvertible scripts — e.g. en, no Tier-2 —
+ *                                         # produce no draft, fail-closed; voiceCast#47)
  *
  * [chantReadings]                         # chant annotation layer (R-B: D2/D4/D8)
  * hud = true                              # ChantHud current-line reading row (D4: default on)
@@ -203,7 +203,7 @@ public final class WizardRealConfig {
                         (float) toml.getDouble("learning", "knownThreshold", 10.0)),
                 new VoiceSettings(parseLanguages(
                         toml.getString("voice", "languages", "")),
-                        toml.getBool("voice", "g2pDrafts", false)),
+                        toml.getBool("voice", "g2pDrafts", true)),
                 new ReadingsSettings(
                         toml.getBool("chantReadings", "hud", true),
                         parseLanguagePolicy(toml.getString("chantReadings", "languagePolicy", "auto")),
@@ -231,7 +231,7 @@ public final class WizardRealConfig {
                 .setDouble("learning", "skipChantThreshold", 0.5)
                 .setDouble("learning", "knownThreshold", 10.0)
                 .setString("voice", "languages", "")
-                .setBool("voice", "g2pDrafts", false)
+                .setBool("voice", "g2pDrafts", true)
                 .setBool("chantReadings", "hud", true)
                 .setString("chantReadings", "languagePolicy", "auto")
                 .setString("chantReadings", "languages", "")

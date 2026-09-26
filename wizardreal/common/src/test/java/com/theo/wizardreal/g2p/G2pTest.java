@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -37,6 +38,35 @@ class G2pTest {
         registerCurated("wizardreal:aegis", "shield", "ʃiːld");
         assertEquals("ʃiːld", G2p.toIpa("shield", "en"));
         assertEquals("ʃiːld", G2p.toIpa("shield", "")); // Tier-0 ignores lang
+    }
+
+    @Test
+    void multiAliasSurfaceDoesNotBindFirstTemplate() {
+        // radix-shaped multilingual trigger: 6 aliases, 3 merged templates
+        // (en x2 none, zh x2, ja x1). Binding the first template to EVERY
+        // alias drafted en "radix" as zh 缠根's reading (2026-09-26 audit);
+        // unregistered aliases must fall to the per-script chain instead.
+        SpellRegistry.replace(new TestSpell("wizardreal:radix",
+                new Pronunciation("wizardreal:radix",
+                        List.of("ʈʂʰan kən", "tʰəŋ man ʈʂʰan ʐaʊ", "ɾa di kɯ sɯ"),
+                        List.of("radix", "root cone", "缠根", "藤蔓缠绕", "ラディクス", "根のブレス")),
+                -1f, List.of()));
+        G2p.invalidate();
+        assertEquals("", G2p.toIpa("radix", "en"));  // Latin: Tier-2 later phase
+        assertNotEquals("ʈʂʰan kən", G2p.toIpa("藤蔓缠绕", "zh")); // per-script pinyin
+        assertNotEquals("ʈʂʰan kən", G2p.toIpa("ラディクス", "ja")); // per-script kana
+    }
+
+    @Test
+    void soleAliasSurfaceBindsFirstTemplate() {
+        // One alias = the mapping is unambiguous, extra template variants
+        // (alternate readings) still bind the first.
+        SpellRegistry.replace(new TestSpell("wizardreal:solo",
+                new Pronunciation("wizardreal:solo",
+                        List.of("fʉː v1", "fʉː v2"), List.of("Foo")),
+                -1f, List.of()));
+        G2p.invalidate();
+        assertEquals("fʉː v1", G2p.toIpa("foo", "en"));
     }
 
     @Test

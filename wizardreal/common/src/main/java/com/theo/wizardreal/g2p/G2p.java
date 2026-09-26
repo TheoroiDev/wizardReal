@@ -160,6 +160,15 @@ public final class G2p {
     /**
      * Tier-0 dictionary: lowercase alias -> first curated IPA template, from
      * every registered spell (trigger aliases + chant line aliases).
+     *
+     * <p>Only SOLE-alias surfaces register. Multi-alias surfaces have no
+     * machine-readable alias-&rarr;template mapping (a multilingual trigger
+     * keeps one merged template list: en aliases have no segment at all, and
+     * zh/ja segment counts need not match alias counts) — binding the first
+     * template to every alias handed each language's aliases another
+     * language's reading (en "radix" drafted as zh 缠根, 2026-09-26 audit).
+     * Unregistered aliases fall to the per-script chain, which is the correct
+     * draft for them.</p>
      */
     public static Map<String, String> tier0Dictionary() {
         Map<String, String> cache = tier0Cache;
@@ -181,12 +190,11 @@ public final class G2p {
     }
 
     private static void collect(Map<String, String> out, List<String> aliases, List<String> ipa) {
-        if (aliases == null || ipa == null || ipa.isEmpty()) return;
+        if (aliases == null || ipa == null || aliases.size() != 1 || ipa.isEmpty()) return;
         String template = ipa.get(0);
-        if (template == null || template.isBlank()) return;
-        for (String alias : aliases) {
-            out.putIfAbsent(alias.strip().toLowerCase(Locale.ROOT), template.strip());
-        }
+        String alias = aliases.get(0);
+        if (alias == null || alias.isBlank() || template == null || template.isBlank()) return;
+        out.put(alias.strip().toLowerCase(Locale.ROOT), template.strip());
     }
 
     /** Invalidate the Tier-0 cache (call after the spell registry rebuilds). */
