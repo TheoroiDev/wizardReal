@@ -15,6 +15,7 @@ import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.g2p.G2p;
 import com.theo.wizardreal.item.StaffItem;
+import com.theo.wizardreal.net.ChantNetwork;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.event.events.common.PlayerEvent;
@@ -273,6 +274,18 @@ public final class ServerVoiceCast {
         ChantGate.Decision gate = ChantGate.route(result, ChantGate.rejectLevel());
         switch (gate.kind()) {
             case ENTER -> {
+                // Issue #41 preflight: the learning gate / staff / origin /
+                // cooldown checks fire BEFORE the chant starts, with the
+                // specific reason on the action bar — reciting a full ritual
+                // into a locked gate is wasted breath. Mana is deliberately
+                // not preflighted (空转咏唱: the chant completes and the cast
+                // degrades by stage, ChantManager completion path).
+                String blocked = SpellCastHandler.preflight(player, gate.spell().id());
+                if (blocked != null) {
+                    WizardReal.LOGGER.info("Server heard '{}' / [{}] -> chant entry {} blocked preflight ({})",
+                            heard, ipa, gate.spell().id(), blocked);
+                    return;
+                }
                 ChantManager.get().startAtLine(player, gate.spell(), gate.variant());
                 WizardReal.LOGGER.info("Server heard '{}' / [{}] -> chant entry {} variant {}",
                         heard, ipa, gate.spell().id(), gate.variant());
@@ -290,8 +303,49 @@ public final class ServerVoiceCast {
                         heard, gate.spell().id());
                 ChantManager.get().trySkipCast(player, gate.spell());
             }
-            case NONE -> WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match "
-                    + "(decision={})", heard, ipa, result == null ? null : result.decision());
+            case NONE -> {
+                // Issue #41 拒识有反馈: surface the rejection on the HUD
+                // instead of a debug line. REJECTED = the adjudicator heard
+                // speech but refused it ("咒文消散在风中"); otherwise the
+                // top runner-up candidate reads as a near-whisper of that
+                // spell ("似是而非的低语……最接近：…"). Pure noise — no
+                // decision, no candidates — stays silent.
+                sendIdleFeedback(player, result);
+                WizardReal.LOGGER.debug("Server heard '{}' / [{}] — no spell match "
+                        + "(decision={})", heard, ipa, result == null ? null : result.decision());
+            }
         }
+    }
+
+    /** Idle rejection feedback (issue #41): maps the adjudication outcome to
+     *  the S2C {@link ChantNetwork} notice. */
+    private static void sendIdleFeedback(ServerPlayer player,
+                                         com.theo.voicecast.api.RecognitionResult result) {
+        if (result == null) return;
+        String kind = noticeKind(result.decision(), result.alternatives());
+        if (kind == null) return;
+        String nameKey = "";
+        if (ChantNetwork.NOTICE_WHISPER.equals(kind)) {
+            for (com.theo.voicecast.api.Alternative alt : result.alternatives()) {
+                Spell spell = SpellRegistry.get(alt.spellId()).orElse(null);
+                if (spell != null) {
+                    nameKey = spell.nameKey();
+                    break;
+                }
+            }
+            if (nameKey.isEmpty()) return; // candidates exist but none registered
+        }
+        ChantNetwork.sendNotice(player, kind, nameKey);
+    }
+
+    /** Pure kind selection (unit-tested): REJECTED = dissipate outright;
+     *  anything else with runner-up candidates = whisper; no candidates =
+     *  silent. {@code null} means "no notice". */
+    static String noticeKind(com.theo.voicecast.api.Decision decision,
+                             List<com.theo.voicecast.api.Alternative> alternatives) {
+        if (decision == com.theo.voicecast.api.Decision.REJECTED) {
+            return ChantNetwork.NOTICE_DISSIPATE;
+        }
+        return alternatives != null && !alternatives.isEmpty() ? ChantNetwork.NOTICE_WHISPER : null;
     }
 }

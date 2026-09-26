@@ -16,6 +16,13 @@ public final class ChantState {
     public long endedMs;
     public boolean active;
 
+    // Idle-recognition notice (issue #41): kind + optional spell name lang
+    // key, transient — the HUD fades it after NOTICE_TTL_MS.
+    public static final long NOTICE_TTL_MS = 3500;
+    public String noticeKind;
+    public String noticeNameKey;
+    public long noticeMs;
+
     void onStart(String spellId, List<List<String>> variantLines) {
         this.spellId = spellId;
         this.variantLines = variantLines;
@@ -40,5 +47,11 @@ public final class ChantState {
     void onEnd(boolean success) {
         this.active = false;
         this.endedMs = System.currentTimeMillis();
+    }
+
+    void onNotice(String kind, String nameKey) {
+        this.noticeKind = kind;
+        this.noticeNameKey = nameKey;
+        this.noticeMs = System.currentTimeMillis();
     }
 }

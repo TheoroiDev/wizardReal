@@ -58,6 +58,87 @@ public final class SpellCastHandler {
     }
 
     /**
+     * Read-only cast preflight (issue #41): the learning gate, staff/origin
+     * and cooldown checks of the validated chain, run WITHOUT casting and
+     * BEFORE a chant starts — so a player is told "you cannot learn-cast this
+     * / wrong staff / on cooldown" up front instead of after reciting every
+     * line. Mana is deliberately NOT a block here (空转咏唱: the chant may
+     * complete and the cast degrades by stage — see {@link #affordableStage}).
+     * Sends the same action-bar feedback the full chain would and returns the
+     * blocked step, or {@code null} when the chant may start.
+     */
+    public static String preflight(ServerPlayer player, String spellId) {
+        if (player.isSpectator()) return "spectator";
+        Spell spell = SpellRegistry.get(spellId).orElse(null);
+        if (spell == null) return "unknown";
+
+        PlayerMagicState state = PlayerMagicState.get(player.getServer());
+        UUID uuid = player.getUUID();
+        ItemStack mainHand = player.getMainHandItem();
+        boolean bypassStaff = mainHand.getItem() instanceof StaffItem staff && staff.bypassAll();
+        float learningT = state.learningPercent(uuid, spellId, spell.difficulty());
+
+        if (!bypassStaff && spell.requiresLearning() && !LearningCurve.castable(learningT)) {
+            actionBar(player, Component.translatable("wizardreal.learning.not_ready",
+                    String.format(java.util.Locale.ROOT, "%.0f", learningT)));
+            return "learning";
+        }
+        if (!(mainHand.getItem() instanceof StaffItem staff)) {
+            actionBar(player, Component.translatable("wizardreal.cast.needs_staff"));
+            return "staff";
+        }
+        if (!staff.allowsSpell(spell)) {
+            actionBar(player, Component.translatable("wizardreal.cast.wrong_origin",
+                    Component.translatable("origin." + spell.origin().replace(':', '.'))));
+            return "origin";
+        }
+        if (state.isOnCooldown(uuid, spellId, player.level().getGameTime())) {
+            long remainingTicks = state.getCooldownEnd(uuid, spellId) - player.level().getGameTime();
+            actionBar(player, Component.translatable("wizardreal.cast.cooldown", (remainingTicks + 19) / 20));
+            return "cooldown";
+        }
+        return null;
+    }
+
+    /**
+     * 空转咏唱 (issue #41): the highest chant stage {@code mana} can afford,
+     * walking down from the intended stage to the base tier. A chant is never
+     * wasted on an empty bar: the completed-lines tier degrades to what the
+     * caster's current mana supports (base stage unaffordable = the fizzle
+     * the validated chain reports).
+     *
+     * @return the affordable stage index, or -1 when even the base tier is
+     *         out of reach
+     */
+    public static int affordableStage(ServerPlayer player, Spell spell, int intendedStage) {
+        if (player.isCreative()) return Math.max(0, intendedStage);
+        List<SpellStage> stages = spell.chantStages();
+        ItemStack mainHand = player.getMainHandItem();
+        StaffItem staff = mainHand.getItem() instanceof StaffItem s ? s : null;
+        int top = Math.max(0, intendedStage);
+        float[] costs = new float[top + 1];
+        for (int i = 0; i <= top; i++) {
+            float base = StageResolver.manaCost(stages, i, spell.manaCost());
+            costs[i] = staff != null ? staff.getManaCost(spell, base) : base;
+        }
+        return cheapestAffordableStage(stateMana(player), costs);
+    }
+
+    /** Pure stage walk (unit-tested): the highest index whose cost the mana
+     *  affords, or -1 when even index 0 is out of reach. */
+    static int cheapestAffordableStage(float mana, float[] stageCosts) {
+        for (int stage = stageCosts.length - 1; stage >= 0; stage--) {
+            if (mana >= stageCosts[stage]) return stage;
+        }
+        return -1;
+    }
+
+    private static float stateMana(ServerPlayer player) {
+        return PlayerMagicState.get(player.getServer()).getMana(player.getUUID());
+    }
+
+
+    /**
      * Full validated cast shared by every entry point. Sends action-bar
      * feedback on failure and fires the cancelable {@link SpellCastEvent}.
      * The incoming {@code power} (chant tier or 1.0) is multiplied by the

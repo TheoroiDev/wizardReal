@@ -28,7 +28,9 @@ import java.util.Set;
  * timeoutMode = "per_line" | "fixed"      # chant timeout: 10s x lines (default) or a fixed cap
  * perLineSeconds = 10                     # per_line mode: seconds per chant line
  * fixedSeconds = 90                       # fixed mode: total chant timeout
- * failBlindness = true                    # failed chants apply stacking darkness (D-C5)
+ * failBlindness = false                   # failed chants apply stacking darkness (D-C5;
+ *                                         # default OFF since #41 — the penalty stacked on
+ *                                         # accent/noise misrecognition, not on mistakes)
  * failBlindnessBase = 3.0                 # first failure: darkness seconds
  * failBlindnessStep = 3.0                 # extra seconds per consecutive failure
  * failBlindnessWindowSeconds = 30         # consecutive-failure window
@@ -193,7 +195,7 @@ public final class WizardRealConfig {
                         parseTimeoutMode(toml.getString("chant", "timeoutMode", "per_line")),
                         (int) toml.getInt("chant", "perLineSeconds", 10),
                         (int) toml.getInt("chant", "fixedSeconds", 90),
-                        toml.getBool("chant", "failBlindness", true),
+                        toml.getBool("chant", "failBlindness", false),
                         (float) toml.getDouble("chant", "failBlindnessBase", 3.0),
                         (float) toml.getDouble("chant", "failBlindnessStep", 3.0),
                         (int) toml.getInt("chant", "failBlindnessWindowSeconds", 30)),

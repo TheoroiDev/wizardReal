@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** {@code [chant]} config: timeout dual mode (D-C4) + failure darkness (D-C5). */
@@ -21,7 +22,9 @@ class WizardRealConfigChantTest {
         assertEquals("per_line", chant.timeoutMode());
         assertEquals(10, chant.perLineSeconds());
         assertEquals(90, chant.fixedSeconds());
-        assertTrue(chant.failBlindness());
+        // #41: the darkness penalty defaults OFF — it stacked on accent/noise
+        // misrecognition. Opt back in via the config key.
+        assertFalse(chant.failBlindness());
         assertEquals(3.0f, chant.failBlindnessBase());
         assertEquals(3.0f, chant.failBlindnessStep());
         assertEquals(30, chant.failBlindnessWindowSeconds());
@@ -29,6 +32,17 @@ class WizardRealConfigChantTest {
         String toml = java.nio.file.Files.readString(WizardRealConfig.file(gameDir)).replace("\r\n", "\n");
         assertTrue(toml.contains("[chant]"));
         assertTrue(toml.contains("timeoutMode"));
+    }
+
+    @Test
+    void failBlindnessOptsBackIn() throws Exception {
+        java.nio.file.Files.createDirectories(WizardRealConfig.file(gameDir).getParent());
+        java.nio.file.Files.writeString(WizardRealConfig.file(gameDir), """
+                [chant]
+                failBlindness = true
+                """);
+        WizardRealConfig c = WizardRealConfig.load(gameDir);
+        assertTrue(c.chant().failBlindness());
     }
 
     @Test

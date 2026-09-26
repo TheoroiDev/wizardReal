@@ -19,6 +19,8 @@ import net.minecraft.server.level.ServerPlayer;
  *   <li>S2C {@link #START} — spell id + every chant variant's display keys.</li>
  *   <li>S2C {@link #PROGRESS} — locked variant / line index / error flash.</li>
  *   <li>S2C {@link #END} — chant finished, cancelled, or timed out.</li>
+ *   <li>S2C {@link #NOTICE} — idle-recognition feedback (issue #41): a
+ *       rejected utterance surfaces as a whisper / dissipate line.</li>
  *   <li>C2S {@link #CANCEL} — player-initiated cancel (left-click while
  *       channeling the staff).</li>
  * </ul>
@@ -30,6 +32,12 @@ public final class ChantNetwork {
     public static final int PROGRESS = 2;
     public static final int END = 3;
     public static final int CANCEL = 4;
+    /** S2C idle-recognition feedback (issue #41): rejected/whisper notice. */
+    public static final int NOTICE = 5;
+
+    /** Notice kinds (see {@link #sendNotice}). */
+    public static final String NOTICE_WHISPER = "whisper";
+    public static final String NOTICE_DISSIPATE = "dissipate";
 
     private ChantNetwork() {}
 
@@ -75,6 +83,25 @@ public final class ChantNetwork {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeByte(END);
         buf.writeBoolean(success);
+        NetworkManager.sendToPlayer(player, CHANNEL_CHANT, buf);
+    }
+
+    /**
+     * Idle-recognition feedback (issue #41 拒识有反馈): the utterance heard
+     * something but the semantic gate ruled it out.
+     *
+     * @param kind    {@link #NOTICE_WHISPER} (no match, but a runner-up
+     *                candidate exists — the HUD names it) or
+     *                {@link #NOTICE_DISSIPATE} (the adjudicator rejected the
+     *                utterance outright)
+     * @param nameKey the runner-up spell's lang key ({@code spell.<id>.name});
+     *                empty for {@code dissipate}
+     */
+    public static void sendNotice(ServerPlayer player, String kind, String nameKey) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeByte(NOTICE);
+        buf.writeUtf(kind, 16);
+        buf.writeUtf(nameKey, 128);
         NetworkManager.sendToPlayer(player, CHANNEL_CHANT, buf);
     }
 

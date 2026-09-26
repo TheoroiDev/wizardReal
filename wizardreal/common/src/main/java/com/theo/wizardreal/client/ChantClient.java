@@ -47,6 +47,11 @@ public final class ChantClient {
                     boolean success = buf.readBoolean();
                     ctx.queue(() -> CHANT.onEnd(success));
                 }
+                case ChantNetwork.NOTICE -> {
+                    String kind = buf.readUtf(16);
+                    String nameKey = buf.readUtf(128);
+                    ctx.queue(() -> CHANT.onNotice(kind, nameKey));
+                }
                 default -> { }
             }
         });

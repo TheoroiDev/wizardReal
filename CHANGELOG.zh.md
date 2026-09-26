@@ -6,6 +6,7 @@
 
 ### Features
 
+- 拒识现在有回应了（wizardReal#41）：手持法杖时被语义门否决的语句不再静默吞掉——被拒的诵读会显示"咒文消散在风中"，擦边未中则显示最接近的候选（"你听见了似是而非的低语……最接近：……"带候选法术名），在咏唱 HUD 锚点处停留数秒
 - 咒文注音层（咏唱读法标注）：服务端在目录构建期对每条咏唱行一次性派生 `readings` 注音映射——zh 行得有调本调拼音（教科书标调规则，调号取自内嵌数据表；v1 不做变调），ja 行得平文式罗马字（新增纯 JVM KanaRomaji 表：促音叠辅音、语尾 っ 以撇号表示、长音合流为 macron、按 mora 分隔输出、外来音节 ティ/ファ/ウィ 与 ん=n）。注音以固定键集（`pinyin`/`romaji`/`ipa`）随目录下发；派生严格 fail-closed（任一不可转字母即缺该键——不造假读法），标点/空白按分隔符丢弃（手订模板本就不含停顿 token，丢标点才与手订同源）；行手订 IPA 永远优先于 G2P 派生。lab 新增 lint（`check_readings.py`）交叉核对派生与手订 IPA，兼任 Stage-A 吸收清单（首跑全量：689 条手订行中 687 条完全收敛）
 - 咏唱 HUD 注音（D4，默认开启）：咏唱进行中在当前行上方显示小号灰色注音行，读法取自目录派生的 readings；语言策略与书页同语义（`[chantReadings] languagePolicy`：auto=非显示语言才注 / off / 手选语言集 / all，配 `languages` 指定手选集）。新增 `[chantReadings] pinyinStyle` 选择拼音显示样式——符号调（`zhēn`，默认）或数字调（`zhen1`，永远可渲染）——在目录派生期应用，改动于下次目录重建（登录 / 数据包重载）后生效
 - G2P 管线补全：为全部 75 个法术 JSON 此前为空的 ipa 字段生成 769 条草案（zh 咏唱行全覆盖；ja 受限于假名行待形态分析器），并新增 `[voice] g2pDrafts` 运行时填充（现**默认开**，见 Changes），服主无需动数据包即可给自定义词生成模板
@@ -15,6 +16,8 @@
 
 ### Changes
 
+- 咏唱失败默认不再致盲：`[chant] failBlindness` 现默认**关闭**（原为开）——叠加黑暗对口音/背景噪音造成的误识与念错同等惩罚，失败现在只是空响（wizardReal#41）。想要旧仪式感的服主在配置中设 `failBlindness = true`
+- 咏唱不再会在锁死的门前白念：学习门、手持法杖、法杖起源与冷却改在**第一句被接受之前**校验（动作栏给出具体原因），而不是整篇念完才告诉你；空法力也不再作废念完的咏唱——施法按当前法力降档到最高可负担的阶梯（空转咏唱，wizardReal#41）
 - breaking: `[voice] g2pDrafts` 现默认**开启**（原为关）：无手工 IPA 模板的词表条目在推送时经生产 G2P 链补草案模板（voiceCast#47——0.5.0 引擎切换后 en/ja 咏唱行完全没有 zipa CTC 模板，运行时填充为 G2P 链支持的所有语言恢复模板覆盖：zh/ja/ko；en 暂无 Tier-2、维持 fail-closed）。0.6.0 的 CTC 后验校准（R3/R5 移植）落地后，原先"校准前无 CTC 收益"的保留理由不再成立。草案逐别名严格转换、永不覆盖手工模板——如需旧行为，在配置中设 `g2pDrafts = false`
 - 中文语音咒文改词（改词批实验室回测：六个最重混淆对在新词面上从 14-64% 误匹配降到 0-3%）：弃用"幻弹"保留"虚影弹"（falsum）、火墙→燎墙（vestibulum）、唤林→唤森（silva_voco）、疾风步→迅风步（volatus）、轻风步→踏云步（aurae_levitas）、圣光矢→圣光箭（sagitta）；裸短别名"圣光"弃用（"圣光束"保留）——它被其它法术的咒文行包含、持续误触发对方。咒文行已同步新词面，旧别名不再生效；自定义词面命名规范见 wiki「Spell-Alias-Guidelines」
 - breaking: `wizardreal:spell_catalog` S2C 升 formatVersion 3；`spell_catalog.json` 导出升 format 3，新增 `effects` 与 `chant_stages`

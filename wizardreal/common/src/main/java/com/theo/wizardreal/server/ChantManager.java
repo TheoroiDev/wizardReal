@@ -190,11 +190,20 @@ public final class ChantManager {
         ChantNetwork.sendEnd(player, true);
         // Power tier for the full chant (chant_policy.power_per_line, default 1.0),
         // plus the chant-stage resolution (magic_eco 03): completed lines AND the
-        // caster's mastery decide which stage's effects fire.
-        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines),
-                StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell)));
-        WizardReal.LOGGER.info("{} completed chant for {} ({} lines)",
-                player.getName().getString(), spell.id(), completedLines);
+        // caster's mastery decide which stage's effects fire. 空转咏唱 (issue
+        // #41): an empty bar never wastes the recital — the stage degrades to
+        // what the current mana affords (base unaffordable = fizzle).
+        int stage = StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell));
+        int affordable = SpellCastHandler.affordableStage(player, spell, stage);
+        if (affordable < 0) {
+            WizardReal.LOGGER.info("{} completed chant for {} but has no mana (fizzle)",
+                    player.getName().getString(), spell.id());
+            fail(player, engine);
+            return;
+        }
+        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines), affordable);
+        WizardReal.LOGGER.info("{} completed chant for {} ({} lines, stage {})",
+                player.getName().getString(), spell.id(), completedLines, affordable);
     }
 
     /** D9 咒名跳章: the spell-name line was spoken mid-chant; cast at the
@@ -213,10 +222,18 @@ public final class ChantManager {
         }
         lock(player, COMPLETION_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, true);
-        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines),
-                StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell)));
-        WizardReal.LOGGER.info("{} released {} early ({} lines complete)",
-                player.getName().getString(), spell.id(), completedLines);
+        // 空转咏唱 (issue #41): same stage degrade as the full completion.
+        int stage = StageResolver.resolve(spell.chantStages(), completedLines, masteryT(player, spell));
+        int affordable = SpellCastHandler.affordableStage(player, spell, stage);
+        if (affordable < 0) {
+            WizardReal.LOGGER.info("{} released {} early but has no mana (fizzle)",
+                    player.getName().getString(), spell.id());
+            fail(player, engine);
+            return;
+        }
+        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines), affordable);
+        WizardReal.LOGGER.info("{} released {} early ({} lines complete, stage {})",
+                player.getName().getString(), spell.id(), completedLines, affordable);
     }
 
     /** Caster's learning percent for this spell (D4) — the stage ladder's gate. */

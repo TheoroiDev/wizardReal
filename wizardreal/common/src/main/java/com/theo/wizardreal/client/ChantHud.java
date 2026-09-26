@@ -2,6 +2,7 @@ package com.theo.wizardreal.client;
 
 import com.theo.wizardreal.api.catalog.CatalogPayload;
 import com.theo.wizardreal.config.WizardRealConfig;
+import com.theo.wizardreal.net.ChantNetwork;
 import com.theo.wizardreal.net.MagicClientState;
 
 import java.util.List;
@@ -43,6 +44,22 @@ public final class ChantHud {
     public static void render(GuiGraphics ctx, Minecraft mc, ChantState state) {
         if (state == null) return;
         long now = System.currentTimeMillis();
+
+        // Idle-recognition notice (issue #41 拒识有反馈): a transient line at
+        // the chant anchor, rendered independently of any active chant — the
+        // rejection feedback must reach an idle player too.
+        if (state.noticeKind != null && now - state.noticeMs <= ChantState.NOTICE_TTL_MS) {
+            boolean whisper = ChantNetwork.NOTICE_WHISPER.equals(state.noticeKind)
+                    && state.noticeNameKey != null && !state.noticeNameKey.isEmpty();
+            Component notice = whisper
+                    ? Component.translatable("wizardreal.chant.whisper",
+                            Component.translatable(state.noticeNameKey))
+                            .withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.ITALIC)
+                    : Component.translatable("wizardreal.chant.dissipate")
+                            .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
+            ctx.drawString(mc.font, notice, ctx.guiWidth() / 2 + X_OFFSET,
+                    ctx.guiHeight() / 2 - 24, 0xFFFFFF);
+        }
 
         if (!state.active) {
             if (state.endedMs == 0 || now - state.endedMs > FADE_MS) return;
