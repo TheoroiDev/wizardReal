@@ -189,15 +189,6 @@ if (devModsManifest.isFile()) {
         }
     }
 }
-if (devModsManifest.isFile()) {
-    devModsManifest.eachLine { line ->
-        def t = line.trim()
-        if (t && !t.startsWith("#")) {
-            def parts = t.split(/\s+/)
-            if (parts.length >= 2) devModLines << [file: parts[0], target: parts[1].toLowerCase()]
-        }
-    }
-}
 
 def linkDevMod = { java.nio.file.Path src, java.nio.file.Path dst ->
     if (java.nio.file.Files.exists(dst) && java.nio.file.Files.isSameFile(dst, src)) return "kept"
