@@ -146,10 +146,17 @@ public final class ChantManager {
      *         try instant casting).
      */
     public boolean feed(ServerPlayer player, String heard, List<String> heardIpa, float confidence) {
+        return feed(player, heard, heardIpa, confidence, null);
+    }
+
+    /** voiceCast#48 W2: the utterance's production adjudication rides along
+     *  (pronId/decision/score) — the progression matcher weighs it. */
+    public boolean feed(ServerPlayer player, String heard, List<String> heardIpa, float confidence,
+                        com.theo.voicecast.match.ChantLineMatcher.ChantVerdict verdict) {
         ChantEngine engine = active.get(player.getUUID());
         if (engine == null) return false;
 
-        ChantEngine.FeedResult r = engine.feed(heard, heardIpa, System.currentTimeMillis());
+        ChantEngine.FeedResult r = engine.feed(heard, heardIpa, System.currentTimeMillis(), verdict);
         if (!r.consumed()) return false;
 
         if (r.timeout()) {

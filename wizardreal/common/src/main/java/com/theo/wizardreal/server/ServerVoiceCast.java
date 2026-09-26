@@ -249,7 +249,10 @@ public final class ServerVoiceCast {
                 return;
             }
             ChantManager.get().feed(player, heard, ipa.isBlank()
-                    ? List.of() : List.of(ipa.split(" ")), result.score());
+                    ? List.of() : List.of(ipa.split(" ")), result.score(),
+                    new com.theo.voicecast.match.ChantLineMatcher.ChantVerdict(
+                            result.pronId(), result.decision() == null ? "" : result.decision().name(),
+                            result.score()));
             return;
         }
 

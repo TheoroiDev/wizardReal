@@ -135,6 +135,13 @@ public final class ChantEngine {
      *         (darkness) path.
      */
     public FeedResult feed(String heard, List<String> heardIpa, long nowMs) {
+        return feed(heard, heardIpa, nowMs, null);
+    }
+
+    /** voiceCast#48 W2: the utterance's production adjudication (may be null)
+     *  rides along so the injected matcher can weigh it. */
+    public FeedResult feed(String heard, List<String> heardIpa, long nowMs,
+                           com.theo.voicecast.match.ChantLineMatcher.ChantVerdict verdict) {
         if (timedOut(nowMs)) {
             return FeedResult.of(true, false, List.of());
         }
@@ -158,7 +165,7 @@ public final class ChantEngine {
             int best = -1;
             for (int vi = 0; vi < chants.size(); vi++) {
                 ChantLine first = chants.get(vi).lines().get(0);
-                if (lineMatches(matcher, first, heard, heardIpa)) {
+                if (lineMatches(matcher, first, heard, heardIpa, verdict)) {
                     best = vi;
                     break;
                 }
@@ -183,7 +190,7 @@ public final class ChantEngine {
         }
 
         ChantLine current = chant.lines().get(lineIndex);
-        if (lineMatches(matcher, current, heard, heardIpa)) {
+        if (lineMatches(matcher, current, heard, heardIpa, verdict)) {
             lineIndex++;
             lineStartedMs = nowMs;
             wrongStreak = 0;
@@ -198,7 +205,7 @@ public final class ChantEngine {
         // spell policy.
         if (lineIndex < chant.lines().size() - 1) {
             ChantLine castLine = chant.lines().get(chant.lines().size() - 1);
-            if (lineMatches(matcher, castLine, heard, heardIpa)) {
+            if (lineMatches(matcher, castLine, heard, heardIpa, verdict)) {
                 return FeedResult.earlyRelease(lineIndex, events);
             }
         }
@@ -232,13 +239,14 @@ public final class ChantEngine {
     /** Lenient per-line match, delegated to the injected matcher (W1 seam;
      *  default binding = IPA phonemes first, then text aliases — unchanged). */
     static boolean lineMatches(ChantLine line, String heard, List<String> heardIpa) {
-        return lineMatches(LenientLineMatcher.INSTANCE, line, heard, heardIpa);
+        return lineMatches(LenientLineMatcher.INSTANCE, line, heard, heardIpa, null);
     }
 
     static boolean lineMatches(ChantLineMatcher matcher, ChantLine line,
-                               String heard, List<String> heardIpa) {
+                               String heard, List<String> heardIpa,
+                               com.theo.voicecast.match.ChantLineMatcher.ChantVerdict verdict) {
         Pronunciation p = line.pronunciation();
-        return matcher.match(p.ipa(), p.aliases(), heard, heardIpa).matched();
+        return matcher.match(p.id(), p.ipa(), p.aliases(), heard, heardIpa, verdict).matched();
     }
 
 
