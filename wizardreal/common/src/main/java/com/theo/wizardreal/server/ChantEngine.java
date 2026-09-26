@@ -4,7 +4,9 @@ import com.theo.wizardreal.api.Pronunciation;
 import com.theo.wizardreal.api.Chant;
 import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.Spell;
+import com.theo.voicecast.match.ChantLineMatcher;
 import com.theo.voicecast.match.LenientLine;
+import com.theo.voicecast.match.LenientLineMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,7 @@ public final class ChantEngine {
     private final Spell spell;
     private final List<Chant> chants;
     private final long timeoutMs;
+    private final ChantLineMatcher matcher;
     private int variant = -1;   // locked chant index; -1 until first line
     private int lineIndex;
     private long lastActivity;
@@ -78,9 +81,18 @@ public final class ChantEngine {
     /** Entry rework (D9): pre-locked engine — the idle-state L1 gate already
      * matched the entry utterance, which counts as completed line 1. */
     public ChantEngine(Spell spell, long nowMs, long timeoutMs, int lockedVariant) {
+        this(spell, nowMs, timeoutMs, lockedVariant, LenientLineMatcher.INSTANCE);
+    }
+
+    /** voiceCast#48 W1 seam: the line-progression decision comes from the
+     *  injected matcher (default binding = the pre-#48 lenient boolean,
+     *  behavior-free). W2+ bindings route through the production adjudicator. */
+    public ChantEngine(Spell spell, long nowMs, long timeoutMs, int lockedVariant,
+                       ChantLineMatcher matcher) {
         this.spell = spell;
         this.chants = spell.chants();
         this.timeoutMs = timeoutMs;
+        this.matcher = matcher == null ? LenientLineMatcher.INSTANCE : matcher;
         if (lockedVariant >= 0 && lockedVariant < chants.size()) {
             this.variant = lockedVariant;
             this.lineIndex = 1;
@@ -146,7 +158,7 @@ public final class ChantEngine {
             int best = -1;
             for (int vi = 0; vi < chants.size(); vi++) {
                 ChantLine first = chants.get(vi).lines().get(0);
-                if (lineMatches(first, heard, heardIpa)) {
+                if (lineMatches(matcher, first, heard, heardIpa)) {
                     best = vi;
                     break;
                 }
@@ -171,7 +183,7 @@ public final class ChantEngine {
         }
 
         ChantLine current = chant.lines().get(lineIndex);
-        if (lineMatches(current, heard, heardIpa)) {
+        if (lineMatches(matcher, current, heard, heardIpa)) {
             lineIndex++;
             lineStartedMs = nowMs;
             wrongStreak = 0;
@@ -186,7 +198,7 @@ public final class ChantEngine {
         // spell policy.
         if (lineIndex < chant.lines().size() - 1) {
             ChantLine castLine = chant.lines().get(chant.lines().size() - 1);
-            if (lineMatches(castLine, heard, heardIpa)) {
+            if (lineMatches(matcher, castLine, heard, heardIpa)) {
                 return FeedResult.earlyRelease(lineIndex, events);
             }
         }
@@ -217,22 +229,16 @@ public final class ChantEngine {
         return new Progress(variant, lineIndex, false);
     }
 
-    /** Lenient per-line match: IPA phonemes first, then text aliases. */
+    /** Lenient per-line match, delegated to the injected matcher (W1 seam;
+     *  default binding = IPA phonemes first, then text aliases — unchanged). */
     static boolean lineMatches(ChantLine line, String heard, List<String> heardIpa) {
+        return lineMatches(LenientLineMatcher.INSTANCE, line, heard, heardIpa);
+    }
+
+    static boolean lineMatches(ChantLineMatcher matcher, ChantLine line,
+                               String heard, List<String> heardIpa) {
         Pronunciation p = line.pronunciation();
-        if (heardIpa != null && !heardIpa.isEmpty() && !p.ipa().isEmpty()) {
-            String ipaText = String.join(" ", heardIpa);
-            for (String templ : p.ipa()) {
-                if (LenientLine.loosePhonetic(ipaText, templ)) return true;
-            }
-        }
-        if (heard != null && !heard.isBlank()) {
-            for (String alias : p.aliases()) {
-                if (LenientLine.looseText(heard.toLowerCase(Locale.ROOT),
-                        alias.toLowerCase(Locale.ROOT))) return true;
-            }
-        }
-        return false;
+        return matcher.match(p.ipa(), p.aliases(), heard, heardIpa).matched();
     }
 
 
