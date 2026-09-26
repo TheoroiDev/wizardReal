@@ -21,12 +21,12 @@ public final class WizardRealSounds {
     public static final List<String> IDS = List.of(
             // ----- casts -----
             "cast.ignis", "cast.fulmen", "cast.vitae", "cast.aegis", "cast.ictus",
-            "cast.explosion", "cast.excalibur", "cast.dragon_slave",
+            "cast.explosion", "cast.blade", "cast.rift",
             "cast.arcanum", "cast.gaia", "cast.mare", "cast.mortis", "cast.sanctus",
             "cast.semina", "cast.tempest", "cast.umbra", "cast.ventus",
             // ----- impacts -----
             "impact.ignis", "impact.fulmen", "impact.vitae", "impact.aegis",
-            "impact.ictus", "impact.explosion", "impact.excalibur", "impact.dragon_slave");
+            "impact.ictus", "impact.explosion", "impact.blade", "impact.rift");
 
     public static ResourceLocation id(String soundId) {
         return new ResourceLocation("wizardreal", soundId);

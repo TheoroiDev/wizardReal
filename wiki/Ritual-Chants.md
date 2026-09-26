@@ -4,7 +4,7 @@
 
 > [← Home](Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
 
-Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't cast on the trigger alone: the trigger word puts you into a **chant**, and you must speak each line of the incantation before the spell fires. A **chant HUD** appears to the right of the crosshair.
+Every spell in the grimoire is a ritual (see [Spells](Spells.md)): the trigger word puts you into a **chant**, and you must speak each line of the incantation before the spell fires. A **chant HUD** appears to the right of the crosshair.
 
 ## How it flows
 
@@ -16,22 +16,30 @@ Ritual spells (Explosion, Tempest and 8 more — see [Spells](Spells.md)) don't 
 
 | Rule | Detail |
 |---|---|
-| **First line locks the variant** | Each spell has 3 chant variants (English/Chinese/Japanese); whichever variant your first line matches is used to the end |
+| **First line locks the variant** | Each spell has chant variants (English/Chinese/Japanese, several per language on larger rituals); whichever variant your first line matches is used to the end |
 | **Wrong line = retry** | A wrong line never resets progress — **repeat the current line**; finished lines stay green |
 | **1.2 s grace window** | For 1.2 s after each line completes, recognition leftovers don't flash errors |
-| **90 s timeout** | 90 s without a valid utterance cancels the chant |
+| **Timeout: 10 s per line** | A chant with no valid utterance for 10 s × its line count cancels (server-configurable to a fixed cap) |
 | **3 s completion / 1.2 s cancel lockout** | Short ignore-window after the chant ends (the last line usually equals the trigger; recognition emits several finals per utterance — this prevents an instant re-trigger) |
+| **Gates are checked up front** | Learning requirement, staff, origin and cooldown are checked **before** the first line is accepted — the action bar tells you exactly why a chant cannot start; an empty mana bar doesn't void a completed chant, the cast degrades to the tier your mana affords |
 | **Left-click cancels** | While holding right-click during a chant, click **left** to cancel (no mana spent) |
 
 ## HUD legend
 
 ```
-Explosion               ← spell title (gold)
-✓ Cloak the sky in black   ← done (green strikethrough)
-► Wake the crimson thunder ← current (aqua)
-   Explosion!              ← upcoming (dimmed)
-✗ Repeat this line         ← red flash on a wrong line
+Explosion  42%             ← spell title (gold) + your mastery of it
+✓ let the earth split wide    ← done (green strikethrough)
+► let the heavens bend low    ← current (aqua; its pinyin/romaji reading sits above)
+   sealed in ruin's name      ← upcoming (dimmed)
+   unmake all that stands
+   Explosion!                 ← the final line is usually the trigger
+✗ Repeat this line            ← red flash on a wrong line
 ```
+
+And when you are **not** chanting, a rejected utterance still answers you (a few seconds, then it fades):
+
+- *"✦ The incantation dissipates on the wind"* — the server heard speech but nothing cleared the threshold;
+- *"✦ You catch an almost-familiar whisper — closest: …"* — you were near another spell's trigger; its name is shown.
 
 ## Tips
 

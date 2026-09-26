@@ -38,7 +38,7 @@
 ## 下一步
 
 - [施法系统](Spellcasting-zh)：法力、冷却、学习与卷轴；
-- [法术一览](Spells-zh)：15 个内置法术的数值与触发词；
+- [法术一览](Spells-zh)：法术条目字段速览（完整名册见游戏内图鉴）；
 - [仪式吟唱](Ritual-Chants-zh)：长咒语逐句咏唱；
 - [配置](Configuration-zh)：咒文注音与其他选项；
 - 遇到问题看[排障与 FAQ](Troubleshooting-FAQ-zh)。

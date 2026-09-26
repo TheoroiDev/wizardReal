@@ -17,7 +17,8 @@ A Minecraft 1.20.1 mod (Fabric + Forge) for **casting spells with your voice**. 
 |---|---|
 | [Getting Started](Getting-Started) | Install, staffs, push-to-talk, HUD legend |
 | [Spellcasting](Spellcasting) | Mana, cooldowns, schools, tomes & scrolls |
-| [Spells](Spells) | All 15 built-in spells: triggers, numbers, effects |
+| [Spells](Spells) | What every spell entry tells you; full roster in the in-game compendium |
+| [Glossary](Glossary) | Canonical terms: realm names (two-tier), spell naming rules, banned words |
 | [Ritual Chants](Ritual-Chants) | Line-by-line incantations: variants, retries, timeout |
 | [Configuration](Configuration) | Chant readings options (`[chantReadings]`) |
 | [Troubleshooting & FAQ](Troubleshooting-FAQ) | Recognition, HUD, voice mods |
@@ -28,7 +29,7 @@ A Minecraft 1.20.1 mod (Fabric + Forge) for **casting spells with your voice**. 
 |---|---|
 | [快速开始](Getting-Started-zh) | 安装、法杖、PTT、HUD 图例 |
 | [施法系统](Spellcasting-zh) | 法力、冷却、学派、典籍与卷轴 |
-| [法术一览](Spells-zh) | 15 个内置法术的触发词、数值与效果 |
+| [法术一览](Spells-zh) | 法术条目字段速览；完整名册见游戏内图鉴 |
 | [仪式吟唱](Ritual-Chants-zh) | 逐句咏唱：变体、重试、超时、取消 |
 | [配置](Configuration-zh) | 咒文注音选项（`[chantReadings]`） |
 | [排障与 FAQ](Troubleshooting-FAQ-zh) | 识别、HUD、语音模组共存 |
