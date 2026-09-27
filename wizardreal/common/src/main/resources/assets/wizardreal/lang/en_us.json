@@ -451,9 +451,9 @@
   "wizardreal.practice.started": "✦ Practice begins — recite the highlighted line (no mana, no cooldown)",
   "wizardreal.practice.stopped": "Practice ended",
   "wizardreal.practice.ended": "✦ Practice complete",
-  "wizardreal.practice.band.perfect": "✦ PERFECT resonance! (avg ≥ 0.95)",
-  "wizardreal.practice.band.excellent": "✦ Excellent recital (avg ≥ 0.85)",
-  "wizardreal.practice.band.pass": "✦ Recital passed (avg ≥ 0.70)",
+  "wizardreal.practice.band.perfect": "✦ PERFECT resonance! (avg ≥ 0.98)",
+  "wizardreal.practice.band.excellent": "✦ Excellent recital (avg ≥ 0.92)",
+  "wizardreal.practice.band.pass": "✦ Recital passed (avg ≥ 0.85)",
   "wizardreal.practice.resonance": "✦ Resonance! Perfect chant — power +10%",
   "wizardreal.cmd.practice.start": "Practice started: %s — speak the lines; no mana or cooldown is spent",
   "item.wizardreal.first_lesson_tome": "First Lesson",
@@ -472,5 +472,6 @@
   "wizardreal.first_lesson.progressed": "§7%s read again (t = %s%%)",
   "wizardreal.first_lesson.done": "✦ The First Lesson is finished — staff in hand, whisper to the world",
   "wizardreal.cmd.mana.bonus.ok": "+%s max mana (now %s)",
-  "wizardreal.cmd.mana.bonus.cap": "Max mana already at the cap (%s)"
+  "wizardreal.cmd.mana.bonus.cap": "Max mana already at the cap (%s)",
+  "wizardreal.practice.no_gain": "No mastery gained today (daily practice limit reached, or the spell is already fully mastered)"
 }

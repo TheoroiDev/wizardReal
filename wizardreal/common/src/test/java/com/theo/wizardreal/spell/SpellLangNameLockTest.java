@@ -98,4 +98,20 @@ class SpellLangNameLockTest {
             }
         }
     }
+
+    /** Refine round 1: the name lock only covered spell.* keys — the wr#47
+     *  realms batch shipped a missing {@code wizardreal.chit.used} through
+     *  exactly this hole. Pin full-file key parity so any new key must land
+     *  in both languages at once. */
+    @Test
+    void enAndZhKeySetsAreIdentical() throws IOException {
+        Set<String> en = lang("en_us.json").keySet();
+        Set<String> zh = lang("zh_cn.json").keySet();
+        Set<String> missingInZh = new HashSet<>(en);
+        missingInZh.removeAll(zh);
+        Set<String> missingInEn = new HashSet<>(zh);
+        missingInEn.removeAll(en);
+        assertTrue(missingInZh.isEmpty(), "keys missing from zh_cn.json: " + missingInZh);
+        assertTrue(missingInEn.isEmpty(), "keys missing from en_us.json: " + missingInEn);
+    }
 }

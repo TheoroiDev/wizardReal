@@ -274,18 +274,7 @@ public final class ChantManager {
         // wr#43 practice completion: zero mana, zero cooldown, no effect —
         // the rehearsal settles half-rate mastery (daily capped) instead.
         if (engine.isPractice()) {
-            float applied = LearningService.onPractice(player, spell);
-            float avg = engine.averageScore();
-            var band = com.theo.wizardreal.match.ScoreBands.DEFAULT.bandOf(avg);
-            hint(player, switch (band) {
-                case PERFECT -> "wizardreal.practice.band.perfect";
-                case EXCELLENT -> "wizardreal.practice.band.excellent";
-                case PASS -> "wizardreal.practice.band.pass";
-                default -> "wizardreal.practice.ended";
-            });
-            WizardReal.LOGGER.info("{} practiced {} ({} lines, avg score {}, mastery +{})",
-                    player.getName().getString(), spell.id(), completedLines,
-                    String.format(java.util.Locale.ROOT, "%.2f", avg), applied);
+            settlePractice(player, engine, completedLines);
             return;
         }
 
@@ -323,6 +312,25 @@ public final class ChantManager {
 
     /** D9 咒名跳章: the spell-name line was spoken mid-chant; cast at the
      * completed-lines power tier (skip_allowed governs, enforced here). */
+    /** Shared practice settlement (full completion AND early release): zero
+     *  stake — half-rate mastery (daily capped) against the STRICT summary
+     *  band, matching the STRICT per-line gate the rehearsal runs under. */
+    private void settlePractice(ServerPlayer player, ChantEngine engine, int completedLines) {
+        Spell spell = engine.spell();
+        float applied = LearningService.onPractice(player, spell);
+        float avg = engine.averageScore();
+        var band = com.theo.wizardreal.match.ScoreBands.STRICT.bandOf(avg);
+        hint(player, applied <= 0f ? "wizardreal.practice.no_gain" : switch (band) {
+            case PERFECT -> "wizardreal.practice.band.perfect";
+            case EXCELLENT -> "wizardreal.practice.band.excellent";
+            case PASS -> "wizardreal.practice.band.pass";
+            default -> "wizardreal.practice.ended";
+        });
+        WizardReal.LOGGER.info("{} practiced {} ({} lines, avg score {}, mastery +{})",
+                player.getName().getString(), spell.id(), completedLines,
+                String.format(java.util.Locale.ROOT, "%.2f", avg), applied);
+    }
+
     private void earlyRelease(ServerPlayer player, ChantEngine engine, int completedLines) {
         Spell spell = engine.spell();
         ChantPolicy policy = spell.chantPolicy();
@@ -332,11 +340,7 @@ public final class ChantManager {
             // wr#43: practice early release = a shorter rehearsal — same
             // zero-stake settlement as the full completion.
             ChantNetwork.sendEnd(player, true);
-            LearningService.onPractice(player, spell);
-            float avg = engine.averageScore();
-            WizardReal.LOGGER.info("{} released {} early in practice ({} lines, avg {})",
-                    player.getName().getString(), spell.id(), completedLines,
-                    String.format(java.util.Locale.ROOT, "%.2f", avg));
+            settlePractice(player, engine, completedLines);
             return;
         }
         if (policy != null && !policy.skipAllowed()) {
@@ -514,10 +518,9 @@ public final class ChantManager {
             ChantEngine engine = e.getValue();
             if (p == null) return true; // player gone; quit handler covers packet
             if (now - engine.lastActivityMs() <= engine.timeoutMs()) return false;
-            declareMode(p, CastMode.OPEN, null);
-            ChantNetwork.sendEnd(p, false);
-            applyFailBlindness(p);
-            lock(p, CANCEL_LOCKOUT_MS);
+            // Route through fail() so practice timeouts stay zero-stake (no
+            // blindness, no streaks) and real timeouts feed the fail-streak.
+            fail(p, engine);
             return true;
         });
         // Expire stale lockouts and failure streaks so the maps cannot grow.

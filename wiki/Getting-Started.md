@@ -8,7 +8,8 @@ Voice recognition is handled by the companion **VoiceCast** mod — see [its wik
 
 ## Get your first staff
 
-- **Apprentice Staff**: craft it (gold ingot / stick / diamond diagonal);
+- **First Lesson tome**: given to you on first join — one use teaches the three entry spells (ignis / celere / velum), the shortest chants in the game. Work through it first;
+- **Apprentice Staff**: craft it (gold ingot / stick / diamond diagonal) — that's also your first advancement;
 - **Fire / Lightning Staff**: upgrades of the apprentice staff (recipes in [Spellcasting](Spellcasting));
 - Or explore: desert pyramids, jungle temples, woodland mansions, strongholds, mineshafts and dungeons have a small chance of loot — a finished staff (3%), **blank scrolls** (15%) and **spell tomes** (8%).
 
@@ -38,7 +39,7 @@ Incantations in languages you don't speak come with a small gray **reading row**
 ## Next steps
 
 - [Spellcasting](Spellcasting): mana, learning, tomes & scrolls;
-- [Spells](Spells): all 15 built-in spells with trigger words;
+- [Spells](Spells): a field-by-field guide to spell entries (full roster lives in the in-game compendium);
 - [Ritual Chants](Ritual-Chants): long incantations;
 - [Configuration](Configuration): chant readings & other options;
 - Problems: [Troubleshooting & FAQ](Troubleshooting-FAQ).

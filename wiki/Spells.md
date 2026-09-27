@@ -10,7 +10,7 @@ Be a Real Wizard ships a growing grimoire of voice-cast spells — every one of 
 
 - **In-game compendium** (wizardpedia book): every spell with its trigger words, schools, mana, cooldown, learning requirement, chant stages and effects — in your client language, always in sync with the loaded datapack;
 - **`/wr spells` / `/wr spellinfo`** — quick lookups from chat;
-- **`spell_catalog.json`** in your game directory — the same data exported as a file (see [Spell Catalog](Spell-Catalog)).
+- **`spell_catalog.json`** in your game directory — the same data exported as a JSON file (open it with any text editor).
 
 ## What every spell entry tells you
 

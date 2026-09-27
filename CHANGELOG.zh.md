@@ -6,12 +6,13 @@
 
 ### Features
 
-- 中文咏唱范读随包发布（wizardReal#45，zh 线）：69 个法术共 132 条 CosyVoice3 合成范读，注册为 `wizardreal.reading.<spell>.zh` 声音事件——语料已过生产链回测并与 TTS 基线同水平（zh cast 89% vs 基线 93%、zipa chant_idx0 93% vs 89%），范读音频即经过机器验证的正确发音。en/ja 线待多语 prompt 调优轮后跟进
+- 中文咏唱范读随包发布（wizardReal#45，zh 线）：69 个法术共 132 条 CosyVoice3 合成范读，注册为 `wizardreal.reading.<spell>.zh` 声音事件——语料已过生产链回测并与 TTS 基线同水平（zh cast 89% vs 基线 93%、zipa chant_idx0 93% vs 89%），范读音频即经过机器验证的正确发音
+- 日文咏唱范读随包发布（wizardReal#45，ja 线）：75 个法术共 106 条 CosyVoice3 合成范读，注册为 `wizardreal.reading.<spell>.ja`——调优轮后改用日语母语提示音重生成（实验台回测 cast 26% → 67%，大幅接近 zh 基线 77%）。en 线待提示音来源决策。播放接线（图鉴范读按钮）随 wizardpedia 播放位切片落地——当前事件已注册、字幕就绪
 - 学派粒子词汇表（wizardReal#44）：十个锁定色板的 spark 粒子（每学派一个，法术效果 JSON 里写 `spark_<school>`）——程序化绘制的辉光珠，颜色直接取自学派色板，施法所见与 HUD/图标所指的学派一致
-- 学派色板单一事实源（wizardReal#44）：十大流派的颜色（accent / glow / dark，取自所有玩家都能看到的法术 dust 色）落在一处——咏唱 HUD 标题按学派取色、图标重染色相同源，生成器同时校验每个法术效果的粒子色都在色板内（当前 23 处 dust 色，0 越板）。学派粒子贴图与帧动画随后续批次
+- 学派色板单一事实源（wizardReal#44）：十大流派的颜色（accent / glow / dark，取自所有玩家都能看到的法术 dust 色）落在一处——咏唱 HUD 标题按学派取色、图标重染色相同源，生成器同时校验每个法术效果的粒子色都在色板内（当前 23 处 dust 色，0 越板）。帧动画（mcmeta）随后续批次
 - 第一课引导（wizardReal#49）：每个新玩家首次进服即获得固定的「第一课」典籍——一次阅读教会三个入门法术（ignis / celere / velum，最短咒文），取代拿不到目标书的随机典籍战利品。五级 advancement 边玩边教规则：合成学徒法杖 → 初次低语（首次语音施法）→ 完整的仪式（3 行以上咏唱）→ 禁忌之言（五大禁咒之一）→ 千锤百炼（单法术 100% 熟练度，奖励 +20 法力上限——首个法力上限获取源，上限 300）
 - 练习闭环（`/wrpractice <法术>`——wizardReal#43）：零法力、零冷却、无实际效果地排练任意法术。咏唱 HUD 随朗读**逐词高亮**当前句，评分走严档，每完成一次练习结算 +1% 熟练度（实机施法的一半，每日有上限——实机施法保持全额 +2%）。练习失败永不致盲、不叠层。OP 另可走 `/wr practice <法术>` 进入
-- 咏唱评分带与共鸣（wizardReal#43，消费 voiceCast#48 W3 的逐句评分）：每完成一句即打分——完美（≥ 0.95）/ 优秀（≥ 0.85）/ 及格（≥ 0.70，成功线）。**完美**咏唱触发**共鸣**——仅该次施法威力 +10%。评分永不改变成败，也绝不加熟练度（熟练度跟成功走、分数跟表现走）；切档阈值经每模式阈值提供器以数据下发，不写死
+- 咏唱评分带与共鸣（wizardReal#43，消费 voiceCast#48 W3 的逐句评分）：每完成一句即打分——完美（≥ 0.95）/ 优秀（≥ 0.85）/ 及格（≥ 0.70，成功线）。**完美**咏唱触发**共鸣**——仅该次施法威力 +10%。评分永不改变成败，也绝不加熟练度（熟练度跟成功走、分数跟表现走）；切档以 `ScoreBands` 常量随包；`PerModeThresholdProvider#scoreBands` 是插件重标定接缝（按模式接线随四模式路由落地）
 - 拒识现在有回应了（wizardReal#41）：手持法杖时被语义门否决的语句不再静默吞掉——被拒的诵读会显示"咒文消散在风中"，擦边未中则显示最接近的候选（"你听见了似是而非的低语……最接近：……"带候选法术名），在咏唱 HUD 锚点处停留数秒
 - 咒文注音层（咏唱读法标注）：服务端在目录构建期对每条咏唱行一次性派生 `readings` 注音映射——zh 行得有调本调拼音（教科书标调规则，调号取自内嵌数据表；v1 不做变调），ja 行得平文式罗马字（新增纯 JVM KanaRomaji 表：促音叠辅音、语尾 っ 以撇号表示、长音合流为 macron、按 mora 分隔输出、外来音节 ティ/ファ/ウィ 与 ん=n）。注音以固定键集（`pinyin`/`romaji`/`ipa`）随目录下发；派生严格 fail-closed（任一不可转字母即缺该键——不造假读法），标点/空白按分隔符丢弃（手订模板本就不含停顿 token，丢标点才与手订同源）；行手订 IPA 永远优先于 G2P 派生。lab 新增 lint（`check_readings.py`）交叉核对派生与手订 IPA，兼任 Stage-A 吸收清单（首跑全量：689 条手订行中 687 条完全收敛）
 - 咏唱 HUD 注音（D4，默认开启）：咏唱进行中在当前行上方显示小号灰色注音行，读法取自目录派生的 readings；语言策略与书页同语义（`[chantReadings] languagePolicy`：auto=非显示语言才注 / off / 手选语言集 / all，配 `languages` 指定手选集）。新增 `[chantReadings] pinyinStyle` 选择拼音显示样式——符号调（`zhēn`，默认）或数字调（`zhen1`，永远可渲染）——在目录派生期应用，改动于下次目录重建（登录 / 数据包重载）后生效
@@ -58,6 +59,10 @@
 - breaking：matcher 机器迁入 voicecast（本仓删除 `PhonemeMatcher`、`SpellMatcher`、`Phonetics` 与代价资产 `assets/wizardreal/phoneme_costs.tsv`）；`com.theo.wizardreal.api.Pronunciation` 成为 wizardreal 自有内容类型（voicecast 推送类型为 `SessionVocabulary`）；`PerModeThresholdProvider`/`ResourceModeThresholdProvider` 改产 `ThresholdHint` 数据而非 matcher 常量
 - reject level 重键到 Decision：`EXACT` 任意 level 接受，`NEAR` 仅 level 0，`AMBIGUOUS`/`REJECTED` 一律不施法；旧 ctcPresent 条件性的分面压制（level ≥ 1 杀触发词匹配面、level ≥ 2 杀宽松首行面）改为推送期阈值 hint（数据过界）——首行即门优先级与咏唱进度门不变
 
+### Infrastructure
+
+- common 子项目现发布到 Maven（`gradlew publishToMavenLocal` → `com.theo.wizardreal:wizardreal-common-1.20.1`，与 voicecast-common 块同构）：未分类普通 jar + sources 让非 MC 消费方（lab/java-harness 识别测试台、未来工具链）按坐标解析纯 JVM 子集（G2P、Pronunciation/SpellRegistry api）。纯构建设施——零逻辑变更
+
 ### Features
 
 - 阶梯咏唱（magic_eco 03）：法术可定义 `chant_stages` 升级阶——咏唱念得更深即切换到该阶自己的效果列表（可覆盖耗魔/冷却），解锁门槛=已完成行数×施法者熟练度百分比**双门槛**；熟练度不足时向下结算到已解锁的最高阶——用低阶练习成长解锁高阶
@@ -82,7 +87,7 @@
 - Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径
 - 咏唱入口改版（语音改版 D9）：仪式法术的**第一句（L1）**现在用于进入咏唱并锁定变体（入口语句计为第 1 行）；空闲态念触发词/咒名改为尝试破弃快施，需咏唱熟练度（学习系统上线前一律拒绝）
 - 吟唱中念出咒名即提前施放，威力按已完成行数取档（`chant_policy.skip_allowed`；禁咒拒绝跳章）
-- 吟唱中受击会被打断（07 M1）：≥3 行法术回退一行，更短的直接失败；失败的咏唱施加可叠加的黑暗惩罚（`[chant]` 配置：超时模式按行数（默认 10s×行数）或固定值，黑暗基值/步长/窗口）
+- 吟唱中受击会被打断（07 M1）：≥3 行法术回退一行，更短的直接失败；失败的咏唱施加可叠加的黑暗惩罚（`[chant]` 配置：超时模式按行数（默认 10s×行数）或固定值，黑暗基值/步长/窗口）——**0.6.0 起默认关闭**（见未发布区）
 - 法术 JSON 新增 `chant_policy` 块：逐行威力档、跳章许可、可打断性、可选自缚；`chants` 支持语言 keyed 新格式（每语言 trigger/cast/body 变体，legacy 数组继续可读）
 - 法术效果现在随施法威力缩放（吟唱档位 × 熟练度）：伤害/治疗/射程/爆炸线性缩放，状态时长亚线性（开方）且强化等级至多 +2，弹丸数量随威力增长——威力来自吟唱档位与熟练度；音效/粒子等纯演出不缩放
 - 法术加载期校验报告：仪式链首行（L1）近似冲突、禁咒字段组错误（难度 ≥2 但缺 requires_learning/skip_allowed=false）、IPA 覆盖缺口，以及 reload 日志中的注册数量行
@@ -99,9 +104,6 @@
 - CI 将 voicecast 依赖构建进 mavenLocal（远程 maven 就绪前的过渡；voicecast#13）
 - 纯开发测试 mod 移出 gradle 依赖：release jar 预下载到工作区 `resources/devmods/<loader>/`，由 `manifest.txt` 驱动接线（fabric 硬链接进 run mods 目录；forge 作为文件依赖由 Loom 重映射；Carpet 的 Forge 移植仍受阻，voicecast#38）；语音模型事实源移至 `resources/models/`
 - 回测工具（`tools/benchmark`：`IpaBench`/`EngineBench`/`LiveBench` + `ipafill.py`/`engbench.py`）移植到 0.5.0 契约——ipa 臂经 `SessionVocabulary` 驱动 `ZipaPhonemeRecognizer`、读取 `RecognitionDiagnostics.templateScores()`，文本臂为 Qwen3-ASR 离线引擎，对着已发布的 voicecast jar 编译验证；已删除的 streaming/SenseVoice 引擎分支移除
-
-### Changes
-
 
 ## 0.3.2 — 2026-09-02
 

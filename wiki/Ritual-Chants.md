@@ -27,7 +27,7 @@ Every spell in the grimoire is a ritual (see [Spells](Spells.md)): the trigger w
 ## HUD legend
 
 ```
-Explosion  42%             ← spell title (gold) + your mastery of it
+Explosion  42%             ← spell title (school color) + your mastery of it
 ✓ let the earth split wide    ← done (green strikethrough)
 ► let the heavens bend low    ← current (aqua; its pinyin/romaji reading sits above)
    sealed in ruin's name      ← upcoming (dimmed)
