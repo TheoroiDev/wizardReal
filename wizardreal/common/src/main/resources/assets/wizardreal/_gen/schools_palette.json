@@ -1,0 +1,55 @@
+{
+  "_source": "assets/_plan/palette.json (generated — edit the source, not this copy)",
+  "schools": {
+    "air": {
+      "accent": "#C8F0FF",
+      "glow": "#DBF5FF",
+      "dark": "#647880"
+    },
+    "arcane": {
+      "accent": "#C878FF",
+      "glow": "#DBA7FF",
+      "dark": "#643C80"
+    },
+    "earth": {
+      "accent": "#A06E46",
+      "glow": "#C1A187",
+      "dark": "#503723"
+    },
+    "fire": {
+      "accent": "#FF7814",
+      "glow": "#FFA766",
+      "dark": "#803C0A"
+    },
+    "holy": {
+      "accent": "#FFE68C",
+      "glow": "#FFEFB4",
+      "dark": "#807346"
+    },
+    "illusion": {
+      "accent": "#B4D2FF",
+      "glow": "#CEE2FF",
+      "dark": "#5A6980"
+    },
+    "lightning": {
+      "accent": "#E6E6FF",
+      "glow": "#EFEFFF",
+      "dark": "#737380"
+    },
+    "nature": {
+      "accent": "#64DC78",
+      "glow": "#9AE8A7",
+      "dark": "#326E3C"
+    },
+    "necromancy": {
+      "accent": "#AA6EDC",
+      "glow": "#C8A1E8",
+      "dark": "#55376E"
+    },
+    "water": {
+      "accent": "#50B4FF",
+      "glow": "#8DCEFF",
+      "dark": "#285A80"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 package com.theo.wizardreal.client;
 
+import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.api.catalog.CatalogPayload;
 import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.net.ChantNetwork;
@@ -81,9 +82,12 @@ public final class ChantHud {
 
         // Title: spell name + mastery percent (0.4.0 learning sync). spellId
         // already carries its namespace; lang keys are "spell.<id>.name".
+        // wizardReal#44: the title takes the school's palette color (HUD 文本色
+        // consumer) instead of a fixed gold.
         float mastery = MagicClientState.learningPercent(state.spellId);
+        ChatFormatting titleColor = titleColorFor(state.spellId);
         Component title = Component.translatable("spell." + state.spellId + ".name")
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
+                .withStyle(titleColor, ChatFormatting.BOLD)
                 .copy()
                 .append(Component.literal(String.format("  %.0f%%", mastery))
                         .withStyle(mastery >= 100f ? ChatFormatting.GREEN : ChatFormatting.GRAY));
@@ -178,6 +182,17 @@ public final class ChantHud {
         ctx.pose().scale(0.5f, 0.5f, 1f);
         ctx.drawString(font, clipped, 0, 0, READING_COLOR, false);
         ctx.pose().popPose();
+    }
+
+    /** wizardReal#44: the school palette text color for one spell (client
+     *  catalog fallback mirrors SchoolTintModels.schoolProperty). */
+    private static ChatFormatting titleColorFor(String spellId) {
+        int ord = Math.round(com.theo.wizardreal.net.SpellCatalogCache.schoolOrdinal(spellId));
+        School[] schools = School.values();
+        if (ord >= 1 && ord <= schools.length) {
+            return SchoolColors.textFormatting(schools[ord - 1]);
+        }
+        return ChatFormatting.GOLD;
     }
 
     /** wr#43 逐词高亮: render the current practice line word by word — the
