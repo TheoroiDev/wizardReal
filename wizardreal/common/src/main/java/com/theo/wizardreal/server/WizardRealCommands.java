@@ -308,7 +308,8 @@ public final class WizardRealCommands {
         ServerPlayer player = self(ctx);
         Spell spell = requireSpell(ctx.getSource(), spellId);
         if (spell == null) return 0;
-        ChantManager.get().startPractice(player, spell);
+        boolean started = ChantManager.get().startPractice(player, spell);
+        if (!started) return 0; // refusal reason already on the action bar
         ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.practice.start",
                 spellDisplayName(spell)), false);
         return Command.SINGLE_SUCCESS;
@@ -316,8 +317,8 @@ public final class WizardRealCommands {
 
     /** `/wrpractice` bare / `stop`: leave practice (no penalty). */
     private static int practiceStop(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ChantManager.get().stopPractice(self(ctx));
-        return Command.SINGLE_SUCCESS;
+        boolean stopped = ChantManager.get().stopPractice(self(ctx));
+        return stopped ? Command.SINGLE_SUCCESS : 0; // reason on the action bar
     }
 
     private static int listSpells(CommandContext<CommandSourceStack> ctx, String filter) {

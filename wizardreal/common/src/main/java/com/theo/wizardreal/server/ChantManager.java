@@ -172,13 +172,13 @@ public final class ChantManager {
     /** wr#43 practice loop entry (`/wr practice <spell>`): an unlocked
      *  practice engine + PRACTICE_CONFIRM routing — zero mana/cooldown/effects,
      *  strict bands, per-word HUD feedback, half-rate daily-capped mastery. */
-    public void startPractice(ServerPlayer player, Spell spell) {
+    public boolean startPractice(ServerPlayer player, Spell spell) {
         ChantEngine current = active.get(player.getUUID());
         if (current != null && !current.isPractice()) {
             // refine R2: practice must not be a free exit from a live real
             // chant (that path has no darkness, no streak, no lockout).
             hint(player, "wizardreal.practice.blocked");
-            return;
+            return false;
         }
         if (current != null) { // replace an in-flight rehearsal cleanly
             active.remove(player.getUUID());
@@ -191,6 +191,7 @@ public final class ChantManager {
         ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
         hint(player, "wizardreal.practice.started");
         WizardReal.LOGGER.info("{} began practicing {}", player.getName().getString(), spell.id());
+        return true;
     }
 
     /** Whether the player's active chant is a practice rehearsal. */
@@ -200,18 +201,19 @@ public final class ChantManager {
     }
 
     /** Leave practice voluntarily (`/wr practice stop`) — no penalty. */
-    public void stopPractice(ServerPlayer player) {
+    public boolean stopPractice(ServerPlayer player) {
         ChantEngine engine = active.get(player.getUUID());
-        if (engine == null) return;
+        if (engine == null) return false;
         if (!engine.isPractice()) {
             // refine R2: never touch a real chant from the practice-stop path
             hint(player, "wizardreal.practice.not_practicing");
-            return;
+            return false;
         }
         active.remove(player.getUUID());
         declareMode(player, CastMode.OPEN, null);
         ChantNetwork.sendEnd(player, false);
         hint(player, "wizardreal.practice.stopped");
+        return true;
     }
 
     private List<List<String>> variantLineKeys(Spell spell) {
