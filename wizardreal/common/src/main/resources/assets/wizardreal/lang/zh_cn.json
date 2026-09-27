@@ -473,5 +473,8 @@
   "wizardreal.first_lesson.done": "✦ 第一课完结——持杖，向世界低语",
   "wizardreal.cmd.mana.bonus.ok": "+%s 法力上限（当前 %s）",
   "wizardreal.cmd.mana.bonus.cap": "法力上限已达封顶（%s）",
-  "wizardreal.practice.no_gain": "今日修为无精进（已到每日练习上限，或该咒已圆满）"
+  "wizardreal.practice.no_gain": "今日修为无精进（已到每日练习上限，或该咒已圆满）",
+  "wizardreal.practice.blocked": "咏唱进行中——请先完成或中断，再进入练习",
+  "wizardreal.practice.not_practicing": "当前不在练习中。",
+  "wizardreal.scroll.invalid": "卷轴上的咒文已失传——它化作尘埃散去"
 }

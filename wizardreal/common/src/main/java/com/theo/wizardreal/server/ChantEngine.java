@@ -250,6 +250,12 @@ public final class ChantEngine {
         wrongStreak = 0;
         if (variant < 0) return new Progress(0, 0, false);
         lineIndex = Math.max(0, lineIndex - 1);
+        // refine R2: a retreated line loses its recorded score (invariant
+        // scores.size() == lineIndex - 1) — keeping it diluted averageScore
+        // and let a re-speak double-count the line.
+        while (lineScores.size() > Math.max(0, lineIndex - 1)) {
+            lineScores.remove(lineScores.size() - 1);
+        }
         return new Progress(variant, lineIndex, false);
     }
 

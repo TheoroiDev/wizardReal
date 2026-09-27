@@ -45,6 +45,9 @@ public class ScrollItem extends Item {
 
         Spell spell = SpellRegistry.get(spellId).orElse(null);
         if (spell == null) {
+            // refine R2: a bound-but-retired spell id must not fail silently
+            player.displayClientMessage(Component.translatable("wizardreal.scroll.invalid")
+                    .withStyle(net.minecraft.ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);
         }
 

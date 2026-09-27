@@ -6,7 +6,7 @@
 
 ## What you know
 
-A fresh character knows 5 basic spells: **Ignis**, **Fulmen**, **Vitae**, **Aegis**, **Ictus**. Everything else must be learned from a **Spell Tome**. The block-breaking ritual **Explosion** additionally requires learning before it can be chanted.
+A fresh character can cast 65 of the 75 built-in spells right away — the **First Lesson** tome (given on first join) teaches the three entry spells **Ignis / Celere / Velum**, the shortest chants in the game. The remaining 10 (among them the block-breaking ritual **Explosion**) must be learned from a **Spell Tome** before they can be cast.
 
 ## Mana & cooldowns
 

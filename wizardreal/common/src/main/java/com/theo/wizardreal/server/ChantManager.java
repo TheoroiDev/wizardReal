@@ -173,6 +173,18 @@ public final class ChantManager {
      *  practice engine + PRACTICE_CONFIRM routing — zero mana/cooldown/effects,
      *  strict bands, per-word HUD feedback, half-rate daily-capped mastery. */
     public void startPractice(ServerPlayer player, Spell spell) {
+        ChantEngine current = active.get(player.getUUID());
+        if (current != null && !current.isPractice()) {
+            // refine R2: practice must not be a free exit from a live real
+            // chant (that path has no darkness, no streak, no lockout).
+            hint(player, "wizardreal.practice.blocked");
+            return;
+        }
+        if (current != null) { // replace an in-flight rehearsal cleanly
+            active.remove(player.getUUID());
+            declareMode(player, CastMode.OPEN, null);
+            ChantNetwork.sendEnd(player, false);
+        }
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
                 timeoutMs(player, spell), -1, lineMatcherFor(player, spell), true));
         declareMode(player, CastMode.PRACTICE_CONFIRM, spell);
@@ -189,8 +201,14 @@ public final class ChantManager {
 
     /** Leave practice voluntarily (`/wr practice stop`) — no penalty. */
     public void stopPractice(ServerPlayer player) {
-        ChantEngine engine = active.remove(player.getUUID());
-        if (engine == null || !engine.isPractice()) return;
+        ChantEngine engine = active.get(player.getUUID());
+        if (engine == null) return;
+        if (!engine.isPractice()) {
+            // refine R2: never touch a real chant from the practice-stop path
+            hint(player, "wizardreal.practice.not_practicing");
+            return;
+        }
+        active.remove(player.getUUID());
         declareMode(player, CastMode.OPEN, null);
         ChantNetwork.sendEnd(player, false);
         hint(player, "wizardreal.practice.stopped");
@@ -508,6 +526,15 @@ public final class ChantManager {
         }
         active.clear();
         WizardReal.LOGGER.info("All active chants cancelled (spell registry reloaded)");
+    }
+
+    /** Full state wipe (SERVER_STOPPED / server change in a single JVM):
+     *  lockouts and fail-streaks must not leak across worlds. */
+    public void reset() {
+        active.clear();
+        lockoutUntil.clear();
+        failStreaks.clear();
+        failStreaksBySpell.clearAll();
     }
 
     /** Periodic timeout sweep (called from the server tick). */

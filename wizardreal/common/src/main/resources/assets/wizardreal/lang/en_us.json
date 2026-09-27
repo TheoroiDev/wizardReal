@@ -473,5 +473,8 @@
   "wizardreal.first_lesson.done": "✦ The First Lesson is finished — staff in hand, whisper to the world",
   "wizardreal.cmd.mana.bonus.ok": "+%s max mana (now %s)",
   "wizardreal.cmd.mana.bonus.cap": "Max mana already at the cap (%s)",
-  "wizardreal.practice.no_gain": "No mastery gained today (daily practice limit reached, or the spell is already fully mastered)"
+  "wizardreal.practice.no_gain": "No mastery gained today (daily practice limit reached, or the spell is already fully mastered)",
+  "wizardreal.practice.blocked": "You are mid-chant — finish or cancel it before practicing",
+  "wizardreal.practice.not_practicing": "Not in practice.",
+  "wizardreal.scroll.invalid": "This scroll's incantation is gone — it crumbles to dust"
 }

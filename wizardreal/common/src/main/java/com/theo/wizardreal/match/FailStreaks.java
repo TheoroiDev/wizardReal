@@ -45,4 +45,9 @@ public final class FailStreaks {
     public void clear(UUID player) {
         bySpell.remove(player);
     }
+
+    /** Drop everything (server stop — nothing may leak across worlds). */
+    public void clearAll() {
+        bySpell.clear();
+    }
 }

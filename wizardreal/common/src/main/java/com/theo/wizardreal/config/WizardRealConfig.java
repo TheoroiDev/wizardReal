@@ -225,7 +225,7 @@ public final class WizardRealConfig {
                 .setString("chant", "timeoutMode", "per_line")
                 .setInt("chant", "perLineSeconds", 10)
                 .setInt("chant", "fixedSeconds", 90)
-                .setBool("chant", "failBlindness", true)
+                .setBool("chant", "failBlindness", false)
                 .setDouble("chant", "failBlindnessBase", 3.0)
                 .setDouble("chant", "failBlindnessStep", 3.0)
                 .setInt("chant", "failBlindnessWindowSeconds", 30)

@@ -49,10 +49,19 @@ public final class SpellKillDrops {
             chance = 0.25f;
         } else if (entity.getType() == EntityType.WITCH) {
             drop = new ItemStack(WizardRealItems.SPELL_TOME.get());
-            // random spell from the basic set
-            String[] basic = {"wizardreal:ignis", "wizardreal:fulmen", "wizardreal:vitae",
-                    "wizardreal:aegis", "wizardreal:ictus"};
-            SpellTomeItem.setSpellId(drop, basic[RANDOM.nextInt(basic.length)]);
+            // random spell from the starter set; unknown/retired ids are
+            // skipped at drop time so a rename can never mint a dead tome
+            // (refine R2: vitae/ictus had outlived their spells)
+            java.util.List<String> basic = java.util.stream.Stream
+                    .of("wizardreal:ignis", "wizardreal:fulmen", "wizardreal:sanare",
+                            "wizardreal:aegis", "wizardreal:celere")
+                    .filter(id -> com.theo.wizardreal.api.SpellRegistry.get(id).isPresent())
+                    .toList();
+            if (!basic.isEmpty()) {
+                SpellTomeItem.setSpellId(drop, basic.get(RANDOM.nextInt(basic.size())));
+            } else {
+                drop = null; // registry empty (datapack reload race) — drop nothing
+            }
             chance = 0.10f;
         } else if (entity.getType() == EntityType.WITHER_SKELETON) {
             drop = new ItemStack(WizardRealItems.SPELL_TOME.get());

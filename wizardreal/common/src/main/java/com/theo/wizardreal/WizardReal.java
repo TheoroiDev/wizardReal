@@ -72,6 +72,7 @@ public final class WizardReal {
             TempBlockManager.clearAll(server);
             TempEntityTracker.clearAll(server);
             VisualPlayback.clearAll();
+            com.theo.wizardreal.server.ChantManager.get().reset();
         });
     }
 }
