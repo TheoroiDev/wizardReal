@@ -232,5 +232,413 @@
         "volume": 1.5
       }
     ]
+  },
+  "reading.aduro.zh": {
+    "sounds": [
+      "wizardreal:reading/aduro__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/aduro__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.aegis.zh": {
+    "sounds": [
+      "wizardreal:reading/aegis__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/aegis__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.anemos.zh": {
+    "sounds": [
+      "wizardreal:reading/anemos__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/anemos__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.angelus.zh": {
+    "sounds": [
+      "wizardreal:reading/angelus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/angelus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.anima.zh": {
+    "sounds": [
+      "wizardreal:reading/anima__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/anima__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.aqua_vitae.zh": {
+    "sounds": [
+      "wizardreal:reading/aqua_vitae__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.blade.zh": {
+    "sounds": [
+      "wizardreal:reading/blade__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/blade__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.carnifex.zh": {
+    "sounds": [
+      "wizardreal:reading/carnifex__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.celere.zh": {
+    "sounds": [
+      "wizardreal:reading/celere__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/celere__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.chaos.zh": {
+    "sounds": [
+      "wizardreal:reading/chaos__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/chaos__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.concoctio.zh": {
+    "sounds": [
+      "wizardreal:reading/concoctio__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/concoctio__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.diluvium.zh": {
+    "sounds": [
+      "wizardreal:reading/diluvium__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/diluvium__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.domain.zh": {
+    "sounds": [
+      "wizardreal:reading/domain__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/domain__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.explosion.zh": {
+    "sounds": [
+      "wizardreal:reading/explosion__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/explosion__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.fallax.zh": {
+    "sounds": [
+      "wizardreal:reading/fallax__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.ferae_vocatus.zh": {
+    "sounds": [
+      "wizardreal:reading/ferae_vocatus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/ferae_vocatus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.flamma.zh": {
+    "sounds": [
+      "wizardreal:reading/flamma__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/flamma__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.flatu_signum.zh": {
+    "sounds": [
+      "wizardreal:reading/flatu_signum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/flatu_signum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.floris.zh": {
+    "sounds": [
+      "wizardreal:reading/floris__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/floris__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.fluctus.zh": {
+    "sounds": [
+      "wizardreal:reading/fluctus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/fluctus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.fodere.zh": {
+    "sounds": [
+      "wizardreal:reading/fodere__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/fodere__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.fulgur.zh": {
+    "sounds": [
+      "wizardreal:reading/fulgur__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/fulgur__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.fulmen.zh": {
+    "sounds": [
+      "wizardreal:reading/fulmen__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/fulmen__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.galvanum.zh": {
+    "sounds": [
+      "wizardreal:reading/galvanum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/galvanum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.glacies.zh": {
+    "sounds": [
+      "wizardreal:reading/glacies__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/glacies__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.gravitas.zh": {
+    "sounds": [
+      "wizardreal:reading/gravitas__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/gravitas__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.gurges.zh": {
+    "sounds": [
+      "wizardreal:reading/gurges__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/gurges__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.ignis.zh": {
+    "sounds": [
+      "wizardreal:reading/ignis__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/ignis__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.incendo.zh": {
+    "sounds": [
+      "wizardreal:reading/incendo__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/incendo__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.incursus.zh": {
+    "sounds": [
+      "wizardreal:reading/incursus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/incursus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.judicium.zh": {
+    "sounds": [
+      "wizardreal:reading/judicium__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/judicium__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.lapides.zh": {
+    "sounds": [
+      "wizardreal:reading/lapides__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/lapides__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.letum.zh": {
+    "sounds": [
+      "wizardreal:reading/letum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/letum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.lithos.zh": {
+    "sounds": [
+      "wizardreal:reading/lithos__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/lithos__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.lumen.zh": {
+    "sounds": [
+      "wizardreal:reading/lumen__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/lumen__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.lux.zh": {
+    "sounds": [
+      "wizardreal:reading/lux__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/lux__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.mare_gradus.zh": {
+    "sounds": [
+      "wizardreal:reading/mare_gradus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/mare_gradus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.mentis.zh": {
+    "sounds": [
+      "wizardreal:reading/mentis__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.metus.zh": {
+    "sounds": [
+      "wizardreal:reading/metus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/metus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.murus.zh": {
+    "sounds": [
+      "wizardreal:reading/murus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/murus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.mutatio.zh": {
+    "sounds": [
+      "wizardreal:reading/mutatio__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/mutatio__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.nubes.zh": {
+    "sounds": [
+      "wizardreal:reading/nubes__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/nubes__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.ossum.zh": {
+    "sounds": [
+      "wizardreal:reading/ossum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/ossum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.petra_catena.zh": {
+    "sounds": [
+      "wizardreal:reading/petra_catena__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/petra_catena__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.portus.zh": {
+    "sounds": [
+      "wizardreal:reading/portus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/portus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.procella.zh": {
+    "sounds": [
+      "wizardreal:reading/procella__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/procella__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.radix.zh": {
+    "sounds": [
+      "wizardreal:reading/radix__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/radix__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.rift.zh": {
+    "sounds": [
+      "wizardreal:reading/rift__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/rift__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.sanare.zh": {
+    "sounds": [
+      "wizardreal:reading/sanare__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/sanare__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.saxum.zh": {
+    "sounds": [
+      "wizardreal:reading/saxum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/saxum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.semina.zh": {
+    "sounds": [
+      "wizardreal:reading/semina__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/semina__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.siphon.zh": {
+    "sounds": [
+      "wizardreal:reading/siphon__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/siphon__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.somnus.zh": {
+    "sounds": [
+      "wizardreal:reading/somnus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/somnus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.spectra.zh": {
+    "sounds": [
+      "wizardreal:reading/spectra__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/spectra__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.spina.zh": {
+    "sounds": [
+      "wizardreal:reading/spina__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/spina__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.spiritus.zh": {
+    "sounds": [
+      "wizardreal:reading/spiritus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/spiritus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.suctus.zh": {
+    "sounds": [
+      "wizardreal:reading/suctus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/suctus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.telum.zh": {
+    "sounds": [
+      "wizardreal:reading/telum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/telum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.tempestas.zh": {
+    "sounds": [
+      "wizardreal:reading/tempestas__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.terra.zh": {
+    "sounds": [
+      "wizardreal:reading/terra__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/terra__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.tonitrus.zh": {
+    "sounds": [
+      "wizardreal:reading/tonitrus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/tonitrus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.torpor.zh": {
+    "sounds": [
+      "wizardreal:reading/torpor__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/torpor__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.turbo.zh": {
+    "sounds": [
+      "wizardreal:reading/turbo__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/turbo__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.umbra_mortis.zh": {
+    "sounds": [
+      "wizardreal:reading/umbra_mortis__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/umbra_mortis__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.unda.zh": {
+    "sounds": [
+      "wizardreal:reading/unda__chant_trigger__zh__x__cv3"
+    ]
+  },
+  "reading.velum.zh": {
+    "sounds": [
+      "wizardreal:reading/velum__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/velum__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.ventus.zh": {
+    "sounds": [
+      "wizardreal:reading/ventus__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/ventus__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.vincula.zh": {
+    "sounds": [
+      "wizardreal:reading/vincula__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/vincula__trigger__zh__x__cv3"
+    ]
+  },
+  "reading.vireo.zh": {
+    "sounds": [
+      "wizardreal:reading/vireo__chant_trigger__zh__x__cv3",
+      "wizardreal:reading/vireo__trigger__zh__x__cv3"
+    ]
   }
 }

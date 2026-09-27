@@ -6,6 +6,12 @@
 
 ### Features
 
+- 中文咏唱范读随包发布（wizardReal#45，zh 线）：69 个法术共 132 条 CosyVoice3 合成范读，注册为 `wizardreal.reading.<spell>.zh` 声音事件——语料已过生产链回测并与 TTS 基线同水平（zh cast 89% vs 基线 93%、zipa chant_idx0 93% vs 89%），范读音频即经过机器验证的正确发音。en/ja 线待多语 prompt 调优轮后跟进
+- 学派粒子词汇表（wizardReal#44）：十个锁定色板的 spark 粒子（每学派一个，法术效果 JSON 里写 `spark_<school>`）——程序化绘制的辉光珠，颜色直接取自学派色板，施法所见与 HUD/图标所指的学派一致
+- 学派色板单一事实源（wizardReal#44）：十大流派的颜色（accent / glow / dark，取自所有玩家都能看到的法术 dust 色）落在一处——咏唱 HUD 标题按学派取色、图标重染色相同源，生成器同时校验每个法术效果的粒子色都在色板内（当前 23 处 dust 色，0 越板）。学派粒子贴图与帧动画随后续批次
+- 第一课引导（wizardReal#49）：每个新玩家首次进服即获得固定的「第一课」典籍——一次阅读教会三个入门法术（ignis / celere / velum，最短咒文），取代拿不到目标书的随机典籍战利品。五级 advancement 边玩边教规则：合成学徒法杖 → 初次低语（首次语音施法）→ 完整的仪式（3 行以上咏唱）→ 禁忌之言（五大禁咒之一）→ 千锤百炼（单法术 100% 熟练度，奖励 +20 法力上限——首个法力上限获取源，上限 300）
+- 练习闭环（`/wrpractice <法术>`——wizardReal#43）：零法力、零冷却、无实际效果地排练任意法术。咏唱 HUD 随朗读**逐词高亮**当前句，评分走严档，每完成一次练习结算 +1% 熟练度（实机施法的一半，每日有上限——实机施法保持全额 +2%）。练习失败永不致盲、不叠层。OP 另可走 `/wr practice <法术>` 进入
+- 咏唱评分带与共鸣（wizardReal#43，消费 voiceCast#48 W3 的逐句评分）：每完成一句即打分——完美（≥ 0.95）/ 优秀（≥ 0.85）/ 及格（≥ 0.70，成功线）。**完美**咏唱触发**共鸣**——仅该次施法威力 +10%。评分永不改变成败，也绝不加熟练度（熟练度跟成功走、分数跟表现走）；切档阈值经每模式阈值提供器以数据下发，不写死
 - 拒识现在有回应了（wizardReal#41）：手持法杖时被语义门否决的语句不再静默吞掉——被拒的诵读会显示"咒文消散在风中"，擦边未中则显示最接近的候选（"你听见了似是而非的低语……最接近：……"带候选法术名），在咏唱 HUD 锚点处停留数秒
 - 咒文注音层（咏唱读法标注）：服务端在目录构建期对每条咏唱行一次性派生 `readings` 注音映射——zh 行得有调本调拼音（教科书标调规则，调号取自内嵌数据表；v1 不做变调），ja 行得平文式罗马字（新增纯 JVM KanaRomaji 表：促音叠辅音、语尾 っ 以撇号表示、长音合流为 macron、按 mora 分隔输出、外来音节 ティ/ファ/ウィ 与 ん=n）。注音以固定键集（`pinyin`/`romaji`/`ipa`）随目录下发；派生严格 fail-closed（任一不可转字母即缺该键——不造假读法），标点/空白按分隔符丢弃（手订模板本就不含停顿 token，丢标点才与手订同源）；行手订 IPA 永远优先于 G2P 派生。lab 新增 lint（`check_readings.py`）交叉核对派生与手订 IPA，兼任 Stage-A 吸收清单（首跑全量：689 条手订行中 687 条完全收敛）
 - 咏唱 HUD 注音（D4，默认开启）：咏唱进行中在当前行上方显示小号灰色注音行，读法取自目录派生的 readings；语言策略与书页同语义（`[chantReadings] languagePolicy`：auto=非显示语言才注 / off / 手选语言集 / all，配 `languages` 指定手选集）。新增 `[chantReadings] pinyinStyle` 选择拼音显示样式——符号调（`zhēn`，默认）或数字调（`zhen1`，永远可渲染）——在目录派生期应用，改动于下次目录重建（登录 / 数据包重载）后生效
@@ -16,6 +22,8 @@
 
 ### Changes
 
+- 失败庇护（voiceCast#52）：同一法术连败 3 次后，咏唱内行匹配放宽——裁定曾指向本句但落在 AMBIGUOUS（margin 压制的擦边命中）的语句，达到放宽线（成功线 −5 分）即可完成该句。空闲触发永不放宽，一次成功即重置，练习模式本就零风险不受影响
+- 咏唱行进判定现在走生产裁定器行匹配器（voiceCast#48 W2，随 #43 接线）：逐句匹配参考识别器的带分裁定，词表外语句回退宽松布尔判定——此前咏唱静默运行 pre-#48 布尔匹配器（每个命中句恒 1.0/0.0），评分带形同虚设
 - 咏唱失败默认不再致盲：`[chant] failBlindness` 现默认**关闭**（原为开）——叠加黑暗对口音/背景噪音造成的误识与念错同等惩罚，失败现在只是空响（wizardReal#41）。想要旧仪式感的服主在配置中设 `failBlindness = true`
 - 咏唱不再会在锁死的门前白念：学习门、手持法杖、法杖起源与冷却改在**第一句被接受之前**校验（动作栏给出具体原因），而不是整篇念完才告诉你；空法力也不再作废念完的咏唱——施法按当前法力降档到最高可负担的阶梯（空转咏唱，wizardReal#41）
 - breaking: `[voice] g2pDrafts` 现默认**开启**（原为关）：无手工 IPA 模板的词表条目在推送时经生产 G2P 链补草案模板（voiceCast#47——0.5.0 引擎切换后 en/ja 咏唱行完全没有 zipa CTC 模板，运行时填充为 G2P 链支持的所有语言恢复模板覆盖：zh/ja/ko；en 暂无 Tier-2、维持 fail-closed）。0.6.0 的 CTC 后验校准（R3/R5 移植）落地后，原先"校准前无 CTC 收益"的保留理由不再成立。草案逐别名严格转换、永不覆盖手工模板——如需旧行为，在配置中设 `g2pDrafts = false`
@@ -30,12 +38,12 @@
 
 - 咏唱中退出不再由退出处理器重新声明 OPEN 施法模式：VoiceCast 自身的退出清理本就会清掉该玩家的会话与模式声明，两者竞争可能在 VoiceCast 侧留下以已退出玩家 UUID 为键的残留声明
 
-### Infrastructure（基础设施）
-
-- common 子工程现可发布到 Maven（`gradlew publishToMavenLocal` -> `com.theo.wizardreal:wizardreal-common-1.20.1`，镜像 voicecast-common 的 publish 块）：普通未分类 jar + sources，让非 MC 消费方（lab/java-harness 识别 harness、未来工具链）能按坐标解析纯 JVM 子集（G2P、Pronunciation/SpellRegistry api）。仅构建基建——零逻辑改动
 
 ### Modding/API
 
+- 两个自定义 advancement 触发器开放给数据包作者（wizardReal#49）：`wizardreal:voice_cast`（可选 `lines` 最小行数与 `spells` 过滤——仅经验证的语音施法触发）与 `wizardreal:mastery`（可选 `spells` 过滤——法术熟练度突破 100% 时触发）
+- `PerModeThresholdProvider` 新增 `failSafeBonus(String mode)`（默认 0.05）——#52 失败庇护的每模式放宽量；新增 `FailSafeLineMatcher` + `FailStreaks`（`match` 包）以可覆盖匹配器绑定承载 per-player 放宽
+- `PerModeThresholdProvider` 新增 `scoreBands(String mode)` 与 `ScoreBands` record（`match` 包）：带分咏唱的完美/优秀/及格切点以数据下发（默认 `0.95/0.85/0.70`）——插件可按模式重标定；`ScoreBands.STRICT`（0.98/0.92/0.85）为练习评分档
 - breaking: CatalogPayload v4——咏唱行结构化为 `CatalogLine(text, readings)` 记录（取代纯字符串）；`wizardreal:spell_catalog` S2C 通道升 formatVersion 4（每行 = 文本 ≤160 + readings 映射，键 ≤8 / 值 ≤128 UTF-16 单位，超限截断不拒绝）；`spell_catalog.json` 导出升 format 4，每条咏唱行携带 `key`/`text`/`readings`
 - 语音匹配器落定 lab 校准的 S6 工作点（wizardreal#29）：IPA 音素匹配器以数据驱动的加权编辑距离取代平权 Levenshtein——872 对混淆代价表以 jar 资产随包分发（`assets/wizardreal/phoneme_costs.tsv`；表内代价匹配时 `clamp(raw x 2.0, 0.1, 1)`，表外替换保持平权 1.0，插入/删除双向 0.6，原"目标音素免费跳过"取消——被吞音素现计 0.6）。lab 台架上方言口音召回显著提升（正样本 74.3% vs 60.7%，负误触 8/300）；代价资产缺失为硬错误，无平权回退
 - CTC margin 拒识随语义 v2 链沿用（VoiceCast 侧规则）：前两名模板后验差距小于 0.02 时该语句整组 CTC 分数清零——voicecast 裁定器读取 margin 前的差距，被压制的 top1 本可过 forward 阈值时判 `AMBIGUOUS`；per-spell 阈值以推送期 `ThresholdHint` 数据过界（v2，见下）
@@ -87,13 +95,13 @@
 
 ### Infrastructure
 
+- common 子工程现可发布到 Maven（`gradlew publishToMavenLocal` -> `com.theo.wizardreal:wizardreal-common-1.20.1`，镜像 voicecast-common 的 publish 块）：普通未分类 jar + sources，让非 MC 消费方（lab/java-harness 识别 harness、未来工具链）能按坐标解析纯 JVM 子集（G2P、Pronunciation/SpellRegistry api）。仅构建基建——零逻辑改动
 - CI 将 voicecast 依赖构建进 mavenLocal（远程 maven 就绪前的过渡；voicecast#13）
 - 纯开发测试 mod 移出 gradle 依赖：release jar 预下载到工作区 `resources/devmods/<loader>/`，由 `manifest.txt` 驱动接线（fabric 硬链接进 run mods 目录；forge 作为文件依赖由 Loom 重映射；Carpet 的 Forge 移植仍受阻，voicecast#38）；语音模型事实源移至 `resources/models/`
 - 回测工具（`tools/benchmark`：`IpaBench`/`EngineBench`/`LiveBench` + `ipafill.py`/`engbench.py`）移植到 0.5.0 契约——ipa 臂经 `SessionVocabulary` 驱动 `ZipaPhonemeRecognizer`、读取 `RecognitionDiagnostics.templateScores()`，文本臂为 Qwen3-ASR 离线引擎，对着已发布的 voicecast jar 编译验证；已删除的 streaming/SenseVoice 引擎分支移除
 
 ### Changes
 
-- Wiki Server-FAQ 对齐 voicecast 0.3.2（defer 移除）；修正 docs/ref 路径
 
 ## 0.3.2 — 2026-09-02
 
