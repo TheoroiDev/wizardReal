@@ -80,6 +80,38 @@ public final class PlayerMagicState {
         return maxMana.getOrDefault(player, DEFAULT_MAX_MANA);
     }
 
+    /** Hard cap for granted bonuses (wizardReal#49: 行会试炼/advancement 上限 300). */
+    public static final float MAX_MANA_CAP = 300f;
+
+    /**
+     * Grant a permanent max-mana bonus (the first acquisition source is the
+     * mastery advancement's reward, #49). Idempotent-ish: clamps at
+     * {@link #MAX_MANA_CAP}; repeated grants stack until the cap.
+     *
+     * @return the actually granted amount (0 = already at cap)
+     */
+    public float grantMaxMana(UUID player, float amount) {
+        float current = getMaxMana(player);
+        float granted = Math.max(0f, Math.min(amount, MAX_MANA_CAP - current));
+        if (granted > 0f) {
+            maxMana.put(player, current + granted);
+        }
+        return granted;
+    }
+
+    // ---------------- first-lesson gift (wizardReal#49) ----------------
+
+    private final Set<UUID> firstLessonGiven = new HashSet<>();
+
+    /** Whether the first-join "First Lesson" tome was already handed out. */
+    public boolean firstLessonGiven(UUID player) {
+        return firstLessonGiven.contains(player);
+    }
+
+    public void markFirstLessonGiven(UUID player) {
+        firstLessonGiven.add(player);
+    }
+
     public void setMana(UUID player, float value) {
         mana.put(player, Math.min(value, getMaxMana(player)));
     }
@@ -264,6 +296,10 @@ public final class PlayerMagicState {
             practiceTag.put(e.getKey().toString(), inner);
         }
         nbt.put("practiceDaily", practiceTag);
+
+        CompoundTag lessonTag = new CompoundTag();
+        for (UUID uuid : firstLessonGiven) lessonTag.putBoolean(uuid.toString(), true);
+        nbt.put("firstLessonGiven", lessonTag);
         return nbt;
     }
 
@@ -321,6 +357,13 @@ public final class PlayerMagicState {
                     for (String s : inner.getAllKeys()) map.put(s, inner.getLong(s));
                     cooldownUntil.put(uuid, map);
                 } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        if (nbt.contains("firstLessonGiven", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = nbt.getCompound("firstLessonGiven");
+            for (String key : tag.getAllKeys()) {
+                try { firstLessonGiven.add(UUID.fromString(key)); }
+                catch (IllegalArgumentException ignored) {}
             }
         }
         if (nbt.contains("practiceDaily", Tag.TAG_COMPOUND)) {

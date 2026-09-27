@@ -4,6 +4,7 @@ import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.item.ScrollItem;
+import com.theo.wizardreal.item.FirstLessonTomeItem;
 import com.theo.wizardreal.item.SpellTomeItem;
 import com.theo.wizardreal.item.StaffItem;
 import com.theo.wizardreal.item.WizardRealItems;
@@ -71,6 +72,8 @@ public final class WizardRealForge {
                 () -> new ScrollItem(new Item.Properties()));
         WizardRealItems.SPELL_TOME = ITEMS.register("spell_tome",
                 () -> new SpellTomeItem(new Item.Properties()));
+        WizardRealItems.FIRST_LESSON_TOME = ITEMS.register("first_lesson_tome",
+                () -> new FirstLessonTomeItem(new Item.Properties()));
 
         WizardRealParticles.SPARK = PARTICLE_TYPES.register("spark",
                 WizardSimpleParticle::new)::get;
@@ -82,6 +85,12 @@ public final class WizardRealForge {
         for (String soundId : WizardRealSounds.IDS) {
             SOUND_EVENTS.register(soundId, () -> SoundEvent.createVariableRangeEvent(WizardRealSounds.id(soundId)));
         }
+
+        // 1.20.1 criterion triggers register into vanilla's static map.
+        net.minecraft.advancements.CriteriaTriggers.register(
+                com.theo.wizardreal.advancement.WizardRealCriteria.VOICE_CAST);
+        net.minecraft.advancements.CriteriaTriggers.register(
+                com.theo.wizardreal.advancement.WizardRealCriteria.MASTERY);
 
         WizardReal.init();
     }

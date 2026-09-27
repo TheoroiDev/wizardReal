@@ -25,4 +25,5 @@ public final class WizardRealItems {
 
     // ----- Spell Tomes ------------------------------------------------
     public static Supplier<Item> SPELL_TOME;
+    public static Supplier<Item> FIRST_LESSON_TOME;
 }

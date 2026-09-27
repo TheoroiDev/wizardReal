@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "item": "wizardreal:staff_apprentice"
+    },
+    "title": {
+      "translate": "advancements.wizardreal.first_lesson.root.title"
+    },
+    "description": {
+      "translate": "advancements.wizardreal.first_lesson.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+  },
+  "criteria": {
+    "staff": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "wizardreal:staff_apprentice"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

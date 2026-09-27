@@ -455,5 +455,22 @@
   "wizardreal.practice.band.excellent": "✦ Excellent recital (avg ≥ 0.85)",
   "wizardreal.practice.band.pass": "✦ Recital passed (avg ≥ 0.70)",
   "wizardreal.practice.resonance": "✦ Resonance! Perfect chant — power +10%",
-  "wizardreal.cmd.practice.start": "Practice started: %s — speak the lines; no mana or cooldown is spent"
+  "wizardreal.cmd.practice.start": "Practice started: %s — speak the lines; no mana or cooldown is spent",
+  "item.wizardreal.first_lesson_tome": "First Lesson",
+  "advancements.wizardreal.first_lesson.root.title": "Be a Real Wizard",
+  "advancements.wizardreal.first_lesson.root.description": "Craft an apprentice staff — every spell starts at your fingertips",
+  "advancements.wizardreal.first_lesson.first_whisper.title": "First Whisper",
+  "advancements.wizardreal.first_lesson.first_whisper.description": "Cast a spell with your voice. Mastery grows only on success",
+  "advancements.wizardreal.first_lesson.full_ritual.title": "The Full Ritual",
+  "advancements.wizardreal.first_lesson.full_ritual.description": "Complete a chant of 3+ lines — more lines, mightier tier",
+  "advancements.wizardreal.first_lesson.forbidden_words.title": "Forbidden Words",
+  "advancements.wizardreal.first_lesson.forbidden_words.description": "Cast one of the five forbidden spells — they do not forgive mistakes",
+  "advancements.wizardreal.first_lesson.mastery.title": "Thousand Times Refined",
+  "advancements.wizardreal.first_lesson.mastery.description": "Bring one spell to 100% mastery. The guild grants +20 max mana (cap 300)",
+  "wizardreal.first_lesson.gift": "§dYou received the §5First Lesson§d — right-click it to learn your first three spells",
+  "wizardreal.first_lesson.taught": "§a%s advanced (t = %s%%)",
+  "wizardreal.first_lesson.progressed": "§7%s read again (t = %s%%)",
+  "wizardreal.first_lesson.done": "✦ The First Lesson is finished — staff in hand, whisper to the world",
+  "wizardreal.cmd.mana.bonus.ok": "+%s max mana (now %s)",
+  "wizardreal.cmd.mana.bonus.cap": "Max mana already at the cap (%s)"
 }

@@ -4,6 +4,7 @@ import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.api.SpellRegistry;
 import com.theo.wizardreal.item.ScrollItem;
+import com.theo.wizardreal.item.FirstLessonTomeItem;
 import com.theo.wizardreal.item.SpellTomeItem;
 import com.theo.wizardreal.item.StaffItem;
 import com.theo.wizardreal.item.WizardRealItems;
@@ -54,6 +55,9 @@ public final class WizardRealFabric implements ModInitializer {
         WizardRealItems.STAFF_SDEVV = register("staff_sdevv", StaffItem.dev(new Item.Properties()));
         WizardRealItems.SCROLL_BLANK = register("scroll_blank", new ScrollItem(new Item.Properties()));
         WizardRealItems.SPELL_TOME = register("spell_tome", new SpellTomeItem(new Item.Properties()));
+        WizardRealItems.FIRST_LESSON_TOME = register("first_lesson_tome", new FirstLessonTomeItem(new Item.Properties()));
+
+        WizardRealCriteriaReg.register();
 
         WizardRealParticles.SPARK = registerParticle("spark", new WizardSimpleParticle());
         WizardRealParticles.RUNE = registerParticle("rune", new WizardSimpleParticle());
@@ -80,6 +84,7 @@ public final class WizardRealFabric implements ModInitializer {
                     entries.accept(WizardRealItems.STAFF_SDEVV.get());
                     entries.accept(WizardRealItems.SCROLL_BLANK.get());
                     entries.accept(WizardRealItems.SPELL_TOME.get());
+                    entries.accept(WizardRealItems.FIRST_LESSON_TOME.get());
 
                     // One spell tome and one scroll per registered spell.
                     // In MP the client registry is empty — fall back to the

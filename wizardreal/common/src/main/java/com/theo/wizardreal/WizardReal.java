@@ -6,6 +6,7 @@ import com.theo.wizardreal.item.WizardRealItems;
 import com.theo.wizardreal.net.ChantNetwork;
 import com.theo.wizardreal.server.LootTableModifier;
 import com.theo.wizardreal.server.MagicSyncHandler;
+import com.theo.wizardreal.server.Onboarding;
 import com.theo.wizardreal.server.ManaManager;
 import com.theo.wizardreal.server.PlayerMagicState;
 import com.theo.wizardreal.server.ServerVoiceCast;
@@ -47,6 +48,7 @@ public final class WizardReal {
         BuiltinEffects.register();
         Spells.register();
         ServerVoiceCast.init();
+        Onboarding.init();
         ChantNetwork.registerServerReceiver();
         SpellCatalogService.register();
         PlayerMagicState.registerHooks();

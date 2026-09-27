@@ -455,5 +455,22 @@
   "wizardreal.practice.band.excellent": "✦ 优秀咏唱（均值 ≥ 0.85）",
   "wizardreal.practice.band.pass": "✦ 咏唱通过（均值 ≥ 0.70）",
   "wizardreal.practice.resonance": "✦ 共鸣！完美咏唱——威力 +10%",
-  "wizardreal.cmd.practice.start": "练习开始：%s——跟读咒文行；不消耗法力与冷却"
+  "wizardreal.cmd.practice.start": "练习开始：%s——跟读咒文行；不消耗法力与冷却",
+  "item.wizardreal.first_lesson_tome": "第一课",
+  "advancements.wizardreal.first_lesson.root.title": "成为真正的法师",
+  "advancements.wizardreal.first_lesson.root.description": "合成一根学徒法杖——一切法术始于指尖",
+  "advancements.wizardreal.first_lesson.first_whisper.title": "初次低语",
+  "advancements.wizardreal.first_lesson.first_whisper.description": "用你的声音施放一个法术。熟练度只随成功增长",
+  "advancements.wizardreal.first_lesson.full_ritual.title": "完整的仪式",
+  "advancements.wizardreal.first_lesson.full_ritual.description": "完成一次 3 行以上的咏唱——行数越多，威力档越高",
+  "advancements.wizardreal.first_lesson.forbidden_words.title": "禁忌之言",
+  "advancements.wizardreal.first_lesson.forbidden_words.description": "施放五大禁咒之一——它们不原谅失误",
+  "advancements.wizardreal.first_lesson.mastery.title": "千锤百炼",
+  "advancements.wizardreal.first_lesson.mastery.description": "将一个法术练至 100% 熟练度。行会授予 +20 法力上限（至多 300）",
+  "wizardreal.first_lesson.gift": "§d你获得了§5第一课§d——右键阅读即可学会前三个法术",
+  "wizardreal.first_lesson.taught": "§a%s 进阶（t = %s%%）",
+  "wizardreal.first_lesson.progressed": "§7%s 复读（t = %s%%）",
+  "wizardreal.first_lesson.done": "✦ 第一课完结——持杖，向世界低语",
+  "wizardreal.cmd.mana.bonus.ok": "+%s 法力上限（当前 %s）",
+  "wizardreal.cmd.mana.bonus.cap": "法力上限已达上限（%s）"
 }

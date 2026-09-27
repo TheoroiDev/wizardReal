@@ -293,7 +293,12 @@ public final class ServerVoiceCast {
             case INSTANT -> {
                 // Instant voice cast: base power 1.0 (recognition confidence is
                 // not a power factor — the performance layer owns that in P2).
-                SpellCastHandler.handleCast(player, gate.spell().id(), 1.0f);
+                boolean cast = SpellCastHandler.castValidated(player, gate.spell().id(), 1.0f,
+                        java.util.EnumSet.noneOf(SpellCastHandler.CastFlag.class), 0);
+                if (cast) {
+                    com.theo.wizardreal.advancement.WizardRealCriteria.VOICE_CAST.trigger(
+                            player, gate.spell().id(), 1); // wr#49 advancement hook
+                }
                 WizardReal.LOGGER.info("Server matched '{}' / [{}] -> {} score={} (instant)",
                         heard, ipa, gate.spell().id(),
                         String.format(java.util.Locale.ROOT, "%.2f", gate.score()));

@@ -39,6 +39,7 @@ final class WizardRealForgeModBus {
         put(event, new ItemStack(WizardRealItems.STAFF_SDEVV.get()));
         put(event, new ItemStack(WizardRealItems.SCROLL_BLANK.get()));
         put(event, new ItemStack(WizardRealItems.SPELL_TOME.get()));
+        put(event, new ItemStack(WizardRealItems.FIRST_LESSON_TOME.get()));
 
         // One spell tome and one scroll per registered spell. In MP the
         // client registry is empty — fall back to the spell catalog synced

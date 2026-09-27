@@ -1,0 +1,23 @@
+{
+  "parent": "wizardreal:first_lesson/root",
+  "display": {
+    "icon": {
+      "item": "wizardreal:spell_tome"
+    },
+    "title": {
+      "translate": "advancements.wizardreal.first_lesson.first_whisper.title"
+    },
+    "description": {
+      "translate": "advancements.wizardreal.first_lesson.first_whisper.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "voice_cast": {
+      "trigger": "wizardreal:voice_cast"
+    }
+  }
+}

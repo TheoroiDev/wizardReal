@@ -85,6 +85,11 @@ public final class LearningService {
         float gain = gainFor(source, t);
         if (gain <= 0f) return 0f;
         state.addLearningPercent(player.getUUID(), spell.id(), gain, difficulty);
+        // wr#49 advancement hook: mastery crossed 100% this settlement.
+        float after = state.learningPercent(player.getUUID(), spell.id(), difficulty);
+        if (t < 100f && after >= 100f) {
+            com.theo.wizardreal.advancement.WizardRealCriteria.MASTERY.trigger(player, spell.id());
+        }
         state.save();
         return gain;
     }

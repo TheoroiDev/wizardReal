@@ -1,0 +1,26 @@
+{
+  "parent": "wizardreal:first_lesson/forbidden_words",
+  "display": {
+    "icon": {
+      "item": "wizardreal:first_lesson_tome"
+    },
+    "title": {
+      "translate": "advancements.wizardreal.first_lesson.mastery.title"
+    },
+    "description": {
+      "translate": "advancements.wizardreal.first_lesson.mastery.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "rewards": {
+    "function": "wizardreal:first_lesson/mastery"
+  },
+  "criteria": {
+    "mastery": {
+      "trigger": "wizardreal:mastery"
+    }
+  }
+}

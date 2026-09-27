@@ -455,7 +455,28 @@ public final class WizardRealCommands {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int manaReset(CommandContext<CommandSourceStack> ctx, ServerPlayer target) {
+        /** wr#49: permanent max-mana bonus (advancement reward path, capped at
+     *  {@code PlayerMagicState.MAX_MANA_CAP}). Advancement reward functions
+     *  run at permission 2 as the player, so this is callable from datapack. */
+    private static int manaBonus(CommandContext<CommandSourceStack> ctx, float amount,
+                                 ServerPlayer target) {
+        PlayerMagicState state = PlayerMagicState.get(target.getServer());
+        float granted = state.grantMaxMana(target.getUUID(), amount);
+        float cap = state.getMaxMana(target.getUUID());
+        if (granted > 0f) {
+            state.save();
+            MagicSyncHandler.send(target, state);
+            ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.mana.bonus.ok",
+                    String.format(java.util.Locale.ROOT, "%.0f", granted),
+                    String.format(java.util.Locale.ROOT, "%.0f", cap)), true);
+        } else {
+            ctx.getSource().sendFailure(Component.translatable("wizardreal.cmd.mana.bonus.cap",
+                    String.format(java.util.Locale.ROOT, "%.0f", cap)));
+        }
+        return granted > 0f ? Command.SINGLE_SUCCESS : 0;
+    }
+
+private static int manaReset(CommandContext<CommandSourceStack> ctx, ServerPlayer target) {
         PlayerMagicState state = PlayerMagicState.get(target.getServer());
         UUID uuid = target.getUUID();
         state.setMana(uuid, state.getMaxMana(uuid));

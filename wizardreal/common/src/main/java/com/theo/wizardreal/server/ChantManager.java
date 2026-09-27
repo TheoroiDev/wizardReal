@@ -306,6 +306,8 @@ public final class ChantManager {
         // only. The band never changes success/failure, and resonance never
         // touches mastery (两轴分离).
         recordChantSuccess(player.getUUID(), spell.id()); // voiceCast#52: success resets the庇护 streak
+        com.theo.wizardreal.advancement.WizardRealCriteria.VOICE_CAST.trigger(
+                player, spell.id(), completedLines); // wr#49 advancement hook
         float power = powerFor(spell, completedLines);
         if (com.theo.wizardreal.match.ScoreBands.DEFAULT.bandOf(engine.averageScore())
                 == com.theo.wizardreal.match.ScoreBands.Band.PERFECT) {
@@ -356,6 +358,8 @@ public final class ChantManager {
             return;
         }
         recordChantSuccess(player.getUUID(), spell.id()); // voiceCast#52: success resets the庇护 streak
+        com.theo.wizardreal.advancement.WizardRealCriteria.VOICE_CAST.trigger(
+                player, spell.id(), completedLines); // wr#49 advancement hook
         SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines), affordable);
         WizardReal.LOGGER.info("{} released {} early ({} lines complete, stage {})",
                 player.getName().getString(), spell.id(), completedLines, affordable);

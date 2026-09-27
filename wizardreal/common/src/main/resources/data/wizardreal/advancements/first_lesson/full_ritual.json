@@ -1,0 +1,26 @@
+{
+  "parent": "wizardreal:first_lesson/first_whisper",
+  "display": {
+    "icon": {
+      "item": "wizardreal:scroll_blank"
+    },
+    "title": {
+      "translate": "advancements.wizardreal.first_lesson.full_ritual.title"
+    },
+    "description": {
+      "translate": "advancements.wizardreal.first_lesson.full_ritual.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "voice_cast": {
+      "trigger": "wizardreal:voice_cast",
+      "conditions": {
+        "lines": 3
+      }
+    }
+  }
+}

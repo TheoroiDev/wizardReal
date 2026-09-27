@@ -1,0 +1,32 @@
+{
+  "parent": "wizardreal:first_lesson/full_ritual",
+  "display": {
+    "icon": {
+      "item": "wizardreal:staff_fire"
+    },
+    "title": {
+      "translate": "advancements.wizardreal.first_lesson.forbidden_words.title"
+    },
+    "description": {
+      "translate": "advancements.wizardreal.first_lesson.forbidden_words.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "voice_cast": {
+      "trigger": "wizardreal:voice_cast",
+      "conditions": {
+        "spells": [
+          "wizardreal:rift",
+          "wizardreal:domain",
+          "wizardreal:explosion",
+          "wizardreal:vincula",
+          "wizardreal:blade"
+        ]
+      }
+    }
+  }
+}
