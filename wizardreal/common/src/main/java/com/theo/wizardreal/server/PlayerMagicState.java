@@ -37,6 +37,8 @@ public final class PlayerMagicState {
     private final Map<UUID, Map<String, Float>> learning = new HashMap<>();
     // player uuid -> spell id -> world time when cooldown ends
     private final Map<UUID, Map<String, Long>> cooldownUntil = new HashMap<>();
+    // wizardReal#43 practice daily cap: player uuid -> spell id -> [dayStamp, count]
+    private final Map<UUID, Map<String, long[]>> practiceDaily = new HashMap<>();
 
     private static PlayerMagicState INSTANCE;
     private static Path savePath;
@@ -163,6 +165,28 @@ public final class PlayerMagicState {
         cooldownUntil.remove(player);
     }
 
+    // ------------------------- practice daily cap (wizardReal#43) ---------
+
+    /** How many practice settlements {@code player} used for {@code spellId}
+     *  on {@code dayStamp} (0 when none — a different day resets the count). */
+    public int practiceAttemptsToday(UUID player, String spellId, long dayStamp) {
+        Map<String, long[]> m = practiceDaily.get(player);
+        if (m == null) return 0;
+        long[] entry = m.get(spellId);
+        return (entry != null && entry[0] == dayStamp) ? (int) entry[1] : 0;
+    }
+
+    /** Record one practice settlement (increments today's counter). */
+    public void recordPracticeAttempt(UUID player, String spellId, long dayStamp) {
+        Map<String, long[]> m = practiceDaily.computeIfAbsent(player, k -> new HashMap<>());
+        long[] entry = m.get(spellId);
+        if (entry != null && entry[0] == dayStamp) {
+            entry[1]++;
+        } else {
+            m.put(spellId, new long[]{dayStamp, 1});
+        }
+    }
+
     /** Remove expired cooldowns to keep data small. */
     public void pruneCooldowns(long now) {
         for (Map<String, Long> map : cooldownUntil.values()) {
@@ -229,6 +253,17 @@ public final class PlayerMagicState {
             cdTag.put(e.getKey().toString(), inner);
         }
         nbt.put("cooldowns", cdTag);
+
+        CompoundTag practiceTag = new CompoundTag();
+        for (Map.Entry<UUID, Map<String, long[]>> e : practiceDaily.entrySet()) {
+            CompoundTag inner = new CompoundTag();
+            for (Map.Entry<String, long[]> pe : e.getValue().entrySet()) {
+                inner.putLong(pe.getKey() + "|day", pe.getValue()[0]);
+                inner.putInt(pe.getKey() + "|count", (int) pe.getValue()[1]);
+            }
+            practiceTag.put(e.getKey().toString(), inner);
+        }
+        nbt.put("practiceDaily", practiceTag);
         return nbt;
     }
 
@@ -285,6 +320,22 @@ public final class PlayerMagicState {
                     Map<String, Long> map = new HashMap<>();
                     for (String s : inner.getAllKeys()) map.put(s, inner.getLong(s));
                     cooldownUntil.put(uuid, map);
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        if (nbt.contains("practiceDaily", Tag.TAG_COMPOUND)) {
+            CompoundTag tag = nbt.getCompound("practiceDaily");
+            for (String key : tag.getAllKeys()) {
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    CompoundTag inner = tag.getCompound(key);
+                    Map<String, long[]> map = new HashMap<>();
+                    for (String s : inner.getAllKeys()) {
+                        if (!s.endsWith("|day")) continue;
+                        String spellId = s.substring(0, s.length() - 4);
+                        map.put(spellId, new long[]{inner.getLong(s), inner.getInt(spellId + "|count")});
+                    }
+                    practiceDaily.put(uuid, map);
                 } catch (IllegalArgumentException ignored) {}
             }
         }

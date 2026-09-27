@@ -34,6 +34,9 @@ public final class ChantNetwork {
     public static final int CANCEL = 4;
     /** S2C idle-recognition feedback (issue #41): rejected/whisper notice. */
     public static final int NOTICE = 5;
+    /** S2C practice per-word feedback (issue #43): the raw utterance for the
+     *  client-side aligner. */
+    public static final int PRACTICE_WORDS = 6;
 
     /** Notice kinds (see {@link #sendNotice}). */
     public static final String NOTICE_WHISPER = "whisper";
@@ -57,6 +60,13 @@ public final class ChantNetwork {
 
     /** Enter chanting state: spell id + every chant variant's display keys. */
     public static void sendStart(ServerPlayer player, String spellId, List<List<String>> variantLines) {
+        sendStart(player, spellId, variantLines, false);
+    }
+
+    /** Practice overload (wizardReal#43): flags the HUD into per-word
+     *  highlighting + zero-stake rendering. */
+    public static void sendStart(ServerPlayer player, String spellId, List<List<String>> variantLines,
+                                 boolean practice) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeByte(START);
         buf.writeUtf(spellId, 64);
@@ -65,6 +75,7 @@ public final class ChantNetwork {
             buf.writeVarInt(lines.size());
             for (String key : lines) buf.writeUtf(key, 128);
         }
+        buf.writeBoolean(practice);
         NetworkManager.sendToPlayer(player, CHANNEL_CHANT, buf);
     }
 
@@ -102,6 +113,19 @@ public final class ChantNetwork {
         buf.writeByte(NOTICE);
         buf.writeUtf(kind, 16);
         buf.writeUtf(nameKey, 128);
+        NetworkManager.sendToPlayer(player, CHANNEL_CHANT, buf);
+    }
+
+    /**
+     * Practice per-word feedback (wizard#43): ships the raw utterance while a
+     * practice rehearsal is active. The alignment runs CLIENT-side against the
+     * localized current line (the server only knows the lang key) via the pure
+     * {@code PracticeAligner}.
+     */
+    public static void sendPracticeWords(ServerPlayer player, String heard) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        buf.writeByte(PRACTICE_WORDS);
+        buf.writeUtf(heard, 512);
         NetworkManager.sendToPlayer(player, CHANNEL_CHANT, buf);
     }
 

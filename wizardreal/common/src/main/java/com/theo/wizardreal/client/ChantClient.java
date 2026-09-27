@@ -35,7 +35,8 @@ public final class ChantClient {
                         for (int i = 0; i < n; i++) vLines.add(buf.readUtf(128));
                         lines.add(vLines);
                     }
-                    ctx.queue(() -> CHANT.onStart(spellId, lines));
+                    boolean practice = buf.readBoolean();
+                    ctx.queue(() -> CHANT.onStart(spellId, lines, practice));
                 }
                 case ChantNetwork.PROGRESS -> {
                     int variant = buf.readVarInt();
@@ -51,6 +52,10 @@ public final class ChantClient {
                     String kind = buf.readUtf(16);
                     String nameKey = buf.readUtf(128);
                     ctx.queue(() -> CHANT.onNotice(kind, nameKey));
+                }
+                case ChantNetwork.PRACTICE_WORDS -> {
+                    String heard = buf.readUtf(512);
+                    ctx.queue(() -> CHANT.onPracticeWords(heard));
                 }
                 default -> { }
             }

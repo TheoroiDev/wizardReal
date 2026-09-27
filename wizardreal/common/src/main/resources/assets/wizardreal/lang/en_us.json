@@ -447,5 +447,13 @@
   "wizardreal.config.chantReadings.hud": "Chant HUD readings",
   "wizardreal.config.chantReadings.languagePolicy": "Reading language policy",
   "wizardreal.config.chantReadings.languages": "Reading languages (selected)",
-  "wizardreal.config.chantReadings.pinyinStyle": "Pinyin tone style"
+  "wizardreal.config.chantReadings.pinyinStyle": "Pinyin tone style",
+  "wizardreal.practice.started": "✦ Practice begins — recite the highlighted line (no mana, no cooldown)",
+  "wizardreal.practice.stopped": "Practice ended",
+  "wizardreal.practice.ended": "✦ Practice complete",
+  "wizardreal.practice.band.perfect": "✦ PERFECT resonance! (avg ≥ 0.95)",
+  "wizardreal.practice.band.excellent": "✦ Excellent recital (avg ≥ 0.85)",
+  "wizardreal.practice.band.pass": "✦ Recital passed (avg ≥ 0.70)",
+  "wizardreal.practice.resonance": "✦ Resonance! Perfect chant — power +10%",
+  "wizardreal.cmd.practice.start": "Practice started: %s — speak the lines; no mana or cooldown is spent"
 }

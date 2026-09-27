@@ -447,5 +447,13 @@
   "wizardreal.config.chantReadings.hud": "咏唱 HUD 注音",
   "wizardreal.config.chantReadings.languagePolicy": "注音语言策略",
   "wizardreal.config.chantReadings.languages": "注音语言集（手选）",
-  "wizardreal.config.chantReadings.pinyinStyle": "拼音声调样式"
+  "wizardreal.config.chantReadings.pinyinStyle": "拼音声调样式",
+  "wizardreal.practice.started": "✦ 练习开始——跟读高亮句（不耗法力与冷却）",
+  "wizardreal.practice.stopped": "练习结束",
+  "wizardreal.practice.ended": "✦ 练习完成",
+  "wizardreal.practice.band.perfect": "✦ 完美共鸣！（均值 ≥ 0.95）",
+  "wizardreal.practice.band.excellent": "✦ 优秀咏唱（均值 ≥ 0.85）",
+  "wizardreal.practice.band.pass": "✦ 咏唱通过（均值 ≥ 0.70）",
+  "wizardreal.practice.resonance": "✦ 共鸣！完美咏唱——威力 +10%",
+  "wizardreal.cmd.practice.start": "练习开始：%s——跟读咒文行；不消耗法力与冷却"
 }

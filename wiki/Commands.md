@@ -4,6 +4,15 @@
 
 All cheat/debug commands live under **`/wizardreal`** (alias **`/wr`**) and require **permission level 2** (ops / server console). Spell ids are namespaced, e.g. `wizardreal:ignis`; pressing Tab completes ids from the registry.
 
+The practice loop (wizardReal#43) is a **player feature** and lives on its own, permission-free root:
+
+| Command | Description |
+|---|---|
+| `/wrpractice <spell>` | Start a practice rehearsal: no mana, no cooldown, no effects — strict scoring, per-word HUD feedback, mastery +1% per completed rehearsal (capped per day) |
+| `/wrpractice` / `/wrpractice stop` | Leave practice (no penalty) |
+
+Ops also get the same executors under `/wr practice <spell>`.
+
 | Command | Description |
 |---|---|
 | `/wr learn <spell> [target]` | Teach a spell. Target defaults to the executor; required from console |

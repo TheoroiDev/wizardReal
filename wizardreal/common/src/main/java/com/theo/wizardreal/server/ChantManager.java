@@ -1,5 +1,8 @@
 package com.theo.wizardreal.server;
 
+import com.theo.voicecast.match.AdjudicatorBackedChantLineMatcher;
+import com.theo.voicecast.match.ChantLineMatcher;
+import com.theo.voicecast.match.LenientLineMatcher;
 import com.theo.voicecast.server.CastMode;
 import com.theo.wizardreal.WizardReal;
 import com.theo.wizardreal.api.Chant;
@@ -42,6 +45,19 @@ public final class ChantManager {
     // + IPA final / endpoint flush) — the first completes the chant, the rest
     // would instantly re-trigger it.
     private static final long COMPLETION_LOCKOUT_MS = 3000L;
+    /** wr#43 评分带: a PERFECT chant resonates — this cast's power multiplier.
+     *  Two-axis rule: resonance boosts the effect only, never mastery. */
+    static final float RESONANCE_POWER_MULTIPLIER = 1.10f;
+    /**
+     * Production line-progression binding (voiceCast#48 W2, wired by #43):
+     * the adjudicator's verdict decides progression and — critically for the
+     * score bands — grades every matched line ({@code LineMatch.score});
+     * out-of-vocabulary lines and offline paths fall back to the lenient
+     * boolean. Before #43 this field's only consumer was the test suite and
+     * chants silently ran the pre-#48 boolean matcher (every line 1.0/0.0 —
+     * the band would have been vacuous and resonance always-on).
+     */
+    private static final ChantLineMatcher LINE_MATCHER = new AdjudicatorBackedChantLineMatcher();
     // Shorter lock after an explicit cancel (left-click / timeout) so the
     // player can restart a ritual immediately while still swallowing the
     // audio tail of the cancelled line.
@@ -109,34 +125,58 @@ public final class ChantManager {
      * (D9 首行即门): the entry utterance already counted as completed line 1. */
     public void startAtLine(ServerPlayer player, Spell spell, int variant) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
-                timeoutMs(player, spell), variant));
+                timeoutMs(player, spell), variant, LINE_MATCHER));
         declareMode(player, CastMode.CHANT_CONFIRM, spell);
+        ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
+        ChantNetwork.sendProgress(player, variant, 1, false);
+        WizardReal.LOGGER.info("{} began chanting {} (variant {} locked by L1 gate)",
+                player.getName().getString(), spell.id(), variant);
+    }
 
+    /** wr#43 practice loop entry (`/wr practice <spell>`): an unlocked
+     *  practice engine + PRACTICE_CONFIRM routing — zero mana/cooldown/effects,
+     *  strict bands, per-word HUD feedback, half-rate daily-capped mastery. */
+    public void startPractice(ServerPlayer player, Spell spell) {
+        active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
+                timeoutMs(player, spell), -1, LINE_MATCHER, true));
+        declareMode(player, CastMode.PRACTICE_CONFIRM, spell);
+        ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
+        hint(player, "wizardreal.practice.started");
+        WizardReal.LOGGER.info("{} began practicing {}", player.getName().getString(), spell.id());
+    }
+
+    /** Whether the player's active chant is a practice rehearsal. */
+    public boolean isPracticing(ServerPlayer player) {
+        ChantEngine engine = active.get(player.getUUID());
+        return engine != null && engine.isPractice();
+    }
+
+    /** Leave practice voluntarily (`/wr practice stop`) — no penalty. */
+    public void stopPractice(ServerPlayer player) {
+        ChantEngine engine = active.remove(player.getUUID());
+        if (engine == null || !engine.isPractice()) return;
+        declareMode(player, CastMode.OPEN, null);
+        ChantNetwork.sendEnd(player, false);
+        hint(player, "wizardreal.practice.stopped");
+    }
+
+    private List<List<String>> variantLineKeys(Spell spell) {
         List<List<String>> variantLines = new ArrayList<>();
         for (Chant c : spell.chants()) {
             List<String> keys = new ArrayList<>();
             for (ChantLine line : c.lines()) keys.add(line.displayText());
             variantLines.add(keys);
         }
-        ChantNetwork.sendStart(player, spell.id(), variantLines);
-        ChantNetwork.sendProgress(player, variant, 1, false);
-        WizardReal.LOGGER.info("{} began chanting {} (variant {} locked by L1 gate)",
-                player.getName().getString(), spell.id(), variant);
+        return variantLines;
     }
 
     /** Legacy entry (trigger word starts the chant unlocked). Kept for the
      * legacy-format window and robustness; the L1 gate is the primary path. */
     public void start(ServerPlayer player, Spell spell) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
-                timeoutMs(player, spell), -1));
+                timeoutMs(player, spell), -1, LINE_MATCHER));
         declareMode(player, CastMode.CHANT_CONFIRM, spell);
-        List<List<String>> variantLines = new ArrayList<>();
-        for (Chant c : spell.chants()) {
-            List<String> keys = new ArrayList<>();
-            for (ChantLine line : c.lines()) keys.add(line.displayText());
-            variantLines.add(keys);
-        }
-        ChantNetwork.sendStart(player, spell.id(), variantLines);
+        ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
         WizardReal.LOGGER.info("{} began chanting {}", player.getName().getString(), spell.id());
     }
 
@@ -166,6 +206,12 @@ public final class ChantManager {
         for (ChantEngine.Progress p : r.progress()) {
             ChantNetwork.sendProgress(player, p.variant(), p.lineIndex(), p.error());
         }
+        if (engine.isPractice() && !heard.isBlank()) {
+            // wr#43 逐词对齐: the display text is a lang key only the client can
+            // localize, so the server ships the raw utterance and the client
+            // runs the (pure) aligner against its localized line words.
+            ChantNetwork.sendPracticeWords(player, heard);
+        }
         if (r.failed()) {
             // Three consecutive post-grace wrong lines: 念砸了 -> failure (darkness).
             fail(player, engine);
@@ -188,6 +234,25 @@ public final class ChantManager {
         declareMode(player, CastMode.OPEN, null);
         lock(player, COMPLETION_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, true);
+
+        // wr#43 practice completion: zero mana, zero cooldown, no effect —
+        // the rehearsal settles half-rate mastery (daily capped) instead.
+        if (engine.isPractice()) {
+            float applied = LearningService.onPractice(player, spell);
+            float avg = engine.averageScore();
+            var band = com.theo.wizardreal.match.ScoreBands.DEFAULT.bandOf(avg);
+            hint(player, switch (band) {
+                case PERFECT -> "wizardreal.practice.band.perfect";
+                case EXCELLENT -> "wizardreal.practice.band.excellent";
+                case PASS -> "wizardreal.practice.band.pass";
+                default -> "wizardreal.practice.ended";
+            });
+            WizardReal.LOGGER.info("{} practiced {} ({} lines, avg score {}, mastery +{})",
+                    player.getName().getString(), spell.id(), completedLines,
+                    String.format(java.util.Locale.ROOT, "%.2f", avg), applied);
+            return;
+        }
+
         // Power tier for the full chant (chant_policy.power_per_line, default 1.0),
         // plus the chant-stage resolution (magic_eco 03): completed lines AND the
         // caster's mastery decide which stage's effects fire. 空转咏唱 (issue
@@ -201,7 +266,18 @@ public final class ChantManager {
             fail(player, engine);
             return;
         }
-        SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines), affordable);
+        // wr#43 评分带: a PERFECT chant resonates — +10% power for this cast
+        // only. The band never changes success/failure, and resonance never
+        // touches mastery (两轴分离).
+        float power = powerFor(spell, completedLines);
+        if (com.theo.wizardreal.match.ScoreBands.DEFAULT.bandOf(engine.averageScore())
+                == com.theo.wizardreal.match.ScoreBands.Band.PERFECT) {
+            power *= RESONANCE_POWER_MULTIPLIER;
+            hint(player, "wizardreal.practice.resonance");
+            WizardReal.LOGGER.info("{}'s chant for {} resonated (perfect, power x{})",
+                    player.getName().getString(), spell.id(), RESONANCE_POWER_MULTIPLIER);
+        }
+        SpellCastHandler.handleCast(player, spell.id(), power, affordable);
         WizardReal.LOGGER.info("{} completed chant for {} ({} lines, stage {})",
                 player.getName().getString(), spell.id(), completedLines, affordable);
     }
@@ -213,6 +289,17 @@ public final class ChantManager {
         ChantPolicy policy = spell.chantPolicy();
         active.remove(player.getUUID());
         declareMode(player, CastMode.OPEN, null);
+        if (engine.isPractice()) {
+            // wr#43: practice early release = a shorter rehearsal — same
+            // zero-stake settlement as the full completion.
+            ChantNetwork.sendEnd(player, true);
+            LearningService.onPractice(player, spell);
+            float avg = engine.averageScore();
+            WizardReal.LOGGER.info("{} released {} early in practice ({} lines, avg {})",
+                    player.getName().getString(), spell.id(), completedLines,
+                    String.format(java.util.Locale.ROOT, "%.2f", avg));
+            return;
+        }
         if (policy != null && !policy.skipAllowed()) {
             // 禁咒: the jump is forbidden — treat as a failed chant (no cast).
             WizardReal.LOGGER.info("{} tried to jump chapters on forbidden chant {}",
@@ -309,8 +396,12 @@ public final class ChantManager {
         declareMode(player, CastMode.OPEN, null);
         lock(player, CANCEL_LOCKOUT_MS);
         ChantNetwork.sendEnd(player, false);
-        applyFailBlindness(player);
-        WizardReal.LOGGER.info("{}'s chant for {} failed", player.getName().getString(), engine.spell().id());
+        if (!engine.isPractice()) {
+            // wr#43: practice failures are zero-stake — no streaks, no darkness.
+            applyFailBlindness(player);
+        }
+        WizardReal.LOGGER.info("{}'s chant for {} failed{}", player.getName().getString(),
+                engine.spell().id(), engine.isPractice() ? " (practice)" : "");
     }
 
     private void applyFailBlindness(ServerPlayer player) {

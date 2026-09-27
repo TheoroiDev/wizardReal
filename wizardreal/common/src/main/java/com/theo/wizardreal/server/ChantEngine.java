@@ -68,11 +68,13 @@ public final class ChantEngine {
     private final List<Chant> chants;
     private final long timeoutMs;
     private final ChantLineMatcher matcher;
+    private final boolean practice; // wizardReal#43: practice engine — strict bands, zero stakes
     private int variant = -1;   // locked chant index; -1 until first line
     private int lineIndex;
     private long lastActivity;
     private long lineStartedMs; // when the current line began (for the grace window)
     private int wrongStreak;    // consecutive post-grace wrong lines against the current line
+    private final List<Float> lineScores = new ArrayList<>(); // per completed line (wr#43 评分带)
 
     public ChantEngine(Spell spell, long nowMs) {
         this(spell, nowMs, DEFAULT_TIMEOUT_MS, -1);
@@ -89,10 +91,18 @@ public final class ChantEngine {
      *  behavior-free). W2+ bindings route through the production adjudicator. */
     public ChantEngine(Spell spell, long nowMs, long timeoutMs, int lockedVariant,
                        ChantLineMatcher matcher) {
+        this(spell, nowMs, timeoutMs, lockedVariant, matcher, false);
+    }
+
+    /** wizardReal#43 practice engine: strict band gate on graded scores
+     *  (practice 严档), zero-stake settlement handled by the manager. */
+    public ChantEngine(Spell spell, long nowMs, long timeoutMs, int lockedVariant,
+                       ChantLineMatcher matcher, boolean practice) {
         this.spell = spell;
         this.chants = spell.chants();
         this.timeoutMs = timeoutMs;
         this.matcher = matcher == null ? LenientLineMatcher.INSTANCE : matcher;
+        this.practice = practice;
         if (lockedVariant >= 0 && lockedVariant < chants.size()) {
             this.variant = lockedVariant;
             this.lineIndex = 1;
@@ -163,10 +173,14 @@ public final class ChantEngine {
             // First line: pick the variant whose first line matches best.
             // Don't flash an error during the opening grace window.
             int best = -1;
+            com.theo.voicecast.match.ChantLineMatcher.LineMatch bestMatch =
+                    com.theo.voicecast.match.ChantLineMatcher.LineMatch.of(false);
             for (int vi = 0; vi < chants.size(); vi++) {
-                ChantLine first = chants.get(vi).lines().get(0);
-                if (lineMatches(matcher, first, heard, heardIpa, verdict)) {
+                com.theo.voicecast.match.ChantLineMatcher.LineMatch lm =
+                        acceptLine(chants.get(vi).lines().get(0), heard, heardIpa, verdict);
+                if (lm.matched()) {
                     best = vi;
+                    bestMatch = lm;
                     break;
                 }
             }
@@ -179,6 +193,7 @@ public final class ChantEngine {
             variant = best;
             lineIndex = 1;
             lineStartedMs = nowMs;
+            lineScores.add(bestMatch.score());
             boolean finished = lineIndex >= chants.get(best).lines().size();
             events.add(new Progress(best, lineIndex, false));
             return FeedResult.of(false, finished, events);
@@ -190,7 +205,9 @@ public final class ChantEngine {
         }
 
         ChantLine current = chant.lines().get(lineIndex);
-        if (lineMatches(matcher, current, heard, heardIpa, verdict)) {
+        com.theo.voicecast.match.ChantLineMatcher.LineMatch lm = acceptLine(current, heard, heardIpa, verdict);
+        if (lm.matched()) {
+            lineScores.add(lm.score());
             lineIndex++;
             lineStartedMs = nowMs;
             wrongStreak = 0;
@@ -249,5 +266,36 @@ public final class ChantEngine {
         return matcher.match(p.id(), p.ipa(), p.aliases(), heard, heardIpa, verdict).matched();
     }
 
+    /**
+     * Line acceptance with the wizardReal#43 practice gate: in practice the
+     * STRICT band's success line applies to graded scores — a loose NEAR
+     * (e.g. 0.6) still matches in combat (loose 档 leaves the accent buffer)
+     * but does not complete a practice line. Boolean matcher fallbacks arrive
+     * as score 1.0 and are unaffected.
+     */
+    private com.theo.voicecast.match.ChantLineMatcher.LineMatch acceptLine(
+            ChantLine line, String heard, List<String> heardIpa,
+            com.theo.voicecast.match.ChantLineMatcher.ChantVerdict verdict) {
+        Pronunciation p = line.pronunciation();
+        var lm = matcher.match(p.id(), p.ipa(), p.aliases(), heard, heardIpa, verdict);
+        if (lm.matched() && practice && lm.score() < com.theo.wizardreal.match.ScoreBands.STRICT.pass()) {
+            return com.theo.voicecast.match.ChantLineMatcher.LineMatch.of(false);
+        }
+        return lm;
+    }
 
+    /** Per-line scores of the completed lines, in order (wr#43 评分带). */
+    public List<Float> lineScores() {
+        return List.copyOf(lineScores);
+    }
+
+    /** Mean completed-line score (0 when nothing completed) — the band input. */
+    public float averageScore() {
+        return com.theo.wizardreal.match.ScoreBands.average(lineScores);
+    }
+
+    /** Whether this engine runs in practice mode (zero stakes, strict bands). */
+    public boolean isPractice() {
+        return practice;
+    }
 }

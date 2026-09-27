@@ -78,11 +78,21 @@ public final class WizardRealCommands {
                               CommandBuildContext buildContext, Commands.CommandSelection selection) {
         dispatcher.register(tree("wizardreal"));
         dispatcher.register(tree("wr"));
+        // wr#43: practice is a PLAYER feature — the /wr tree is op-gated, so
+        // the practice loop gets its own permission-0 root (/wr practice
+        // remains for ops as the same executors).
+        dispatcher.register(Commands.literal("wrpractice")
+                .executes(WizardRealCommands::practiceStop)
+                .then(Commands.literal("stop").executes(WizardRealCommands::practiceStop))
+                .then(spellArg("spell").executes(WizardRealCommands::practiceStart)));
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> tree(String name) {
         return Commands.literal(name)
                 .requires(source -> source.hasPermission(2))
+                .then(Commands.literal("practice")
+                        .executes(WizardRealCommands::practiceStop)
+                        .then(spellArg("spell").executes(WizardRealCommands::practiceStart)))
                 .then(Commands.literal("learn")
                         .then(Commands.argument("target", EntityArgument.player())
                                 .then(spellArg("spell")
@@ -284,6 +294,26 @@ public final class WizardRealCommands {
                     spellDisplayName(spell), player.getName()));
         }
         return ok ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    /** wr#43 practice loop entry: zero-stake rehearsal of one spell — no
+     *  mana, no cooldown, no effects; strict bands, per-word HUD feedback,
+     *  half-rate daily-capped mastery. */
+    private static int practiceStart(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        String spellId = spellId(ctx, "spell");
+        ServerPlayer player = self(ctx);
+        Spell spell = requireSpell(ctx.getSource(), spellId);
+        if (spell == null) return 0;
+        ChantManager.get().startPractice(player, spell);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wizardreal.cmd.practice.start",
+                spellDisplayName(spell)), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /** `/wrpractice` bare / `stop`: leave practice (no penalty). */
+    private static int practiceStop(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ChantManager.get().stopPractice(self(ctx));
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int listSpells(CommandContext<CommandSourceStack> ctx, String filter) {

@@ -4,6 +4,7 @@ import com.theo.wizardreal.api.catalog.CatalogPayload;
 import com.theo.wizardreal.config.WizardRealConfig;
 import com.theo.wizardreal.net.ChantNetwork;
 import com.theo.wizardreal.net.MagicClientState;
+import com.theo.wizardreal.server.PracticeAligner;
 
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -114,8 +115,15 @@ public final class ChantHud {
             } else if (i == state.lineIndex) {
                 ChatFormatting f = state.error ? ChatFormatting.RED : ChatFormatting.AQUA;
                 int color = state.error ? 0xFF5555 : 0x55FFFF;
-                ctx.drawString(tr, Component.literal("► ").withStyle(f).append(text.copy().withStyle(f, ChatFormatting.BOLD)),
-                        crossX, y, color);
+                if (state.practice && state.practiceHeard != null && !state.error) {
+                    // wr#43 逐词高亮: practice renders the current line word by
+                    // word — spoken words bright, missed words dimmed.
+                    ctx.drawString(tr, Component.literal("► ").withStyle(f), crossX, y, color);
+                    drawPracticeWords(ctx, tr, text.getString(), crossX, y, state.practiceHeard);
+                } else {
+                    ctx.drawString(tr, Component.literal("► ").withStyle(f).append(text.copy().withStyle(f, ChatFormatting.BOLD)),
+                            crossX, y, color);
+                }
                 if (state.error) {
                     ctx.drawString(tr, Component.translatable("wizardreal.chant.retry").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC),
                             crossX, y - 9, 0xFF5555);
@@ -170,5 +178,22 @@ public final class ChantHud {
         ctx.pose().scale(0.5f, 0.5f, 1f);
         ctx.drawString(font, clipped, 0, 0, READING_COLOR, false);
         ctx.pose().popPose();
+    }
+
+    /** wr#43 逐词高亮: render the current practice line word by word — the
+     *  pure {@link PracticeAligner} maps the localized words onto the last
+     *  heard utterance; spoken words render bright, missed words dim. Purely
+     *  feedback — the progression verdict stays server-side. */
+    private static void drawPracticeWords(GuiGraphics ctx, Font font, String line, int x, int y,
+                                          String heard) {
+        String[] words = line.trim().split("\\s+");
+        if (words.length == 0) return;
+        boolean[] hits = PracticeAligner.align(java.util.Arrays.asList(words), heard);
+        int cx = x + font.width(CURRENT_PREFIX);
+        for (int w = 0; w < words.length; w++) {
+            String word = words[w] + (w == words.length - 1 ? "" : " ");
+            ctx.drawString(font, word, cx, y, hits[w] ? 0x55FFFF : 0x4A4A4A);
+            cx += font.width(word);
+        }
     }
 }

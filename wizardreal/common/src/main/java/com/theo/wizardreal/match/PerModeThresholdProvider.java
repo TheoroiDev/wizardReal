@@ -40,4 +40,16 @@ public interface PerModeThresholdProvider {
     static PerModeThresholdProvider fullVocabulary() {
         return mode -> new ThresholdHint(null, null, null);
     }
+
+    /**
+     * Score-band cut points for the given mode (wizardReal#43): where the
+     * perfect / excellent / success lines sit for graded
+     * {@code LineMatch.score}s. Data, not constants — per-mode calibration
+     * overrides this; the default ships {@link ScoreBands#DEFAULT}
+     * (practice grading uses {@link ScoreBands#STRICT} via its own engine
+     * wiring).
+     */
+    default ScoreBands scoreBands(String mode) {
+        return ScoreBands.DEFAULT;
+    }
 }

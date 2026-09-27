@@ -47,6 +47,8 @@ And when you are **not** chanting, a rejected utterance still answers you (a few
 - Chinese lines carry **pinyin** and Japanese lines **romaji** aliases, so both the utterance and IPA engines understand them;
 - The **current chant line shows its reading** (pinyin/romaji) above it while chanting — read it aloud to stay on track ([Configuration](Configuration.md) to turn it off or widen it);
 - While chanting, **no instant spells fire**: every utterance feeds the current ritual only;
-- Mana and cooldown settle **on completion** — cancelling costs nothing.
+- Mana and cooldown settle **on completion** — cancelling costs nothing;
+- **Scoring & resonance (wizardReal#43)**: every completed line is graded (perfect ≥ 0.95 · excellent ≥ 0.85 · pass = the success line at 0.70). A **perfect** chant *resonates*: +10% power for that cast. Grades never change success/failure, and never add mastery — mastery follows success, score follows performance;
+- **Practice mode** (`/wrpractice <spell>`): rehearse a spell with zero mana, zero cooldown and no effect — strict scoring bands, the HUD highlights your line **word by word** as you speak, and each completed rehearsal earns +1% mastery (capped per day; real casts earn the full +2%). Leave with `/wrpractice stop`.
 
 > [← Home](Home.md) · Previous: [Spells](Spells.md) · Next: [Troubleshooting & FAQ](Troubleshooting-FAQ.md)
