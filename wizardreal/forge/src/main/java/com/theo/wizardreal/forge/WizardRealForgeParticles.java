@@ -27,5 +27,11 @@ public final class WizardRealForgeParticles {
         // Held-staff idle ambience: same sprite, much smaller scale.
         event.registerSpriteSet((ParticleType<SimpleParticleType>) WizardRealParticles.WISP.get(),
                 sprites -> new WizardSparkParticle.Factory(sprites, 0.4f));
+        // Per-school sparks (wizardReal#44): palette-locked sprites.
+        for (com.theo.wizardreal.api.School school : com.theo.wizardreal.api.School.values()) {
+            event.registerSpriteSet(
+                    (ParticleType<SimpleParticleType>) WizardRealParticles.SCHOOL_SPARKS.get(school),
+                    WizardSparkParticle.Factory::new);
+        }
     }
 }

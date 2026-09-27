@@ -6,6 +6,7 @@ import com.theo.wizardreal.client.HeldItemAmbience;
 import com.theo.wizardreal.client.MagicHud;
 import com.theo.wizardreal.client.SchoolTintModels;
 import com.theo.wizardreal.client.StaffCastHandler;
+import com.theo.wizardreal.api.School;
 import com.theo.wizardreal.client.WizardSparkParticle;
 import com.theo.wizardreal.net.MagicSyncNetwork;
 import com.theo.wizardreal.net.SpellCatalogNetwork;
@@ -34,6 +35,12 @@ public final class WizardRealFabricClient implements ClientModInitializer {
         ParticleFactoryRegistry.getInstance().register(
                 (ParticleType<SimpleParticleType>) WizardRealParticles.SPARK.get(),
                 WizardSparkParticle.Factory::new);
+
+        for (School school : School.values()) {
+            ParticleFactoryRegistry.getInstance().register(
+                    (ParticleType<SimpleParticleType>) WizardRealParticles.SCHOOL_SPARKS.get(school),
+                    WizardSparkParticle.Factory::new);
+        }
         ParticleFactoryRegistry.getInstance().register(
                 (ParticleType<SimpleParticleType>) WizardRealParticles.RUNE.get(),
                 WizardSparkParticle.Factory::new);

@@ -81,6 +81,11 @@ public final class WizardRealForge {
                 WizardSimpleParticle::new)::get;
         WizardRealParticles.WISP = PARTICLE_TYPES.register("wisp",
                 WizardSimpleParticle::new)::get;
+        for (com.theo.wizardreal.api.School school : com.theo.wizardreal.api.School.values()) {
+            WizardRealParticles.SCHOOL_SPARKS.put(school, PARTICLE_TYPES.register(
+                    "spark_" + school.name().toLowerCase(java.util.Locale.ROOT),
+                    WizardSimpleParticle::new)::get);
+        }
 
         for (String soundId : WizardRealSounds.IDS) {
             SOUND_EVENTS.register(soundId, () -> SoundEvent.createVariableRangeEvent(WizardRealSounds.id(soundId)));

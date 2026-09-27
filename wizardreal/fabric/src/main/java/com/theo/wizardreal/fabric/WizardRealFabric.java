@@ -62,6 +62,11 @@ public final class WizardRealFabric implements ModInitializer {
         WizardRealParticles.SPARK = registerParticle("spark", new WizardSimpleParticle());
         WizardRealParticles.RUNE = registerParticle("rune", new WizardSimpleParticle());
         WizardRealParticles.WISP = registerParticle("wisp", new WizardSimpleParticle());
+        for (com.theo.wizardreal.api.School school : com.theo.wizardreal.api.School.values()) {
+            WizardRealParticles.SCHOOL_SPARKS.put(school,
+                    registerParticle("spark_" + school.name().toLowerCase(java.util.Locale.ROOT),
+                            new WizardSimpleParticle()));
+        }
 
         for (String soundId : WizardRealSounds.IDS) {
             Registry.register(BuiltInRegistries.SOUND_EVENT, WizardRealSounds.id(soundId),
