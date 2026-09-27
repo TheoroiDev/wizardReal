@@ -11,11 +11,12 @@ import net.minecraft.resources.ResourceLocation;
  * referenced from datapack spell JSON via {@code wizardreal:<id>}.
  *
  * <p>The {@code reading.*} events in sounds.json (wr#45 chant readings,
- * zh + ja) are deliberately NOT registered here: they are played through the
- * compendium/chant UI by raw ResourceLocation lookup ({"@code
- * SoundEvent.createVariableRangeEvent"} at the play site), so no registry
- * object is needed. Consumers must keep that contract — do not "fix" the
- * asymmetry by registering 100+ unused events.
+ * zh + ja) are deliberately NOT registered here: once the wizardpedia
+ * play-slot slice lands they will be played through the compendium/chant UI
+ * by raw ResourceLocation lookup ({@code SoundEvent.createVariableRangeEvent}
+ * at the play site), so no registry object is needed. Consumers must keep
+ * that contract — do not "fix" the asymmetry by registering 100+ unused
+ * events.
  *
  * <p>Files live in {@code assets/wizardreal/sounds/spell/<id with . -> _>.ogg},
  * wired by {@code assets/wizardreal/sounds.json}. Generated via the workspace-root tools/sfx
