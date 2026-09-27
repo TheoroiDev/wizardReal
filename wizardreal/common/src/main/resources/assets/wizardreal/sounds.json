@@ -640,5 +640,261 @@
       "wizardreal:reading/vireo__chant_trigger__zh__x__cv3",
       "wizardreal:reading/vireo__trigger__zh__x__cv3"
     ]
-  }
+  },
+  "reading.aduro.ja": [
+    "wizardreal:reading/aduro__chant_trigger__ja__cv3_1"
+  ],
+  "reading.aegis.ja": [
+    "wizardreal:reading/aegis__chant_trigger__ja__cv3_3"
+  ],
+  "reading.anemos.ja": [
+    "wizardreal:reading/anemos__chant_trigger__ja__cv3_5"
+  ],
+  "reading.angelus.ja": [
+    "wizardreal:reading/angelus__chant_trigger__ja__cv3_7",
+    "wizardreal:reading/angelus__trigger__ja__cv3_8"
+  ],
+  "reading.anima.ja": [
+    "wizardreal:reading/anima__chant_trigger__ja__cv3_9",
+    "wizardreal:reading/anima__trigger__ja__cv3_10"
+  ],
+  "reading.aqua_vitae.ja": [
+    "wizardreal:reading/aqua_vitae__chant_trigger__ja__cv3_11",
+    "wizardreal:reading/aqua_vitae__trigger__ja__cv3_12"
+  ],
+  "reading.aurae_levitas.ja": [
+    "wizardreal:reading/aurae_levitas__chant_trigger__ja__cv3_13",
+    "wizardreal:reading/aurae_levitas__trigger__ja__cv3_14"
+  ],
+  "reading.blade.ja": [
+    "wizardreal:reading/blade__chant_trigger__ja__cv3_15"
+  ],
+  "reading.carnifex.ja": [
+    "wizardreal:reading/carnifex__chant_trigger__ja__cv3_17",
+    "wizardreal:reading/carnifex__trigger__ja__cv3_18"
+  ],
+  "reading.celere.ja": [
+    "wizardreal:reading/celere__chant_trigger__ja__cv3_19",
+    "wizardreal:reading/celere__trigger__ja__cv3_20"
+  ],
+  "reading.chaos.ja": [
+    "wizardreal:reading/chaos__chant_trigger__ja__cv3_21"
+  ],
+  "reading.concoctio.ja": [
+    "wizardreal:reading/concoctio__chant_trigger__ja__cv3_23",
+    "wizardreal:reading/concoctio__trigger__ja__cv3_24"
+  ],
+  "reading.diluvium.ja": [
+    "wizardreal:reading/diluvium__chant_trigger__ja__cv3_25",
+    "wizardreal:reading/diluvium__trigger__ja__cv3_26"
+  ],
+  "reading.domain.ja": [
+    "wizardreal:reading/domain__chant_trigger__ja__cv3_27"
+  ],
+  "reading.explosion.ja": [
+    "wizardreal:reading/explosion__chant_trigger__ja__cv3_29",
+    "wizardreal:reading/explosion__trigger__ja__cv3_30"
+  ],
+  "reading.fallax.ja": [
+    "wizardreal:reading/fallax__chant_trigger__ja__cv3_31",
+    "wizardreal:reading/fallax__trigger__ja__cv3_32"
+  ],
+  "reading.falsum.ja": [
+    "wizardreal:reading/falsum__chant_trigger__ja__cv3_33"
+  ],
+  "reading.ferae_vocatus.ja": [
+    "wizardreal:reading/ferae_vocatus__chant_trigger__ja__cv3_35",
+    "wizardreal:reading/ferae_vocatus__trigger__ja__cv3_36"
+  ],
+  "reading.flamma.ja": [
+    "wizardreal:reading/flamma__chant_trigger__ja__cv3_37"
+  ],
+  "reading.flatu_signum.ja": [
+    "wizardreal:reading/flatu_signum__chant_trigger__ja__cv3_39",
+    "wizardreal:reading/flatu_signum__trigger__ja__cv3_40"
+  ],
+  "reading.floris.ja": [
+    "wizardreal:reading/floris__chant_trigger__ja__cv3_41"
+  ],
+  "reading.fluctus.ja": [
+    "wizardreal:reading/fluctus__chant_trigger__ja__cv3_43",
+    "wizardreal:reading/fluctus__trigger__ja__cv3_44"
+  ],
+  "reading.fodere.ja": [
+    "wizardreal:reading/fodere__chant_trigger__ja__cv3_45"
+  ],
+  "reading.fulgur.ja": [
+    "wizardreal:reading/fulgur__chant_trigger__ja__cv3_47"
+  ],
+  "reading.fulmen.ja": [
+    "wizardreal:reading/fulmen__chant_trigger__ja__cv3_49"
+  ],
+  "reading.galvanum.ja": [
+    "wizardreal:reading/galvanum__chant_trigger__ja__cv3_51",
+    "wizardreal:reading/galvanum__trigger__ja__cv3_52"
+  ],
+  "reading.glacies.ja": [
+    "wizardreal:reading/glacies__chant_trigger__ja__cv3_53"
+  ],
+  "reading.gravitas.ja": [
+    "wizardreal:reading/gravitas__chant_trigger__ja__cv3_55",
+    "wizardreal:reading/gravitas__trigger__ja__cv3_56"
+  ],
+  "reading.gurges.ja": [
+    "wizardreal:reading/gurges__chant_trigger__ja__cv3_57"
+  ],
+  "reading.ignis.ja": [
+    "wizardreal:reading/ignis__chant_trigger__ja__cv3_59"
+  ],
+  "reading.incendo.ja": [
+    "wizardreal:reading/incendo__chant_trigger__ja__cv3_61",
+    "wizardreal:reading/incendo__trigger__ja__cv3_62"
+  ],
+  "reading.incursus.ja": [
+    "wizardreal:reading/incursus__chant_trigger__ja__cv3_63",
+    "wizardreal:reading/incursus__trigger__ja__cv3_64"
+  ],
+  "reading.judicium.ja": [
+    "wizardreal:reading/judicium__chant_trigger__ja__cv3_65",
+    "wizardreal:reading/judicium__trigger__ja__cv3_66"
+  ],
+  "reading.lapides.ja": [
+    "wizardreal:reading/lapides__chant_trigger__ja__cv3_67"
+  ],
+  "reading.letum.ja": [
+    "wizardreal:reading/letum__chant_trigger__ja__cv3_69"
+  ],
+  "reading.lithos.ja": [
+    "wizardreal:reading/lithos__chant_trigger__ja__cv3_71"
+  ],
+  "reading.lumen.ja": [
+    "wizardreal:reading/lumen__chant_trigger__ja__cv3_73"
+  ],
+  "reading.lux.ja": [
+    "wizardreal:reading/lux__chant_trigger__ja__cv3_75"
+  ],
+  "reading.mare_gradus.ja": [
+    "wizardreal:reading/mare_gradus__chant_trigger__ja__cv3_77",
+    "wizardreal:reading/mare_gradus__trigger__ja__cv3_78"
+  ],
+  "reading.mentis.ja": [
+    "wizardreal:reading/mentis__chant_trigger__ja__cv3_79"
+  ],
+  "reading.metus.ja": [
+    "wizardreal:reading/metus__chant_trigger__ja__cv3_81"
+  ],
+  "reading.murus.ja": [
+    "wizardreal:reading/murus__chant_trigger__ja__cv3_83"
+  ],
+  "reading.mutatio.ja": [
+    "wizardreal:reading/mutatio__chant_trigger__ja__cv3_85"
+  ],
+  "reading.nubes.ja": [
+    "wizardreal:reading/nubes__chant_trigger__ja__cv3_87"
+  ],
+  "reading.ossum.ja": [
+    "wizardreal:reading/ossum__chant_trigger__ja__cv3_89"
+  ],
+  "reading.petra_catena.ja": [
+    "wizardreal:reading/petra_catena__chant_trigger__ja__cv3_91",
+    "wizardreal:reading/petra_catena__trigger__ja__cv3_92"
+  ],
+  "reading.portus.ja": [
+    "wizardreal:reading/portus__chant_trigger__ja__cv3_93"
+  ],
+  "reading.procella.ja": [
+    "wizardreal:reading/procella__chant_trigger__ja__cv3_95",
+    "wizardreal:reading/procella__trigger__ja__cv3_96"
+  ],
+  "reading.radix.ja": [
+    "wizardreal:reading/radix__chant_trigger__ja__cv3_97"
+  ],
+  "reading.rift.ja": [
+    "wizardreal:reading/rift__chant_trigger__ja__cv3_99"
+  ],
+  "reading.sagitta.ja": [
+    "wizardreal:reading/sagitta__chant_trigger__ja__cv3_101"
+  ],
+  "reading.sanare.ja": [
+    "wizardreal:reading/sanare__chant_trigger__ja__cv3_103",
+    "wizardreal:reading/sanare__trigger__ja__cv3_104"
+  ],
+  "reading.saxum.ja": [
+    "wizardreal:reading/saxum__chant_trigger__ja__cv3_105"
+  ],
+  "reading.semina.ja": [
+    "wizardreal:reading/semina__chant_trigger__ja__cv3_107"
+  ],
+  "reading.silva_voco.ja": [
+    "wizardreal:reading/silva_voco__chant_trigger__ja__cv3_109",
+    "wizardreal:reading/silva_voco__trigger__ja__cv3_110"
+  ],
+  "reading.siphon.ja": [
+    "wizardreal:reading/siphon__chant_trigger__ja__cv3_111"
+  ],
+  "reading.somnus.ja": [
+    "wizardreal:reading/somnus__chant_trigger__ja__cv3_113"
+  ],
+  "reading.spectra.ja": [
+    "wizardreal:reading/spectra__chant_trigger__ja__cv3_115",
+    "wizardreal:reading/spectra__trigger__ja__cv3_116"
+  ],
+  "reading.spina.ja": [
+    "wizardreal:reading/spina__chant_trigger__ja__cv3_117"
+  ],
+  "reading.spiritus.ja": [
+    "wizardreal:reading/spiritus__chant_trigger__ja__cv3_119",
+    "wizardreal:reading/spiritus__trigger__ja__cv3_120"
+  ],
+  "reading.suctus.ja": [
+    "wizardreal:reading/suctus__chant_trigger__ja__cv3_121",
+    "wizardreal:reading/suctus__trigger__ja__cv3_122"
+  ],
+  "reading.telum.ja": [
+    "wizardreal:reading/telum__chant_trigger__ja__cv3_123"
+  ],
+  "reading.tempestas.ja": [
+    "wizardreal:reading/tempestas__chant_trigger__ja__cv3_125",
+    "wizardreal:reading/tempestas__trigger__ja__cv3_126"
+  ],
+  "reading.terra.ja": [
+    "wizardreal:reading/terra__chant_trigger__ja__cv3_127"
+  ],
+  "reading.tonitrus.ja": [
+    "wizardreal:reading/tonitrus__chant_trigger__ja__cv3_129"
+  ],
+  "reading.torpor.ja": [
+    "wizardreal:reading/torpor__chant_trigger__ja__cv3_131",
+    "wizardreal:reading/torpor__trigger__ja__cv3_132"
+  ],
+  "reading.turbo.ja": [
+    "wizardreal:reading/turbo__chant_trigger__ja__cv3_133",
+    "wizardreal:reading/turbo__trigger__ja__cv3_134"
+  ],
+  "reading.umbra_mortis.ja": [
+    "wizardreal:reading/umbra_mortis__chant_trigger__ja__cv3_135",
+    "wizardreal:reading/umbra_mortis__trigger__ja__cv3_136"
+  ],
+  "reading.unda.ja": [
+    "wizardreal:reading/unda__chant_trigger__ja__cv3_137"
+  ],
+  "reading.velum.ja": [
+    "wizardreal:reading/velum__chant_trigger__ja__cv3_139"
+  ],
+  "reading.ventus.ja": [
+    "wizardreal:reading/ventus__chant_trigger__ja__cv3_141"
+  ],
+  "reading.vestibulum.ja": [
+    "wizardreal:reading/vestibulum__chant_trigger__ja__cv3_143"
+  ],
+  "reading.vincula.ja": [
+    "wizardreal:reading/vincula__chant_trigger__ja__cv3_145"
+  ],
+  "reading.vireo.ja": [
+    "wizardreal:reading/vireo__chant_trigger__ja__cv3_147"
+  ],
+  "reading.volatus.ja": [
+    "wizardreal:reading/volatus__chant_trigger__ja__cv3_149",
+    "wizardreal:reading/volatus__trigger__ja__cv3_150"
+  ]
 }
