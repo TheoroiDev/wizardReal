@@ -52,4 +52,15 @@ public interface PerModeThresholdProvider {
     default ScoreBands scoreBands(String mode) {
         return ScoreBands.DEFAULT;
     }
+
+    /**
+     * 失败庇护 relaxation (voiceCast#52, per-player): how many points the
+     * AMBIGUOUS-acceptance floor drops below the mode's success line once a
+     * player is on a failure streak (same spell, ≥ 3 consecutive failed
+     * chants). Default 0.05 (= the "+5%" ruling); 0 disables the庇护
+     * relaxation for the mode.
+     */
+    default float failSafeBonus(String mode) {
+        return 0.05f;
+    }
 }

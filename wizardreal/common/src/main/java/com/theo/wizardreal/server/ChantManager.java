@@ -10,6 +10,8 @@ import com.theo.wizardreal.api.ChantLine;
 import com.theo.wizardreal.api.ChantPolicy;
 import com.theo.wizardreal.api.Spell;
 import com.theo.wizardreal.config.WizardRealConfig;
+import com.theo.wizardreal.match.FailSafeLineMatcher;
+import com.theo.wizardreal.match.ScoreBands;
 import com.theo.wizardreal.net.ChantNetwork;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -58,6 +60,40 @@ public final class ChantManager {
      * the band would have been vacuous and resonance always-on).
      */
     private static final ChantLineMatcher LINE_MATCHER = new AdjudicatorBackedChantLineMatcher();
+    // voiceCast#52 失败庇护 state: consecutive failed chants per (player, spell)
+    final com.theo.wizardreal.match.FailStreaks failStreaksBySpell = new com.theo.wizardreal.match.FailStreaks();
+
+    private boolean failSafeRelaxed(UUID player, String spellId) {
+        return failStreaksBySpell.relaxed(player, spellId);
+    }
+
+    /** The per-chant line matcher: production binding wrapped by the #52
+     *  失败庇护 (live relaxation lookup — a streak building up mid-chant
+     *  applies from the next utterance). */
+    private ChantLineMatcher lineMatcherFor(ServerPlayer player, Spell spell) {
+        return new FailSafeLineMatcher(LINE_MATCHER, new FailSafeLineMatcher.Relaxation() {
+            @Override public boolean relaxed() {
+                return failSafeRelaxed(player.getUUID(), spell.id());
+            }
+
+            @Override public float passFloor() {
+                return com.theo.wizardreal.match.ScoreBands.DEFAULT.pass();
+            }
+
+            @Override public float bonus() {
+                // PerModeThresholdProvider.failSafeBonus default ("+5%", voiceCast#52)
+                return 0.05f;
+            }
+        });
+    }
+
+    private void recordChantFailure(UUID player, String spellId) {
+        failStreaksBySpell.fail(player, spellId);
+    }
+
+    private void recordChantSuccess(UUID player, String spellId) {
+        failStreaksBySpell.success(player, spellId);
+    }
     // Shorter lock after an explicit cancel (left-click / timeout) so the
     // player can restart a ritual immediately while still swallowing the
     // audio tail of the cancelled line.
@@ -125,7 +161,7 @@ public final class ChantManager {
      * (D9 首行即门): the entry utterance already counted as completed line 1. */
     public void startAtLine(ServerPlayer player, Spell spell, int variant) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
-                timeoutMs(player, spell), variant, LINE_MATCHER));
+                timeoutMs(player, spell), variant, lineMatcherFor(player, spell)));
         declareMode(player, CastMode.CHANT_CONFIRM, spell);
         ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
         ChantNetwork.sendProgress(player, variant, 1, false);
@@ -138,7 +174,7 @@ public final class ChantManager {
      *  strict bands, per-word HUD feedback, half-rate daily-capped mastery. */
     public void startPractice(ServerPlayer player, Spell spell) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
-                timeoutMs(player, spell), -1, LINE_MATCHER, true));
+                timeoutMs(player, spell), -1, lineMatcherFor(player, spell), true));
         declareMode(player, CastMode.PRACTICE_CONFIRM, spell);
         ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
         hint(player, "wizardreal.practice.started");
@@ -174,7 +210,7 @@ public final class ChantManager {
      * legacy-format window and robustness; the L1 gate is the primary path. */
     public void start(ServerPlayer player, Spell spell) {
         active.put(player.getUUID(), new ChantEngine(spell, System.currentTimeMillis(),
-                timeoutMs(player, spell), -1, LINE_MATCHER));
+                timeoutMs(player, spell), -1, lineMatcherFor(player, spell)));
         declareMode(player, CastMode.CHANT_CONFIRM, spell);
         ChantNetwork.sendStart(player, spell.id(), variantLineKeys(spell));
         WizardReal.LOGGER.info("{} began chanting {}", player.getName().getString(), spell.id());
@@ -269,6 +305,7 @@ public final class ChantManager {
         // wr#43 评分带: a PERFECT chant resonates — +10% power for this cast
         // only. The band never changes success/failure, and resonance never
         // touches mastery (两轴分离).
+        recordChantSuccess(player.getUUID(), spell.id()); // voiceCast#52: success resets the庇护 streak
         float power = powerFor(spell, completedLines);
         if (com.theo.wizardreal.match.ScoreBands.DEFAULT.bandOf(engine.averageScore())
                 == com.theo.wizardreal.match.ScoreBands.Band.PERFECT) {
@@ -318,6 +355,7 @@ public final class ChantManager {
             fail(player, engine);
             return;
         }
+        recordChantSuccess(player.getUUID(), spell.id()); // voiceCast#52: success resets the庇护 streak
         SpellCastHandler.handleCast(player, spell.id(), powerFor(spell, completedLines), affordable);
         WizardReal.LOGGER.info("{} released {} early ({} lines complete, stage {})",
                 player.getName().getString(), spell.id(), completedLines, affordable);
@@ -399,6 +437,9 @@ public final class ChantManager {
         if (!engine.isPractice()) {
             // wr#43: practice failures are zero-stake — no streaks, no darkness.
             applyFailBlindness(player);
+            // voiceCast#52 失败庇护: consecutive failures of the same spell
+            // relax the in-chant AMBIGUOUS floor once the streak reaches 3.
+            recordChantFailure(player.getUUID(), engine.spell().id());
         }
         WizardReal.LOGGER.info("{}'s chant for {} failed{}", player.getName().getString(),
                 engine.spell().id(), engine.isPractice() ? " (practice)" : "");
@@ -440,6 +481,7 @@ public final class ChantManager {
             ChantNetwork.sendEnd(player, false);
         }
         failStreaks.remove(player.getUUID());
+        failStreaksBySpell.clear(player.getUUID());
     }
 
     /**
